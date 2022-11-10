@@ -81,3 +81,62 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
         Inoltre grazie alla separazione delle responsabilità della layered architecture è più facile andare
         a trasformare i componenti del monolite in microservizi.
 \end{itemize}
+
+\subsection{Struttura software}
+E' stato scelto NestJS come framework di sviluppo del progetto dato che si adatta bene con la layered architecture,
+dato che usa il pattern controller-service-repository, un pattern basato sulla layered architecture,  
+per permettere allo sviluppatore di sviluppare le proprie applicazioni.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=6cm]{controller-service-repository-pattern}
+\end{figure}
+\leavevmode\newline
+Il controller è il livello responsabile per gestire le richieste in arrivo e ritornare le risposte al client.
+Esiste un meccanismo di routing che gestisce a quale controller inviare le richieste.
+\\
+Il service è il livello responsabile della business logic.
+\\
+Il repository è il livello chiamato livello di persistenza nella layered architecture.
+\\\\
+Analizziamo in dettaglio la struttura del software:
+\subsubsection{IoC container}
+L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
+del pattern Dependency Injection all'interno di NestJS.
+\\
+L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come controller o provider.
+\\
+Il funzionamento dell'IoC container è il seguente:
+\\
+quando viene avviata un'applicazione NestJS, il sistema runtime ricerca tutti controller e provider che 
+sono stati dichiarati in dei moduli importati dal modulo root. Per ognuna di queste classi crea un'istanza
+usando il pattern singleton e la inserisce nell'IoC container. 
+\\
+Se però la classe da istanziare dichiarava una dipendenza con un altro controller o provider nel proprio 
+costruttore, il sistema runtime applica in maniera automatica il pattern Dependency Injection; ovvero
+va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe nell'IoC container, se
+presente la inietta nella classe e crea l'istanza della nuova classe da inserire nell'IoC container. 
+\\
+Altrimenti va a creare
+l'istanza della classe che deve essere iniettata, prima della classe che dichiara la dipendenza (se possibile, in quanto la
+classe da iniettare potrebbe a sua volta richiedere una dipendenza e in tal caso si segue la successione di 
+dipendenze fino a che non si trova una classe che possa essere istanziata) e la inietta nella classe che dichiara
+la dipendenza, poi ne crea un'istanza e la inserisce nell'IoC container.
+
+\subsubsection{Moduli}
+Un modulo è un concetto fondamentale in NestJS. Ogni applicazione ha almeno un modulo, chiamato modulo root. 
+Avere solo un modulo non è un caso tipico per un'applicazione, solitamente ce ne sono svariati.
+I moduli sono utilizzati come modo per organizzare i componenti di un'applicazione.
+\\
+All'interno di uno stesso modulo devono essere presenti componenti appartenenti allo stesso dominio. Ad esempio
+il controller, il service e il repository dei sensori di parcheggio sono tre buoni candidati per essere racchiusi 
+all'interno dello stesso modulo.
+\\
+Grazie ai moduli si riesce a mantenere il codice ben organizzato separando le componenti per dominio di appartenenza
+e stabiliscono dei confini chiari tra i vari componenti. In questo modo NestJS ci aiuta a gestire la complessità e a 
+sviluppare con principi SOLID, specialmente quando le dimensioni dell'applicazione crescono e/o quando il team cresce.
+\\
+Per inserire una componente in un modulo deve essere dichiarata come controller o provider, all'interno del decorator
+@Module della classe modulo.
+\\
+Un concetto fondamentale dei moduli è che le componenti (controller, service, repository, classi varie..) dichiarate 
+come appartenenti
