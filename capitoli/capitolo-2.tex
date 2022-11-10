@@ -112,6 +112,10 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \\\\
 
 % parcheggio
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=9cm]{usecase/parking-area}
+\end{figure}
 UC1 - Ottenimento lista di tutti i parcheggi.
 \\
 Attori primari: utente non autenticato.
@@ -184,6 +188,11 @@ Scenario principale:
 
 % manutentore
 \leavevmode\newline
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=9cm]{usecase/maintainer}
+\end{figure}
 UC6 - Ottenimento lista di tutti i manutentori.
 \\
 Attori primari: utente non autenticato.
@@ -256,6 +265,10 @@ Scenario principale:
 
 % sensore
 \leavevmode\newline
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=9cm]{usecase/sensor}
+\end{figure}
 UC11 - Ottenimento lista di tutti i sensori.
 \\
 Attori primari: utente non autenticato.
@@ -311,3 +324,206 @@ Scenario principale:
     \item l'utente richiede la modifica dello stato di manutenzione di un sensore.
     \item l'utente modifica lo stato di manutenzione di un sensore.
 \end{enumerate}
+
+% piazzola
+\leavevmode\newline
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=9cm]{usecase/parking-spot}
+\end{figure}
+UC15 - Ottenimento lista di tutte le piazzole di un parcheggio.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede la lista di tutte le piazzole di un parcheggio.
+    \item l'utente ottiene una lista di tutte le piazzole di un parcheggio.
+\end{enumerate}
+\leavevmode\newline
+UC16 - Ottenimento lista di tutte le piazzole di un sensore.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha ottenuto una lista di tutte le piazzole di un sensore.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede la lista di tutte le piazzole di un sensore.
+    \item l'utente ottiene una lista di tutte le piazzole di un sensore.
+\end{enumerate}
+\leavevmode\newline
+UC17 - Creazione di una piazzola in un parcheggio.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha creato una piazzola in un parcheggio.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede la creazione di una piazzola in un parcheggio.
+    \item l'utente crea una piazzola in un parcheggio.
+\end{enumerate}
+\leavevmode\newline
+UC18 - Modifica dati di una piazzola.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha modificato una piazzola.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede la modifica di una piazzola.
+    \item l'utente modifica una piazzola.
+\end{enumerate}
+\leavevmode\newline
+UC19 - Eliminazione di una piazzola.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha eliminato una piazzola.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede l'eliminazione di una piazzola.
+    \item l'utente elimina una piazzola.
+\end{enumerate}
+
+% misurazione
+\leavevmode\newline
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=9cm]{usecase/parking-sensor}
+\end{figure}
+UC20 - Ottenimento ultima misurazione di un sensore di parcheggio.
+\\
+Attori primari: utente non autenticato.
+\\
+Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\\
+Post-condizioni: l'utente ha ottenuto l'ultima misurazione di un sensore di parcheggio.
+\\
+Scenario principale:
+\begin{enumerate}
+    \item l'utente richiede l'ultima misurazione di un sensore di parcheggio.
+    \item l'utente ottiene l'ultima misurazione di un sensore di parcheggio.
+\end{enumerate}
+
+% TODO: inserire sotto casi d'uso specificando i campi da visualizzare / modificare
+\section{Tracciamento dei requisiti}
+Ogni requisito è identificato da un codice univoco nel seguente formato:
+\begin{itemize}
+    \item la prima lettera è sempre R, a indicare la parola requisito
+    \item la seconda lettera indica il tipo di requisito:
+    \begin{itemize}
+        \item F per i requisiti funzionali
+        \item Q per i requisiti qualitativi
+        \item V per i requisiti di vincolo
+    \end{itemize}
+    \item un numero progressivo che identifica in modo univoco il requisito.
+\end{itemize}
+Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio di appartenenza.
+
+% parcheggio
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF1 & L'utente non autenticato deve poter ottenere la lista di tutti i parcheggi. & Obbligatorio & UC1 \\ 
+    \hline
+    RF2 & L'utente non autenticato deve poter ottenere i dati di un parcheggio. & Obbligatorio & UC2 \\ 
+    \hline
+    RF3 & L'utente non autenticato deve poter creare un parcheggio. & Obbligatorio & UC3 \\ 
+    \hline
+    RF4 & L'utente non autenticato deve poter modificare i dati di un parcheggio. & Obbligatorio & UC4 \\
+    \hline
+    RF5 & L'utente non autenticato deve poter eliminare un parcheggio. & Obbligatorio & UC5 \\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+% manutentore
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF6 & L'utente non autenticato deve poter ottenere la lista di tutti i manutentori. & Obbligatorio & UC6 \\ 
+    \hline
+    RF7 & L'utente non autenticato deve poter ottenere i dati di un manutentore. & Obbligatorio & UC7 \\ 
+    \hline
+    RF8 & L'utente non autenticato deve poter creare un manutentore. & Obbligatorio & UC8 \\ 
+    \hline
+    RF9 & L'utente non autenticato deve poter modificare i dati di un manutentore. & Obbligatorio & UC9 \\
+    \hline
+    RF10 & L'utente non autenticato deve poter eliminare un manutentore. & Obbligatorio & UC10 \\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+% sensore
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF11 & L'utente non autenticato deve poter ottenere la lista di tutti i sensori. & Obbligatorio & UC11 \\ 
+    \hline
+    RF12 & L'utente non autenticato deve poter ottenere i dati di un sensori. & Obbligatorio & UC12 \\ 
+    \hline
+    RF13 & L'utente non autenticato deve poter ottenere la lista di tutti i sensori di una piazzola. & Obbligatorio & UC13 \\ 
+    \hline
+    RF14 & L'utente non autenticato deve poter modificare lo stato di manutenzione di un sensore. & Obbligatorio & UC14 \\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+% piazzola
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF15 & L'utente non autenticato deve poter ottenere la lista di tutte le piazzole di un parcheggio. & Obbligatorio & UC15 \\ 
+    \hline
+    RF16 & L'utente non autenticato deve poter ottenere la lista di tutte le piazzole di un sensore. & Obbligatorio & UC16 \\ 
+    \hline
+    RF17 & L'utente non autenticato deve poter creare una piazzola in un parcheggio. & Obbligatorio & UC17 \\ 
+    \hline
+    RF18 & L'utente non autenticato deve poter modificare i dati di una piazzola. & Obbligatorio & UC18 \\
+    \hline
+    RF19 & L'utente non autenticato deve poter eliminare una piazzola. & Obbligatorio & UC19 \\
+    \hline
+    \end{tabular}
+\end{table}
+
+% misurazione
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF20 & L'utente non autenticato deve poter ottenere l'ultima misurazione di un sensore di parcheggio. & Obbligatorio & UC20 \\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+% TODO: aggiungere requisiti facoltativi e desiderabili. Aggiungere requisiti qualitativi e di vincolo.
