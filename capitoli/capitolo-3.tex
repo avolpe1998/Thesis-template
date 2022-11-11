@@ -99,12 +99,13 @@ Il service è il livello responsabile della business logic.
 Il repository è il livello chiamato livello di persistenza nella layered architecture.
 \\\\
 Analizziamo in dettaglio la struttura del software:
+
 \subsubsection{IoC container}
 L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
 del pattern Dependency Injection all'interno di NestJS.
 \\
 L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come controller o provider.
-\\
+\\\\
 Il funzionamento dell'IoC container è il seguente:
 \\
 quando viene avviata un'applicazione NestJS, il sistema runtime ricerca tutti controller e provider che 
@@ -122,21 +123,248 @@ classe da iniettare potrebbe a sua volta richiedere una dipendenza e in tal caso
 dipendenze fino a che non si trova una classe che possa essere istanziata) e la inietta nella classe che dichiara
 la dipendenza, poi ne crea un'istanza e la inserisce nell'IoC container.
 
+\subsubsection{Controller e provider}
+I due componenti fondamentali di NestJS sono i controller e i provider. 
+Per dichiarare una classe come controller, bisogna applicare il decorator @Controller, sopra la 
+definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
+@Injectable sopra la definizione della classe.
+\\
+\begin{lstlisting}
+@Injectable()
+export class MaintainersRegistryService {
+    constructor(private readonly maintainersRegistryRepository: 
+        MaintainersRegistryRepository){}
+
+    getAllMaintainers(){
+        return this.maintainersRegistryRepository.find();
+    }
+
+    async getMaintainerById(id: string){
+        const maintainer = 
+            await this.maintainersRegistryRepository.findOne({
+                where: {
+                    id: id
+                }
+            });
+
+        if(isEmpty(maintainer))
+            throw new NotFoundError('maintainer id not found');
+
+        return maintainer;
+    }
+
+    async createMaintainer(maintainer: MaintainerRegistry){
+        const insertResponse = 
+            await this.maintainersRegistryRepository.insert(maintainer);
+
+        if(isEmpty(insertResponse.identifiers))
+            throw new InsertError('problem to insert record');
+
+        const maintainerInsertedId = insertResponse.identifiers[0].id;
+
+        return this.getMaintainerById(maintainerInsertedId);
+    }
+
+    async editMaintainerById(id: string, maintainerRegistry: MaintainerRegistry){
+        try{
+            await this.getMaintainerById(id);    
+        }catch(error){
+            throw(error);
+        }
+        
+        const updateResponse = 
+            await this.maintainersRegistryRepository.update(id, maintainerRegistry);
+
+        const numberRowAffected = updateResponse.affected;
+
+        if(numberRowAffected !== 1)
+            throw new UpdateError('problem to update record');
+
+        return this.getMaintainerById(id);
+    }
+
+    async deleteMaintainerById(id: string){
+        try{
+            await this.getMaintainerById(id);    
+        }catch(error){
+            throw(error);
+        }
+
+        const deleteResponse = 
+            await this.maintainersRegistryRepository.delete(id);
+
+        const numberRowAffected = deleteResponse.affected;
+
+        if(numberRowAffected !== 1)
+            throw new DeleteError('problem to delete record');
+    }
+}
+\end{lstlisting}
+\leavevmode\newline
+\\
+I controller sono i componenti dedicati a gestire le richieste in ingresso e a fornire le risposte all'utente
+finale. NestJS considera come provider tutte le classi istanziabili e marcate con il decorator 
+@Injectable che non sono controller; quindi sia classi di tipo service, che repository devono essere marcate
+con il decorator @Injectable. 
+\\
+\begin{lstlisting}
+@Controller('maintainers')
+export class MaintainersRegistryController {
+    constructor(private readonly maintainersRegistryService: 
+        MaintainersRegistryService){}
+
+    @Get()
+    getAllMaintainers(){
+        return this.maintainersRegistryService
+            .getAllMaintainers();
+    }
+
+    @Get(':id')
+    getMaintainerById(@Param('id') id: string){
+        return this.maintainersRegistryService
+            .getMaintainerById(id);
+    }
+
+    @Post()
+    async createMaintainer(@Body() maintainer: MaintainerRegistry){
+        return await this.maintainersRegistryService
+            .createMaintainer(maintainer);
+    }
+
+    @Put(':id')
+    editMaintainerById(
+        @Param('id') id: string,
+        @Body() maintainerRegistry: MaintainerRegistry,
+    ){
+        return this.maintainersRegistryService
+            .editMaintainerById(id, maintainerRegistry);
+    }
+
+    @Delete(':id')
+    @HttpCode(204)
+    deleteMaintainerById(@Param('id') id: string){
+        return this.maintainersRegistryService
+            .deleteMaintainerById(id);
+    }
+}
+\end{lstlisting}
+\leavevmode\newline
+\\
+E' possibile marcare con il decorator @Injectable
+anche classi non service o repository di cui si vuole che NestJS si occupi
+in maniera automatica di istanziare, iniettare le dipendenze dichiarate nel costruttore e inserire nell'IoC 
+container.
+\\\\
+I controller individuati sono i seguenti:
+\begin{itemize}
+    \item MaintainersRegistryController: gestisce le richieste/risposte relative al dominio dei manutentori.
+    \item ParkingAreasController: gestisce le richieste/risposte relative al dominio dei parcheggi.
+    \item ParkingSensorsController: gestisce le richieste/risposte relative al dominio delle misurazioni
+    dei sensori di parcheggio.
+    \item ParkingSensorsSensorsController: gestisce le richieste/risposte relative al dominio delle misurazioni
+    dei sensori di parcheggio di un sensore.
+    \item ParkingSpotsController: gestisce le richieste/risposte relative al dominio delle piazzole.
+    \item ParkingSpotsParkingAreasController: gestisce le richieste/risposte relative al dominio delle piazzole
+    di un parcheggio.
+    \item ParkingSpotsSensorsController: gestisce le richieste/risposte relative al dominio delle piazzole
+    di un sensore.
+    \item SensorsController: gestisce le richieste/risposte relative al dominio dei sensori.
+    \item SensorsParkingSpotsController: gestisce le richieste/risposte relative al dominio dei sensori di una
+    piazzola.
+    \item SensorsMaintenanceSensorsController: gestisce le richieste/risposte relative al dominio della manutenzione dei
+    sensori di un sensore.
+\end{itemize}
+
+\subsection{Repository}
+I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno quindi il compito di
+comunicare con la componente di archiviazione dati come un database. Nel progetto è stato utilizzato un database
+relazionale di tipo postgreSQL.
+\\\\
+NestJS è indipendente dal tipo di database scelto (relazionale o non relazionale). Infatti NestJS si interfaccia
+al database tramite uno strumento che si chiama TypeORM. TypeORM implementa una tecnica di programmazione chiamata 
+ORM che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione OOP.
+\\\\
+Uno strumento ORM incapsula il codice necessario per manipolare i dati, senza aver bisogno di scrivere manualmente
+le query al database ma si interagisce direttamente con un oggetto nello stesso linguaggio che si sta usando. 
+\\
+In questo modo il database viene astratto e si diventa indipendenti dal tipo di database utilizzato, in quanto è compito dell'ORM
+tradurre la richiesta fatta in linguaggio di programmazione ad alto livello nella query al database. 
+\\\\
+Uno strumento come TypeORM offre quindi una grande flessibilità in quanto è possibile decidere di passare da un database
+relazionale a un database non relazionale in qualsiasi momento senza dover effettuare modifiche al livello di persistenza.
+\\\\
+Senza un'ORM la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
+\\\\
+
+% rel: https://it.wikipedia.org/wiki/Object-relational_mapping
+
 \subsubsection{Moduli}
 Un modulo è un concetto fondamentale in NestJS. Ogni applicazione ha almeno un modulo, chiamato modulo root. 
 Avere solo un modulo non è un caso tipico per un'applicazione, solitamente ce ne sono svariati.
 I moduli sono utilizzati come modo per organizzare i componenti di un'applicazione.
-\\
+\\\\
 All'interno di uno stesso modulo devono essere presenti componenti appartenenti allo stesso dominio. Ad esempio
 il controller, il service e il repository dei sensori di parcheggio sono tre buoni candidati per essere racchiusi 
 all'interno dello stesso modulo.
-\\
+\\\\
 Grazie ai moduli si riesce a mantenere il codice ben organizzato separando le componenti per dominio di appartenenza
 e stabiliscono dei confini chiari tra i vari componenti. In questo modo NestJS ci aiuta a gestire la complessità e a 
 sviluppare con principi SOLID, specialmente quando le dimensioni dell'applicazione crescono e/o quando il team cresce.
-\\
+\\\\
 Per inserire una componente in un modulo deve essere dichiarata come controller o provider, all'interno del decorator
-@Module della classe modulo.
-\\
+@Module della classe modulo (i moduli da controller devono essere dichiarati nell'array controllers di @Module,
+mentre i moduli provider devono essere dichiarati nell'array providers di @Module). 
+\\\\
+Se un controller o un provider non è dichiarato in un modulo che viene incluso dal modulo
+root, NestJS non istanzierà la classe del componente e non verrà inserito nell'IoC container.
+\\\\
 Un concetto fondamentale dei moduli è che le componenti (controller, service, repository, classi varie..) dichiarate 
-come appartenenti
+come appartenenti ad un modulo hanno uno scope locale al modulo, quindi sono visibili solo tra di loro e non vedono
+i componenti appartenenti ad altri moduli.
+\\
+E' un caso comune però che un componente di un modulo abbia bisogno di un componente appartenente ad un altro modulo
+e quindi lo dichiara come dipendenza. In questo caso NestJS darebbe errore in fase di compilazione, poiché come 
+spiegato sopra un componente di un modulo A, non può vedere un componente di un modulo B.
+\\\\
+Per risolvere questo problema NestJS permette di definire nel decorator @Module della classe modulo i componenti che
+quel modulo vuole esportare e quindi che abbiano visibilità pubblica (i componenti da esportare devono essere dichiarati 
+nell'array exports di @Module). 
+\\
+In questo caso se una classe di un modulo B dichiara una 
+dipendenza da un componente esportato da un modulo A, nel decorator @Module della classe modulo B deve essere dichiarato il
+modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array imports di @Module).
+\\
+% //TODO: sistemare colori codice
+\begin{lstlisting}
+@Module({
+    imports: [ 
+        SensorsModule,
+    ],
+    controllers: [
+        ParkingSpotsController, 
+        ParkingSpotsParkingAreasController,
+        ParkingSpotsSensorsController,
+    ],
+    providers: [
+        ParkingSpotsService,
+        ParkingSpotsRepository,
+    ],
+    exports: [
+        ParkingSpotsService,
+    ],
+})
+export class ParkingSpotsModule {}
+\end{lstlisting}
+\leavevmode\newline
+I moduli individuati sono i seguenti:
+\begin{itemize}
+    \item AutomapperCustomModule: contiene i componenti per effettuare il mappaggio da DTO a entità.
+    \item DtoValidatorModule: contiene i componenti per validare i campi di un DTO.
+    \item MaintainersRegistryModule: contiene i componenti appartenenti al dominio dei manutentori.
+    \item ParkingAreasModule: contiene i componenti appartenenti al dominio dei parcheggi.
+    \item ParkingSensorsModule: contiene i componenti appartenenti al dominio delle misurazioni dei sensori di parcheggio.
+    \item ParkingSpotsModule: contiene i componenti appartenenti al dominio delle piazzole.
+    \item SensorsModule: contiene i componenti appartenenti al dominio dei sensori.
+    \item SensorsMaintenanceModule: contiene i componenti appartenenti al dominio della manutenzione dei sensori.
+    \item SensorsScrapingModule: contiene i componenti appartenenti al dominio del polling dei sensori.
+\end{itemize}
