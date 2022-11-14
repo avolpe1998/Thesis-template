@@ -82,7 +82,7 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
         a trasformare i componenti del monolite in microservizi.
 \end{itemize}
 
-\subsection{Struttura software}
+\section{Struttura software}
 E' stato scelto NestJS come framework di sviluppo del progetto dato che si adatta bene con la layered architecture,
 dato che usa il pattern controller-service-repository, un pattern basato sulla layered architecture,  
 per permettere allo sviluppatore di sviluppare le proprie applicazioni.
@@ -100,7 +100,7 @@ Il repository è il livello chiamato livello di persistenza nella layered archit
 \\\\
 Analizziamo in dettaglio la struttura del software:
 
-\subsubsection{IoC container}
+\subsection{IoC container}
 L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
 del pattern Dependency Injection all'interno di NestJS.
 \\
@@ -123,7 +123,7 @@ classe da iniettare potrebbe a sua volta richiedere una dipendenza e in tal caso
 dipendenze fino a che non si trova una classe che possa essere istanziata) e la inietta nella classe che dichiara
 la dipendenza, poi ne crea un'istanza e la inserisce nell'IoC container.
 
-\subsubsection{Controller e provider}
+\subsection{Controller e provider}
 I due componenti fondamentali di NestJS sono i controller e i provider. 
 Per dichiarare una classe come controller, bisogna applicare il decorator @Controller, sopra la 
 definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
@@ -295,10 +295,67 @@ relazionale a un database non relazionale in qualsiasi momento senza dover effet
 \\\\
 Senza un'ORM la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
 \\\\
+Il repository viene fornito e creato in maniera automatica da NestJS. Per fare in modo che ciò avvenga però è necessario
+dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository, nell'array di imports tramite 
+il metodo forFeature della classe TypeOrmModule la lista di entità di cui si vuole creare un repository.
+\\\\
+Il repository creato da NestJS include tutti i metodi necessari per le operazioni basilari CRUD (find(), save(), update(), 
+delete() ecc..).
+\\\\
+Spesso però abbiamo bisogno di effettuare query al database più complesse rispetto a quelle a disposizione nel repository
+creato da NestJS. Per fare ciò dobbiamo creare una nostra classe repository che estenda la classe Repository, che è una
+classe Generics definita all'interno di NestJS e si aspetta come tipo del Generic il tipo dell'entità di cui vogliamo 
+creare il repository.
+\\\\
+Creato il repository custom non è più necessario usare il metodo forFeature nella classe modulo, ma va importato il repository custom
+come provider.
+\\ 
 
+\begin{lstlisting}
+@Injectable()
+export class SensorsRepository extends Repository<Sensor>{
+    constructor(private dataSource: DataSource){
+        super(Sensor, dataSource.createEntityManager());
+    }
+
+    getSensorsWithoutSensorMaintenance(){
+        return this.dataSource
+        .createQueryBuilder()
+        .select('sensor')
+        .from(Sensor, 'sensor')
+        .leftJoin('sensor.sensorMaintenance', 'sensorMaintenance')
+        .where('sensorMaintenance.id IS NULL')
+        .getMany();
+    }
+}
+\end{lstlisting}
+\leavevmode\newline
+Nel nostro repository oltre che ai metodi ereditati dalla classe padre Repository, possiamo creare i nostri metodi personalizzati
+per poter inserire le nostre query custom. 
+\\\\
+Ci sono 2 modi per creare le query:
+\begin{itemize}
+    \item tramite notazione pura SQL 
+    \item tramite i metodi del Query Builder
+\end{itemize}
+\leavevmode\newline
+E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazione SQL per 2 motivi:
+\begin{enumerate}
+    \item La concatenazione dei metodi del Query Builder rende molto più chiaro e pulito il codice, quindi più facile
+        da manutenere.
+    \item Nel caso di cambio di tipo di database le query continuano a funzionare, in quanto grazie al Query Builder,
+        TypeORM le converte adattandole alla sintassi del database che si stà utilizzando. Mentre non viene 
+        effettuata alcun tipo di conversione per le query in notazione pura SQL.
+\end{enumerate}
+\leavevmode\newline
+I repository custom individuati sono i seguenti:
+\begin{itemize}
+    \item ParkingSensorsRepository: ha un metodo custom per aggiornare i timestamp dei parcheggi passati come parametro.
+    \item SensorsRepository: ha un metodo custom per ottenere i sensori che non hanno almeno una manutenzione.
+\end{itemize}
 % rel: https://it.wikipedia.org/wiki/Object-relational_mapping
 
-\subsubsection{Moduli}
+\subsection{Moduli}
 Un modulo è un concetto fondamentale in NestJS. Ogni applicazione ha almeno un modulo, chiamato modulo root. 
 Avere solo un modulo non è un caso tipico per un'applicazione, solitamente ce ne sono svariati.
 I moduli sono utilizzati come modo per organizzare i componenti di un'applicazione.
@@ -368,3 +425,103 @@ I moduli individuati sono i seguenti:
     \item SensorsMaintenanceModule: contiene i componenti appartenenti al dominio della manutenzione dei sensori.
     \item SensorsScrapingModule: contiene i componenti appartenenti al dominio del polling dei sensori.
 \end{itemize}
+
+\subsection{DTO}
+E' stata usata una classe di tipo DTO chiama SensorsScrapingDto. Questa classe viene utilizzata per rappresentare
+il contenuto del file XML online contente lo stato dei sensori. Da questo oggetto vengono estratte le informazioni
+utili per rappresentare le entità di tipo sensore e misurazioni sensore con cui si va ad aggiornare il database.
+\\\\
+Prima di effettuare la conversione da DTO a entità, i campi del DTO vengono validati, lanciando un'eccezione nel caso 
+la validazione fallisca.
+\\
+\begin{lstlisting}
+export class SensorScrapingDto{
+    
+    id: string;
+
+    name: string;
+
+    address: string;
+
+    lat: string;
+
+    lng: string;
+
+    state: boolean;
+
+    battery: string;
+
+    active: boolean;
+
+    constructor(){
+        this.id = '0';
+        this.name = '';
+        this.address = '';
+        this.lat = '0';
+        this.lng = '0';
+        this.state = false;
+        this.battery = '';
+        this.active = false;
+    }
+}
+\end{lstlisting}
+
+\subsection{Eccezioni}
+NestJS ha un livello built-in che è responsabile di processare tutte le eccezioni non catturate durante 
+l'esecuzione di un'applicazione.
+\\\\
+Quando un'eccezione non viene catturata dal codice dell'applicazione viene catturata da questo livello,
+che in maniera automatica invia una risposta http al client user-friendly, evitando di far interrompere 
+l'esecuzione del programma. Questa componente si chiama exception filter.
+\\\\
+La risposta al client è user-friendly e con un messaggio appropriato se l'eccezione è di tipo HttpException o 
+una sua sottoclasse. 
+\\\\
+Altrimenti viene risposto al client con un messaggio "internal server error" e status code 500.
+\\\\
+Possono capitare eccezioni anche durante l'esecuzione di query tramite TypeORM. Essendo TypeORM una libreria
+esterna nessuna eccezione da lei lanciata viene catturata dal livello descritto sopra di NestJS.
+\\\\
+Per evitare di interrompere l'esecuzione del programma in eccezioni non presenti in NestJS si è deciso di 
+sovrascrivere l'exception filter globale fornito da NestJS con uno custom e di creare un set di eccezioni
+custom che vengono lanciate per problemi di persistenza nella business logic.
+\\\\
+Questo exception filter è stato chiamato TypeOrmExceptionFilter e implementa l'interfaccia ExceptionFilter di
+NestJS. 
+\\
+TypeOrmExceptionFilter simula il comportamento dell'exception filter di NestJS catturando qualsiasi
+tipo di errore, rispondendo con "internal server error" e status code 500 in caso l'eccezione non sia riconosciuta
+e in più funziona anche se si verificano eccezioni da librerie esterne; garantendo un buon livello di resilienza
+del programma. 
+\\\\
+Se le eccezioni sono dei tipi custom per TypeORM, lo status code e il messaggio viene vengono inviati in maniera
+appropriata all'utente finale.
+\\\\
+Altri tipi di eccezione di TypeORM di tipo QueryFailedError, vengono analizzati in base al codice di errore; 
+lo status code e il messaggio anche in questo caso vengono inviati in maniera appropriata al client.
+Ad esempio un eccezione di tipo QueryFailedError con codice errore 23505 indica un confitto nel database, quindi
+viene inviata una risposta al client con status code 409 e messaggio "database error on unique constraint".
+\\\\
+Avere un exception filter permette di spostare la responsabilità della gestione delle eccezioni in un livello
+apposito. In questo modo si facilita la manutenzione e si assicura coerenza nella gestione delle eccezioni.
+\\\\
+Senza un exception filter dovrebbero essere i controller a gestire le eccezioni e modificare la loro risposta
+in base al tipo di eccezione ricevuta dal service (che ha usufruito del metodo del repository che ha lanciato
+l'eccezione).
+\\\\
+In questo modo però si creano controller di grandi dimensioni rendendo meno pulito il codice e più difficile
+da manutenere. Inoltre questo approccio non garantisce che tutti i controller gestiscano la stessa eccezione
+allo stesso modo. 
+\\
+Ad esempio sviluppatori diversi potrebbero gestire in maniera diversa la stessa eccezione (messaggio di errore diverso,
+più messaggi di errore, numero e tipo di parametri di risposta diversi ecc..)
+generando confusione per il cliente finale.
+\\\\
+Le eccezioni custom per TypeORM individuate sono le seguenti:
+\begin{itemize}
+    \item NotFoundError: gestisce errori dovuti alla richiesta di dati inesistenti.
+    \item InsertError: gestisce errori dovuti all'inserimento di dati.
+    \item UpdateError: gestisce errori dovuti all'aggiornamento di dati.
+    \item DeleteError: gestisce errori dovuti alla cancellazione di dati.
+\end{itemize}
+\leavevmode\newline
