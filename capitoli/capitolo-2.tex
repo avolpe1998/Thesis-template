@@ -10,7 +10,7 @@
 \section{Confronto con gli stakeholders}
 E' stato fatto un incontro iniziale con il proponente, ovvero l'azienda Sync Lab,
 per definire con chiarezza i requisiti richiesti.
-\\\\
+\subsection{Servizio REST API}
 Nell'incontro sono state prese in considerazione le REST API scritte col framework Spring 
 già esistenti di cui doveva esserne fatta la migrazione nel framework NestJS.
 E' emerso subito che la quantità di REST API da realizzare era troppo elevata per la
@@ -19,9 +19,100 @@ quantità di tempo a disposizione.
 E' stato quindi necessario fare una valutazione di quali fossero i servizi fondamentali che
 il servizio di REST API avrebbe dovuto esporre, per poter essere utilizzato senza che venissero
 a mancare funzionalità fondamentali per l'utilizzo a livello base del sistema.
+
+\subsection{Servizio di polling}
+Abbiamo poi valutato il secondo servizio importante da realizzare per questo progetto, ovvero
+la necessità di avere una lista sempre aggiornata dei sensori disponibili e del loro stato.
 \\\\
-Ho realizzato quindi un elenco di casi d'uso, in approvazione con la proponente, per avere più
-chiari i requisiti del progetto.
+La rete dei sensori cresce in maniera dinamica, in quanto un nuovo sensore viene aggiunto/spostato
+da un parcheggio senza un utenza manuale che informi il sistema di ciò che avviene. 
+\\
+Ma è necessario che quando un sensore si aggiunge alla rete, il sistema lo rilevi e ne mantenga lo stato
+aggiornato e la stessa cosa deve avvenire per quanto riguarda lo spostamento di un sensore, solo che in 
+questo caso il sistema deve aggiornare le coordinate del sensore esistente, anziché aggiungerne uno nuovo.
+\\\\
+Sono stati scelti una tipologia di sensori con GPS integrato, che ad ogni variazione di stato vanno ad 
+aggiornare un record a loro associato in un file XML online contenente le loro informazioni compreso 
+il loro stato.
+\\\\
+Non avendo controllo sui sensori e quindi su dove vengano scritti i dati, con la proponente si è deciso
+di effettuare un polling ogni 2 minuti al file XML e aggiornare lo stato del back-end.
+\\\\
+Lo stato dei sensori è stato duplicato nel back-end del progetto oltre che sul file poiché questo da dei
+benefici:
+\begin{itemize}
+    \item permette di organizzare i dati in maniera più consona e organizzata.
+    \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file XML online
+        in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza del back-end, 
+        di cui abbiamo pieno controllo.
+\end{itemize}
+\leavevmode\newline
+\\
+La motivazione che ha portato ad eseguire il polling ogni due minuti è la seguente:
+\\
+il tipo di servizio offerto non ha bisogno di essere un real-time system in quanto non crea problemi all'utente
+vedere una piazzola che si libera/occupa con un delta di intervallo di ritardo. 
+\\\\
+L'importante è che questo delta non sia troppo elevato, in tal caso i dati mostrati agli utenti sarebbero troppo
+inconsistenti per essere utili, mentre un delta troppo piccolo genera un carico di lavoro per l'applicazione troppo
+elevato.
+\\
+Infatti effettuare il polling con un basso intervallo, degli ordini dei millisecondi, genera la produzione di molte 
+chiamate http da parte del back-end per l'accesso al file XML e molti accessi al database in caso ci siano dati da 
+inserire/aggiornare.
+\\\\
+Vediamo un esempio pratico con una tabella che mostra il costo delle chiamate e accessi al database giornalieri al variare 
+dell'intervallo di tempo del polling:
+\\
+\begin{table}
+    \begin{tabular}{|p{2.85cm}|p{2.85cm}|p{2.85cm}|p{2.85cm}|} 
+    \hline
+    Polling & \# chiamate http  & \# accessi lettura & \# accessi scrittura \\ 
+    \hline
+    60 minuti & 24 & 24 * $10^3$ & 24 * $10^3$ \\
+    \hline
+    30 minuti & 48 & 48 * $10^3$ & 48 * $10^3$ \\
+    \hline
+    15 minuti & 96 & 96 * $10^3$ & 96 * $10^3$ \\
+    \hline
+    5 minuti & 288 & 288 * $10^3$ & 1440 * $10^2$ \\
+    \hline
+    2 minuti & 720 & 720 * $10^3$ & 1440 * $10^2$ \\
+    \hline
+    1 minuto & 1440 & 1440 * $10^3$ & 1440 * $10^2$ \\
+    \hline
+    1 millisecondo & 864 * $10^5$ & 864 * $10^8$ & 1440 * $10^2$ \\
+    \hline
+    \end{tabular}
+\end{table}
+\leavevmode\newline
+\\
+Per calcolare il numero medio di accessi al database è stata ipotizzata la presenza di 1000 sensori a sistema e che 
+ogni cinque minuti la metà dei sensori abbiano bisogno di un aggiornamento (quindi 100 sensori devono essere 
+acceduti in scrittura ad ogni minuto). 
+\\\\
+Quindi si verificano 1000 accessi in lettura ad ogni polling per verificare quali abbiano bisogno di aggiornamento.
+Gli accessi in scrittura variano in base al tempo trascorso dall'ultimo polling (gli accessi in scrittura sono molto
+più costosi di quelli in lettura).
+\\\\
+Come vediamo dalla tabella e come auspicabile, con il polling ad un intervallo di ogni ora si effettuano solo
+24 richieste http al giorno ma il delta di latenza di aggiornamento dei dati ad ogni ora li rende inutilizzabili.
+\\\\
+D'altra parte un intervallo di un millisecondo per il polling rende i dati aggiornati quasi in tempo reale ma 
+non è sostenibile effettuare un numero di richieste giornaliere dal back-end pari a 864 * $10^5$ (più di 86 milioni).
+\leavevmode
+\\\\
+Un numero di richieste giornaliere pari a 720 è stato ritenuto accettabile, così come il numero di accessi al database
+indicati per la colonna dei 2 minuti e si è optato quindi per questa scelta; ritenendo il delta di ritardo di
+aggiornamento un valore accettabile per l'utente finale e il costo non di sovraccarico per il sistema.
+\\\\
+Il servizio per il polling dei sensori deve essere realizzato in modo che sia separato da quello di REST API.
+\\
+Sia per una separazione di responsabilità, che per una futura migrazione a un'applicazione basata su microservizi,
+in cui il servizio di polling deve diventare un microservizio a se stante, gestibile in maniera indipendente rispetto
+agli altri microservizi.
+% //TODO: Spiegare nella parte di progettazione che si è preferito dare accesso allo scraping sensors al servizio dei sensori
+% anzichè farlo accedere tramite controller e api
 
 \section{Entità}
 Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità è stato necessario

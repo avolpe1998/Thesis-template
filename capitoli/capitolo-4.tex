@@ -3,82 +3,158 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Analisi dei requisiti}
-\label{cap:realizzazione-e-testing}
+\chapter{Verifica e validazione}
+\label{cap:verifica-e-validazione}
 %**************************************************************
 
-% \intro{Breve introduzione al capitolo}\\
+\section{Verifica}
+\subsection{Criteri di verifica}
+E' stato stabilito con il proponente che il prodotto finale dovesse avere 
+una suite di test automatici per testare la business logic del progetto
+con una copertura a livello di branch stabilita >= al 90\% e una copertura
+a livello linee di codice >= al 60\%.
+\\\\
+La motivazione che ha portato a richiedere una copertura così alta a livello
+branch è dovuta al fatto che si vuole assicurare il corretto funzionamento di 
+tutti i possibili casi di errore anche in caso di futura manutenzione del software.
+\\\\
+E' inoltre importante che sia mantenuta la coerenza stabilita per i casi di errore e
+nel caso alcuni branch non fossero coperti da casi di test, uno sviluppatore potrebbe
+inconsciamente modificare il comportamento del programma in caso di un errore, generando
+un comportamento inaspettato del programma per l'utente finale. 
+\\\\
+E' molto importante per la proponente che questa cosa non succeda e quindi è stata richiesta
+una copertura a livello branch >= al 90\%.
 
-% \section{Casi d'uso}
+\subsection{Strumenti utilizzati}
+NestJS fornisce al suo interno uno strumento per scrivere vari tipi di test, tra cui unit test, 
+end to end test, integration test e così via. 
+\\\\
+Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
+il mock dei componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
+Angular, Vue.
+\\\\
+I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
+a testare e devono terminare in .spec.ts se vogliamo che vengano visti da NestJS ed eseguiti.
+\\\\
+Ogni caso di test deve essere racchiuso all'interno della dicitura describe, specificando nome della
+classe che si va a testare e una funzione di callback contenente i test per i vari metodi.
+\\
+A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe che deve
+contenere il nome del metodo e una funzione callback contenente tutti i test su quel metodo.
+\\
+\begin{lstlisting}
+describe('MaintainersRegistryService', () => {
+  describe('getMaintainerById', () => {
+    it('should return the maintainer if found', async () => {
+      jest.spyOn(maintainersRegistryRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(maintainerRegistry));
 
-% Per lo studio dei casi di utilizzo del prodotto sono stati creati dei diagrammi.
-% I diagrammi dei casi d'uso (in inglese \emph{Use Case Diagram}) sono diagrammi di tipo \gls{uml} dedicati alla descrizione delle funzioni o servizi offerti da un sistema, così come sono percepiti e utilizzati dagli attori che interagiscono col sistema stesso.
-% Essendo il progetto finalizzato alla creazione di un tool per l'automazione di un processo, le interazioni da parte dell'utilizzatore devono essere ovviamente ridotte allo stretto necessario. Per questo motivo i diagrammi d'uso risultano semplici e in numero ridotto.
+      const response = maintainersRegistryService.getMaintainerById('1');
 
-% \begin{figure}[!h] 
-%     \centering 
-%     \includegraphics[width=0.9\columnwidth]{usecase/scenario-principale} 
-%     \caption{Use Case - UC0: Scenario principale}
-% \end{figure}
+      await expect(response).resolves.toEqual(maintainerRegistry);
+    });
 
-% \begin{usecase}{0}{Scenario principale}
-% \usecaseactors{Sviluppatore applicativi}
-% \usecasepre{Lo sviluppatore è entrato nel plug-in di simulazione all'interno dell'IDE}
-% \usecasedesc{La finestra di simulazione mette a disposizione i comandi per configurare, registrare o eseguire un test}
-% \usecasepost{Il sistema è pronto per permettere una nuova interazione}
-% \label{uc:scenario-principale}
-% \end{usecase}
+    it('should thrown a NotFoundError if the maintainer was not found', async () => {
+      jest.spyOn(maintainersRegistryRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(null));
 
-% \section{Tracciamento dei requisiti}
+      const response = maintainersRegistryService.getMaintainerById('1');
 
-% Da un'attenta analisi dei requisiti e degli use case effettuata sul progetto è stata stilata la tabella che traccia i requisiti in rapporto agli use case.\\
-% Sono stati individuati diversi tipi di requisiti e si è quindi fatto utilizzo di un codice identificativo per distinguerli.\\
-% Il codice dei requisiti è così strutturato R(F/Q/V)(N/D/O) dove:
-% \begin{enumerate}
-% 	\item[R =] requisito
-%     \item[F =] funzionale
-%     \item[Q =] qualitativo
-%     \item[V =] di vincolo
-%     \item[N =] obbligatorio (necessario)
-%     \item[D =] desiderabile
-%     \item[Z =] opzionale
-% \end{enumerate}
-% Nelle tabelle \ref{tab:requisiti-funzionali}, \ref{tab:requisiti-qualitativi} e \ref{tab:requisiti-vincolo} sono riassunti i requisiti e il loro tracciamento con gli use case delineati in fase di analisi.
+      await expect(response).rejects.toThrow(NotFoundError);
+    });
+  });
+\end{lstlisting}
 
-% \newpage
+\subsection{Progettazione}
+Per i criteri di verifica stabiliti con la proponente si è deciso di testare tutti i metodi dei service che
+avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore
+dato che i metodi con un solo branch (solitamente metodi di get delle informazioni di un'entità) in caso 
+di errore non contengono logica di business per lanciare errori custom ma al massimo lanciano eccezioni
+TypeORM o NestJS catturate dall'exception filter che conforma la risposta per il client.
+\\\\
+Scrivendo dei test che vanno a controllare i metodo con più branch si assicura che:
+\begin{itemize}
+    \item ogni branch può essere raggiunto
+    \item ogni branch si comporta come aspettato
+    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore (id passato non trovato, 
+    aggiornamento non riuscito ecc..) non vengano eliminati e si assicura il mantenimento della loro
+    conformità con quanto stabilito con la proponente. 
+    \\
+    Ad esempio si assicura che venga mantenuto il controllo che in caso di errore di aggiornamento di un'entità
+    venga lanciata, dal service, un eccezione di tipo UpdateError.
+\end{itemize}
+\leavevmode\newline
+Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei mock per tutte le dipendenze
+della classe da testare, repository compresi.
+\\\\
+Fornire dei mock per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
+il comportamento della componente originale. 
+\\\\
+Le componenti fittizie sono molto più piccole delle componenti originali e implementano solo la parte di codice 
+necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
+\\\\
+Jest fornisce dei metodi molto utili per creare il mock di un metodo di una classe e sovrascriverne il comportamento.
+Tramite il metodo spyOn infatti si va a specificare l'oggetto e il suo metodo di cui si vuole effettuare il mock.
+\\\\
+Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il mock dei loro metodi, è stata
+usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
+il mock e restituisce un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
+dei metodi vuoto, 
+alleggerendo quindi notevolmente il peso della componente.
+\\\\
+Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test tramite il metodo
+spyOn, come descritto in precedenza.
 
-% \begin{table}%
-% \caption{Tabella del tracciamento dei requisti funzionali}
-% \label{tab:requisiti-funzionali}
-% \begin{tabularx}{\textwidth}{lXl}
-% \hline\hline
-% \textbf{Requisito} & \textbf{Descrizione} & \textbf{Use Case}\\
-% \hline
-% RFN-1     & L'interfaccia permette di configurare il tipo di sonde del test & UC1 \\
-% \hline
-% \end{tabularx}
-% \end{table}%
+\subsection{Realizzazione}
+Come risultato di quanto progettato sono stata creata una suite di 16 casi di test, per un totale di 59 unit test.
+\\
+\begin{table}
+    \begin{tabular}{|p{5cm}|p{1.4cm}|p{1.5cm}|p{1.4cm}| p{1.4cm} |} 
+    \hline
+    File & \% Stmts & \% Branch &  \% Funcs & \% Lines \\ 
+    \hline
+    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
+    \hline
+    parking-areas.service.ts & 82.14 & 100 & 46.15 & 72.13 \\ 
+    \hline
+    parking-sensors.service.ts & 94.11 & 100 & 94.11 & 92.3 \\ 
+    \hline
+    parking-spots.service.ts & 88.88 & 100 & 50 & 87.87 \\ 
+    \hline
+    sensors.service.ts & 38.46 & 100 & 0 & 27.27 \\ 
+    \hline
+    sensors-maintenance.service.ts & 86.11 & 90 & 71.42 & 84.84 \\ 
+    \hline
+    sensors-scraping.service.ts & 65.95 & 100 & 36.36 & 51.78 \\ 
+    \hline
+    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
+    \hline
+    \end{tabular}
+\end{table}
 
-% \begin{table}%
-% \caption{Tabella del tracciamento dei requisiti qualitativi}
-% \label{tab:requisiti-qualitativi}
-% \begin{tabularx}{\textwidth}{lXl}
-% \hline\hline
-% \textbf{Requisito} & \textbf{Descrizione} & \textbf{Use Case}\\
-% \hline
-% RQD-1    & Le prestazioni del simulatore hardware deve garantire la giusta esecuzione dei test e non la generazione di falsi negativi & - \\
-% \hline
-% \end{tabularx}
-% \end{table}%
-
-% \begin{table}%
-% \caption{Tabella del tracciamento dei requisiti di vincolo}
-% \label{tab:requisiti-vincolo}
-% \begin{tabularx}{\textwidth}{lXl}
-% \hline\hline
-% \textbf{Requisito} & \textbf{Descrizione} & \textbf{Use Case}\\
-% \hline
-% RVO-1    & La libreria per l'esecuzione dei test automatici deve essere riutilizzabile & - \\
-% \hline
-% \end{tabularx}
-% \end{table}%
+\subsection{Scheduler}
+Si è deciso di implementare il polling dei dati del sensore dal file XML online
+tramite la libreria @nestjs/schedule che integra il package cron di Node.js.
+\\\\
+Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
+di una classe ad intervalli di tempo regolari.
+\\\\
+Per fare ciò bisogna importare nel modulo root, il modulo della libreria schedule in questo modo:
+\begin{lstlisting}
+@Module({
+  imports: [
+    ScheduleModule.forRoot()
+  ],
+})
+export class AppModule {}
+\end{lstlisting}
+\leavevmode\newline
+Successivamente abbiamo a disposizione un decorator @Cron, da indicare sopra al metodo che vogliamo venga 
+schedulato. 
+\\\\
+Come parametro del @Cron dobbiamo inserire la stringa, rispettando il cron pattern, che indica
+l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
+\\\\
+Nel nostro caso vogliamo eseguirlo ogni due minuti quindi gli passiamo la stringa "*/2 * * * *".
+\\\\
