@@ -526,5 +526,194 @@ Le eccezioni custom per TypeORM individuate sono le seguenti:
 \end{itemize}
 \leavevmode\newline
 
+\subsection{Scheduler}
+Si è deciso di implementare il polling dei dati del sensore dal file XML online
+tramite la libreria @nestjs/schedule che integra il package cron di Node.js.
+\\\\
+Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
+di una classe ad intervalli di tempo regolari.
+\\\\
+Per fare ciò bisogna importare nel modulo root, il modulo della libreria schedule in questo modo:
+\begin{lstlisting}
+@Module({
+  imports: [
+    ScheduleModule.forRoot()
+  ],
+})
+export class AppModule {}
+\end{lstlisting}
+\leavevmode\newline
+Successivamente abbiamo a disposizione un decorator @Cron, da indicare sopra al metodo che vogliamo venga 
+schedulato. 
+\\\\
+Come parametro del @Cron dobbiamo inserire la stringa, rispettando il cron pattern, che indica
+l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
+\\\\
+Nel nostro caso vogliamo eseguirlo ogni due minuti quindi gli passiamo la stringa "*/2 * * * *".
+
 \subsection{Logging}
 % //TODO: spiegare questa parte
+
+\section{Servizio di polling}
+Sono state proposte due varianti in cui sviluppare il servizio di polling. Queste due varianti riguardano il
+modo in cui il servizio SensorsScrapingService, che si occupa di effettuare il polling dei dati dei sensori
+da un file XML online, debba comunicare col servizio di persistenza.
+\\\\
+Le due varianti:
+\begin{enumerate}
+    \item Far comunicare il SensorsScrapingService col servizio di persistenza effettuando delle chiamate http 
+        alle REST API di cui ha bisogno.
+    \item Far comunicare il SensorsScrapingService direttamente col livello di servizio dei sensori e dei parcheggi.
+\end{enumerate}
+\leavevmode\newline
+
+E' stato scelto il punto 2. Vediamo le motivazioni che hanno portato a effettuare questa scelta, analizzando pro e 
+contro dei due rispettivi punti.
+\\\\
+Pro del punto 1
+\begin{itemize}
+    \item Far comunicare il SensorsScrapingService con un servizio il servizio di REST API, separa bene le responsabilità e 
+        nel caso di migrazione a un applicazione basata su microservizi, il microservizi non deve cambiare il modo in cui interagisce
+        con il servizio di persistenza, in quanto continua a chiamare le stesse REST API tramite il protocollo http.
+\end{itemize}
+\leavevmode\newline
+Contro del punto 1
+\begin{itemize}
+    \item Come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate http giornaliere
+        per scaricare i dati dei sensori aggiornati. 
+        \\
+        Quindi come minimo deve effettuare 720 chiamate http giornaliere anche alle REST API, per verificare se ci sono sensori
+        da aggiornare. 
+        \\
+        Nella pratica le chiamate http da fare sono di più poiché dopo aver verificato se ci sono sensori da aggiornare ed
+        eventualmente aggiornarli, bisogna fare un'altra chiamata http alle REST API per verificare se ci sono anche misurazioni dei sensori
+        da aggiornare ed eventualmente aggiornarle. 
+        \\
+        Questo poiché grazie al DTO i dati dei sensori e delle misurazioni dei sensori vengono suddivisi in due entità diverse e quindi 
+        le chiamate http alle REST API da fare sono diverse, in quanto sensori e misurazioni dei sensori appartengono a domini diversi, quindi
+        hanno diverse REST API dedicate.
+        \\
+        Il che porta il numero di chiamate http da effettuare al servizio di REST API, pari ad un minimo di 1440 giornaliere.
+\end{itemize}
+
+\leavevmode\newline
+\section{REST API}
+Tramite lo strumento Stoplight sono state progettate 22 REST API. Stoplight light è uno strumento molto buono realizzato
+appositamente per progettare REST API.
+\\\\
+Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle api da utilizzare.
+\\\\
+Stoplight permette di definire l'end point dell'api, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
+eventuale corpo della richiesta da fornire, eventuale corpo della risposta, status code delle varie risposte e altre informazioni
+utili a chi deve sviluppare le api o all'utente finale che deve effettuare le richieste.
+\\\\
+Definita un'api su Stoplight è possibile generare il mock della risposta, in questo modo gli sviluppatori front-end non hanno bisogno
+di attendere che il back-end venga realizzato per sviluppare la parte di front-end.
+\\\\
+Le REST API, suddivise per dominio di appartenenza, sono le seguenti:
+% //TODO: valutare se inserire anche i codici di errore
+\\\\
+Parcheggio
+\\
+\begin{table}
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \hline
+    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \hline
+    /parking-areas & GET & 200 & Restituisce tutti i parcheggi \\ 
+    \hline
+    /parking-areas & POST & 201 & Crea un parcheggio \\ 
+    \hline
+    /parking-areas/\{id\} & GET & 200 & Restituisce il parcheggio con l'id richiesto \\ 
+    \hline
+    /parking-areas/\{id\} & PUT & 200 & Modifica il parcheggio con l'id richiesto \\ 
+    \hline
+    /parking-areas/\{id\} & DELETE & 204 & Elimina il parcheggio con l'id richiesto \\ 
+    \hline
+    \end{tabular}
+\end{table}
+\leavevmode\newline
+\\
+Manutentore
+\\
+\begin{table}
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \hline
+    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \hline
+    /maintainers & GET & 200 & Restituisce tutti i manutentori \\ 
+    \hline
+    /maintainers & POST & 201 & Crea un manutentore \\ 
+    \hline
+    /maintainers/\{id\} & GET & 200 & Restituisce il manutentore con l'id richiesto \\ 
+    \hline
+    /maintainers/\{id\} & PUT & 200 & Modifica il manutentore con l'id richiesto \\ 
+    \hline
+    /maintainers/\{id\} & DELETE & 204 & Elimina il manutentore con l'id richiesto \\ 
+    \hline
+    \end{tabular}
+\end{table}
+\leavevmode\newline
+\\
+Sensore
+\\
+\begin{table}
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \hline
+    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \hline
+    /sensors & GET & 200 & Restituisce tutti i sensori \\ 
+    \hline
+    /sensors/\{id\} & GET & 200 & Restituisce il sensore con l'id richiesto \\ 
+    \hline
+    /sensors/sensors-maintenance & GET & 200 & Restituisce tutti i sensori con le loro informazioni sulla 
+        manutenzione \\ 
+    \hline
+    /sensors/\{id\}/sensors-maintenance & GET & 200 & Restituisce il sensore con l'id richiesto con le sue 
+        informazioni sulla manutenzione \\ 
+    \hline
+    /sensors/\{id\}/sensors-maintenance & PUT & 200 & Modifica le informazioni di manutenzione del sensore con
+        l'id richiesto \\ 
+    \hline
+    /parking-spots/\{id\}/sensors & GET & 200 & Restituisce tutti i sensori della piazzola con l'id richiesto \\ 
+    \hline
+    \end{tabular}
+\end{table}
+\leavevmode\newline
+\\
+Piazzola
+\\
+\begin{table}
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \hline
+    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \hline
+    /parking-areas/\{id\}/parking-spots & GET & 200 & Restituisce tutte le piazzole del parcheggio con l'id 
+    richiesto \\ 
+    \hline
+    /parking-areas/\{id\}/parking-spots & POST & 201 & Crea una piazzola associata al parcheggio con l'id 
+    richiesto \\ 
+    \hline
+    /parking-spots/\{id\} & PUT & 200 & Modifica la piazzola con l'id richiesto \\ 
+    \hline
+    /parking-spots/\{id\} & DELETE & 200 & Elimina la piazzola con l'id richiesto \\ 
+    \hline
+    /sensors/\{id\}/parking-spots & GET & 200 & Restituisce tutte le piazzole del sensore con l'id 
+    richiesto \\ 
+    \hline
+    \end{tabular}
+\end{table}
+\leavevmode\newline
+\\
+Misurazione sensore di parcheggio
+\\
+\begin{table}
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \hline
+    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \hline
+    /sensors/{id}/parking-sensors & GET & 200 & Restituisce tutte le misurazioni del sensore di parcheggio con l'id 
+    richiesto (ogni sensore di parcheggio ha solo una misurazione: l'ultima effettuata) \\ 
+    \hline
+    \end{tabular}
+\end{table}

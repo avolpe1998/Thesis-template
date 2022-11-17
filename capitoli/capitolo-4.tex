@@ -132,29 +132,3 @@ Come risultato di quanto progettato sono stata creata una suite di 16 casi di te
     \hline
     \end{tabular}
 \end{table}
-
-\subsection{Scheduler}
-Si è deciso di implementare il polling dei dati del sensore dal file XML online
-tramite la libreria @nestjs/schedule che integra il package cron di Node.js.
-\\\\
-Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
-di una classe ad intervalli di tempo regolari.
-\\\\
-Per fare ciò bisogna importare nel modulo root, il modulo della libreria schedule in questo modo:
-\begin{lstlisting}
-@Module({
-  imports: [
-    ScheduleModule.forRoot()
-  ],
-})
-export class AppModule {}
-\end{lstlisting}
-\leavevmode\newline
-Successivamente abbiamo a disposizione un decorator @Cron, da indicare sopra al metodo che vogliamo venga 
-schedulato. 
-\\\\
-Come parametro del @Cron dobbiamo inserire la stringa, rispettando il cron pattern, che indica
-l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
-\\\\
-Nel nostro caso vogliamo eseguirlo ogni due minuti quindi gli passiamo la stringa "*/2 * * * *".
-\\\\
