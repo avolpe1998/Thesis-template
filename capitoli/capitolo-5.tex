@@ -3,43 +3,190 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Conclusioni}
-\label{cap:conclusioni}
+\chapter{Analisi comparativa}
+\label{cap:analisi-comparativa}
 %**************************************************************
 
-% \intro{Breve introduzione al capitolo}\\
+La proponente ha deciso di realizzare questo progetto di stage allo scopo di effettuare 
+un'analisi comparativa tra la versione in NestJS e la versione in Spring.
+\\\\
+Essendo NestJS un framework abbastanza giovane (rilasciato nel 2016), il proponente si 
+è interessato a questa tecnologia, nell'ottica di poter sviluppatore futuri progetti 
+aziendali con NestJS e sfruttarne i benefici che porta.
+\\\\
+E' stato ritenuto troppo rischioso però affrontare una nuova tecnologia per realizzare i
+progetti senza conoscerla nel dettaglio. 
+\\
+Si è deciso quindi di migrare un progetto già 
+esistente in NestJS con lo scopo di conoscerlo meglio e fare un'analisi comparativa
+con un progetto scritto in un framework che è già ben conosciuto dal proponente come Spring.
+\\\\
+Nel caso l'analisi comparativa dia dei buoni punti a favore di NestJS, il proponente può 
+decidere di utilizzare in produzione il progetto realizzato in NestJS anziché quello realizzato
+in Spring.
+\\\\
+In caso contrario viene mantenuto in produzione il software in Spring senza gravi perdite in termine 
+di costo.
+\\\\
+Se fosse stato realizzato un progetto in NestJS da zero senza una controparte in Spring (o un framework conosciuto)
+e fossero sorti dei problemi proprio dovuti al tipo di tecnologia utilizzata per la realizzazione del prodotto, i
+costi per dover riscrivere il progetto sarebbero stati molto più alti.
 
-% %**************************************************************
-% \section{Tecnologie e strumenti}
-% \label{sec:tecnologie-strumenti}
+\section{I due prodotti}
+I due prodotti realizzano lo stesso progetto: un set di REST API, per la gestione delle operazioni CRUD.
+\\\\
+Il prodotto già esistente è stato realizzato in Spring, l'altro in NestJS:
+\\\\
+Spring è un framework che si basa sul linguaggio Java, rilasciato nel 2003. Ci sono molti progetti scritti
+sopra a Spring, come Spring Boot. Spring Boot è stato utilizzato per creare questo progetto da un altro 
+stagista.
+\\\\
+Questo strumento permette di creare un'applicativo rapidamente, in quanto si occupa Spring Boot di gestire
+e fornire tutte le librerie di Spring o di terze parti in base alla configurazione di cui abbiamo bisogno.
+\\\\
+NestJS è un framework basato sul linguaggio JavaScript, in particolare sul linguaggio TypeScript. NestJS è
+stato rilasciato nel 2016.
+\\\\
+Attualmente non sono molti i prodotti realizzati in NestJS, ma questo framework sta prendendo piede in quanto
+usa Node.js per eseguire il codice JavaScript.
+\\\\
+Node.js è uno strumento molto utilizzato, il suo problema è che la vastità di librerie di cui è fornito non 
+risolvono la mancanza di Node.js, ovvero la presenza di architettura ben strutturata come in Spring, che 
+permetta la realizzazione di applicazioni altamente testabili, scalabili, con basso grado di accoppiamento
+e facili da manutenere.
+\\\\
+NestJS copre questa mancanza di Node.js, fornendo un livello di astrazione aggiuntivo che fornisce un
+architettura simile a quella di Spring.
 
-% Di seguito viene data una panoramica delle tecnologie e strumenti utilizzati.
+\section{Punti di valutazione}
+Per effettuare quest'analisi comparativa tra i 2 prodotti finali, sono stati presi in considerazione i seguenti 
+punti:
+\begin{itemize}
+    \item Facilità di sviluppo.
+    \item Strumenti di supporto allo sviluppo (documentazione, community, video, ecc..).
+    \item Facilità di accesso agli strumenti di supporto.
+    \item Prestazioni.
+    \item Qualità del codice.
+\end{itemize}
 
-% \subsection*{Tecnologia 1}
-% Descrizione Tecnologia 1.
+\section{Valutazione}
+\subsection{Facilità si sviluppo}
+Spring
+\\\\
+Spring Boot si basa sul concetto di Dependency Injection e usa il pattern controller-service-repository
+per sviluppare le applicazioni. Questa struttura permette uno sviluppo rapido dell'applicazione dato
+che si occupa il framework per noi di iniettare le dipendenze dichiarate nei costruttori dei componenti e 
+il pattern controller-service-repository permette di creare un'applicazione ben strutturata e con una 
+buona separazione delle responsabilità.
+\\\\
+NestJS
+\\\\
+Anche NestJS si basa sul concetto di Dependency Injection e usa il pattern controller-service-repository, per
+cui ne trae gli stessi benefici di facilità di sviluppo di Spring.
 
-% \subsection*{Tecnologia 2}
-% Descrizione Tecnologia 2
+\subsection{Strumenti di supporto allo sviluppo}
+Spring
+\\\\
+Spring nel suo sito ufficiale offre una documentazione molto ricca per imparare in dettaglio il framework.
+\\\\
+Essendo questo framework nato 19 anni fa, si è formata una grande community di supporto attorno al framework. 
+\\
+Infatti negli anni sono state pubblicate domande ai problemi più comuni che si presentano agli sviluppatori
+che affrontano questo framework per la prima volta. 
+\\
+Tali discussioni sono reperibili nei blog appositi o in siti come stack overflow. Le risposte alle domande
+degli sviluppatori sono tante, molte sono quindi da evitare ma non è difficile imbattersi in risposte
+corrette e molto accurate scritte da sviluppatori con molta esperienza pregressa col framework.
+\\\\
+Ci sono anche molti video tutorial, in piattaforme come il sito Udemy, per imparare il framework.
+\\\\
+NestJS
+\\\\
+NestJS nel suo sito ufficiale offre una documentazione molto ricca per imparare in dettaglio il framework.
+\\\\
+Questo framework è relativamente giovane, nato 6 anni fa. Di conseguenza le aziende e gli sviluppatori che hanno
+deciso di utilizzarlo non sono molti rispetto a quelli che usano Spring e la community è molto piccola.
+\\\\
+Le discussioni sui problemi che si presentano agli sviluppatori che affrontano il framework per la prima volta
+o sui problemi in generale che si possono avere sviluppando con questo framework sono molto poche. 
+\\\\
+Molto spesso se si cerca la risposta a un problema che si sta avendo con NestJS non si trova nessuna discussione
+a riguardo oppure si trova la domanda posta da uno sviluppatore ma senza alcuna risposta.
+\\\\
+A volte invece si viene a scoprire tramite la discussione ufficiale sul repository GitHub di NestJS, che il 
+problema che si sta avendo è dovuto a un bug di NestJS ancora in fase di fix e previsto in rilascio per le versioni
+successive.
+\\\\
+I video tutorial sono molto pochi e non sufficienti per imparare in dettaglio il framework.
 
-% %**************************************************************
-% \section{Ciclo di vita del software}
-% \label{sec:ciclo-vita-software}
+\subsection{Facilità di accesso agli strumenti di supporto}
+Spring 
+\\\\
+La documentazione di NestJS è molto pedante e ricca. Imparare l'uso del framework solo dalla documentazione 
+ufficiale richiede molto tempo. 
+\\\\
+Leggendo interamente la documentazione si diventa dei veri esperti del framework, ma con le ridotte tempistiche
+dello stage non è possibile effettuare questa cosa.
+\\\\
+Per iniziare è bene integrare la documentazione ai video tutorial e al materiale online, comprese le discussioni 
+della community. 
+\\
+In questo modo si può essere operativi in tempi più brevi, assicurando di avere una conoscenza
+del framework alle spalle sufficiente larga da poter fare le cose in modo coerente.
+\\\\
+NestJS
+Lo strumento principale da usare per imparare NestJS è la documentazione ufficiale.
+\\\\
+La documentazione è fatta molto bene, non è eccessivamente grande, come quella di Spring. Spiega in maniera dettagliata
+e in modo molto chiaro tutti i concetti di cui si ha bisogno per sviluppare con questo framework.
+\\\\
+Ho usato principalmente la documentazione ufficiale per imparare il framework durante lo stage e sono riuscito a essere
+operativo in tempi ragionevoli per lo sviluppo del software e a fare le cose in maniera coerente.
 
-% %**************************************************************
-% \section{Progettazione}
-% \label{sec:progettazione}
+\subsection{Prestazioni}
+% //TODO: implementare questa sezione
+\subsection{Qualità del codice}
+Spring
+\\\\
+Spring permette di usare degli zuccheri sintattici che nascondono la complessità del codice e lo rendono più
+pulito.
+\\
+Come ad esempio le annotazioni, che permettono in maniera chiara e pulita di definire delle proprietà della classe;
+ad esempio di marcarla come Controller semplicemente applicando l'annotazione @Controller sopra la definizione della
+classe.
+\\\\
+Inoltre l'architettura interna del framework permette di per se di scrivere codice pulito, in quanto la separazione delle
+componenti per livello di responsabilità, permette di scrivere metodi con poche righe di codice, facili da interpretare e
+da manutenere.
+\\\\
+NestJS
+\\\\
+NestJS è dotato degli stessi zuccheri sintattici per nascondere la complessità del codice e renderlo più pulito di Spring.
+\\\\
+La differenza rispetto a Spring è che su NestJS le annotazioni si chiamano decorator, ma a livello implementativo hanno lo 
+stesso significato.
+\\\\
+Dato che l'architettura di NestJS è la stessa usata da Spring, anche su NestJS si riflettono gli stessi vantaggi di
+qualità del codice dovuti all'architettura.
+\\\\
+L'uso dei moduli in NestJS permette di organizzare meglio la struttura dei file rispetto a Spring.
+\\\\
+Inoltre TypeOrm, lo strumento ORM di NestJS per interfacciarsi con il database permette di scrivere query leggermente più
+pulite, a livello di codice, rispetto a Hibernate lo strumento ORM di Spring.
+% //TODO: Valutare se inserire qui uno script che mostra come NestJS includa le dipendenze nelle query rispetto a Spring
 
-% \subsubsection{Namespace 1} %**************************
-% Descrizione namespace 1.
-
-% \begin{namespacedesc}
-%     \classdesc{Classe 1}{Descrizione classe 1}
-%     \classdesc{Classe 2}{Descrizione classe 2}
-% \end{namespacedesc}
-
-
-% %**************************************************************
-% \section{Design Pattern utilizzati}
-
-% %**************************************************************
-% \section{Codifica}
+\section{Esito}
+Da quanto emerso dall'analisi comparativa risulta più semplice creare un software in Spring, per l'elevato materiale di
+supporto al framework presente in rete e per la presenza di una community molto attiva e professionale, che negli
+anni ha risolto problemi comuni agli sviluppatori che si sono interfacciati al framework per la prima volta. 
+\\\\
+Dall'altra parte NestJS risulta povero di materiale di supporto, infatti oltre alla documentazione ufficiale (fatta molto
+bene), è praticamente sprovvisto di materiale di supporto e di una community.
+\\\\
+Infatti molti dei problemi che si presentano agli sviluppatori che affrontano il framework per la prima volta, non sono
+stati risolti da una community online e questo è fonte di elevato costo in termini di tempo per lo sviluppatore, che con 
+una scarsa conoscenza del framework, deve cercare di risolvere il problema da solo.
+\\\\
+Il fatto di risolvere in maniera autonoma il problema, oltre che a portare un costo in termini di tempo, non assicura 
+che la soluzione trovata sia il modo corretto di procedere; si vengono quindi a creare potenziali inconsistenze nel codice
+scritto.
