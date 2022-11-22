@@ -111,8 +111,6 @@ Il servizio per il polling dei sensori deve essere realizzato in modo che sia se
 Sia per una separazione di responsabilità, che per una futura migrazione a un'applicazione basata su microservizi,
 in cui il servizio di polling deve diventare un microservizio a se stante, gestibile in maniera indipendente rispetto
 agli altri microservizi.
-% //TODO: Spiegare nella parte di progettazione che si è preferito dare accesso allo scraping sensors al servizio dei sensori
-% anzichè farlo accedere tramite controller e api
 
 \section{Entità}
 Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità è stato necessario
@@ -550,7 +548,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % parcheggio
 \leavevmode\newline
 \begin{table}
-    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
@@ -570,7 +568,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % manutentore
 \leavevmode\newline
 \begin{table}
-    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
@@ -590,7 +588,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % sensore
 \leavevmode\newline
 \begin{table}
-    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
@@ -608,7 +606,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % piazzola
 \leavevmode\newline
 \begin{table}
-    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
@@ -628,7 +626,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % misurazione
 \leavevmode\newline
 \begin{table}
-    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1cm}|} 
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
@@ -637,4 +635,49 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \end{tabular}
 \end{table}
 
-% //TODO: aggiungere requisiti facoltativi e desiderabili. Aggiungere requisiti qualitativi e di vincolo.
+% requisiti di qualità
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RQ1 & Deve essere presente una suite di test automatici per testare la business logic con una copertura a livello branch
+        >= 90\%. & Obbligatorio & Capitolato \\ 
+    \hline
+    RQ2 & Deve essere presente una suite di test automatici per testare la business logic con una copertura a livello linee
+        di codice >= 60\%. & Obbligatorio & Capitolato \\ 
+    \hline
+    RQ3 & Deve essere presente una documentazione che spieghi le scelte progettuali fatte e i motivi che hanno portato ad effettuare
+        tali scelte. & Obbligatorio & Capitolato \\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+% requisiti di vincolo
+\leavevmode\newline
+\begin{table}
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RV1 & Utilizzo del framework NestJS per realizzare l'applicazione. & Obbligatorio & Capitolato \\ 
+    \hline
+    RV2 & Utilizzo di database PostgreSQL. & Desiderabile & Capitolato \\ 
+    \hline
+    RV3 & Le REST API devono poter essere chiamate tramite protocollo HTTP. & Obbligatorio & Capitolato \\ 
+    \hline
+    RV4 & La richiesta di ottenimento delle entità, all'applicazione, deve essere fatta tramite metodo GET. & 
+        Obbligatorio & Capitolato \\ 
+    \hline
+    RV5 & La richiesta di inserimento delle entità, all'applicazione, deve essere fatta tramite metodo POST. & 
+        Obbligatorio & Capitolato \\ 
+    \hline
+    RV6 & La richiesta di modifica delle entità, all'applicazione, deve essere fatta tramite metodo PUT. & 
+        Obbligatorio & Capitolato \\ 
+    \hline
+    RV7 & La richiesta di cancellazione delle entità, all'applicazione, deve essere fatta tramite metodo DELETE. & 
+        Obbligatorio & Capitolato \\ 
+    \hline
+    \end{tabular}
+\end{table}

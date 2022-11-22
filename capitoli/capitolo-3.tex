@@ -6,7 +6,7 @@
 \chapter{Progettazione}
 \label{cap:progettazione}
 %**************************************************************
-
+% //TODO: inserire modello er e motivi che hanno portato a normalizzarlo.
 % \intro{Breve introduzione al capitolo}\\
 
 % %**************************************************************
@@ -552,7 +552,104 @@ l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
 Nel nostro caso vogliamo eseguirlo ogni due minuti quindi gli passiamo la stringa "*/2 * * * *".
 
 \subsection{Logging}
-% //TODO: spiegare questa parte
+Il logging in un'applicazione è un processo fondamentale che serve a salvare gli eventi che accadono durante
+la sua esecuzione.
+\\\\
+Con queste informazioni in mano, gli sviluppatori possono accorgersi di potenziali attacchi o analizzare gli
+errori prima che questi interrompano i flussi di lavoro aziendali.
+\\\\
+Il logging viene effettuato salvando su un file (solitamente con estensione .log) le informazioni rilevanti
+accadute in un particolare evento di cui si è deciso di effettuare il logging, come la richiesta da parte
+dell'utente finale di un servizio dell'applicazione.
+\\\\
+Solitamente questi file di log diventano molto grandi, quindi possono aver bisogno di un server dedicato per 
+memorizzarli.
+\\\\
+Per questo progetto è stato deciso di fare il logging di tutte le richieste alle REST API da parte dell'utente
+finale e tutte le volte che viene eseguito il servizio di polling schedulato.
+\\
+In particolare per le richieste alle REST API dell'utente finale si vuole effettuare il logging delle seguenti 
+informazioni:
+\begin{itemize}
+    \item metodo della richiesta (GET, POST, PUT, DELETE);
+    \item endpoint richiesto;
+    \item corpo della richiesta;
+    \item user agent dell'utente finale;
+    \item ip dell'utente finale;
+    \item status code di risposta;
+    \item lunghezza del messaggio di risposta;
+    \item timestamp della richiesta;
+\end{itemize}
+\leavevmode\newline
+Per il servizio di polling si vogliono salvare le seguenti informazioni:
+\begin{itemize}
+    \item timestamp del momento di avvio del polling;
+    \item timestamp del momento di fine del polling;
+\end{itemize}
+\leavevmode\newline
+
+NestJS integra al suo interno una semplice classe logger che è possibile usare per effettuare il logging 
+dell'applicazione. 
+\\\\
+Questa classe permette solo di effettuare operazioni basilari e come descritto nella 
+guida ufficiale, per effettuare operazioni più complesse come il salvataggio delle informazioni di 
+logging su file è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
+Winston.
+\\\\
+Con Winston è possibile definire l'output dei nostri log (nel nostro caso un file .log in una directory logs nel
+progetto) e la formattazione nel testo (nel nostro caso abbiamo usato una funzionalità di Winston che permette
+di usare la stessa formattazione dei log di NestJS).
+\\\\
+Esistono vari livelli di informazioni di cui si può effettuare il logging tramite winston. Il livello del log 
+indica la sua importanza:
+\begin{itemize}
+    \item error: log critico, qualcosa nell'applicazione non ha funzionato correttamente e
+        alcune funzionalità dell'applicazione potrebbero non funzionare correttamente;
+    \item warn: log di avviso, qualcosa di inaspettato è successo nell'applicazione;
+    \item info: log di informazione, è successo un evento all'interno dell'applicazione;
+\end{itemize}
+\leavevmode\newline
+Esistono poi altri livelli di log che non sono stati però usti nel progetto, quindi si è deciso di non elencarli.
+\\\\
+Winston permette di scegliere a che livello registrare i log, per questo progetto è stato effettuato il logging
+a livello error e info.
+\\\\
+Le richieste dell'utente finale e il servizio di polling sono stati loggati come livello info.
+\\\\
+E' stato implementato un middleware LoggerMiddleware per intercettare tutte le richieste dell'utente finale, prima che 
+vengano passate ai controller e salvarne i log.
+\\\\
+Per avere anche lo status code della risposta inviata all'utente finale dal controller, il LoggerMiddleware, imposta un 
+listener sull'evento close del'oggetto response. In questo modo il log viene scritto solo quando il controller ha terminato di
+gestire la richiesta e abbiamo tutti i dati a disposizione per poterla loggare.
+% ref: https://www.loggly.com/use-cases/application-logging-best-practices/
+
+\begin{lstlisting}
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  constructor(
+    @Inject(WINSTON_MODULE_PROVIDER)
+      private readonly logger: Logger
+  ){}
+
+  use(request: Request, response: Response, next: NextFunction): void {
+    const { ip, method, originalUrl: url } = request;
+    const userAgent = request.get('user-agent') || '';
+    const body = JSON.stringify(request.body);
+
+    response.on('close', () => {
+      const { statusCode } = response;
+      const contentLength = response.get('content-length');
+
+      this.logger.info(
+        `${method} ${url} ${body} ${statusCode} ${contentLength} - ${userAgent} ${ip}`
+      );
+    });
+
+    next();
+  }
+}
+\end{lstlisting}
 
 \section{Servizio di polling}
 Sono state proposte due varianti in cui sviluppare il servizio di polling. Queste due varianti riguardano il
