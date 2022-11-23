@@ -3,132 +3,114 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Verifica e validazione}
-\label{cap:verifica-e-validazione}
+\chapter{Ristrutturazione database}
+\label{cap:ristrutturazione-database}
 %**************************************************************
 
-\section{Verifica}
-\subsection{Criteri di verifica}
-E' stato stabilito con il proponente che il prodotto finale dovesse avere 
-una suite di test automatici per testare la business logic del progetto
-con una copertura a livello di branch stabilita >= al 90\% e una copertura
-a livello linee di codice >= al 60\%.
+Durante la fase di studio del database mi sono reso conto che aveva dei problemi, che hanno
+richiesto una sua ristrutturazione.
 \\\\
-La motivazione che ha portato a richiedere una copertura così alta a livello
-branch è dovuta al fatto che si vuole assicurare il corretto funzionamento di 
-tutti i possibili casi di errore anche in caso di futura manutenzione del software.
-\\\\
-E' inoltre importante che sia mantenuta la coerenza stabilita per i casi di errore e
-nel caso alcuni branch non fossero coperti da casi di test, uno sviluppatore potrebbe
-inconsciamente modificare il comportamento del programma in caso di un errore, generando
-un comportamento inaspettato del programma per l'utente finale. 
-\\\\
-E' molto importante per la proponente che questa cosa non succeda e quindi è stata richiesta
-una copertura a livello branch >= al 90\%.
-
-\subsection{Strumenti utilizzati}
-NestJS fornisce al suo interno uno strumento per scrivere vari tipi di test, tra cui unit test, 
-end to end test, integration test e così via. 
-\\\\
-Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
-il mock dei componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
-Angular, Vue.
-\\\\
-I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
-a testare e devono terminare in .spec.ts se vogliamo che vengano visti da NestJS ed eseguiti.
-\\\\
-Ogni caso di test deve essere racchiuso all'interno della dicitura describe, specificando nome della
-classe che si va a testare e una funzione di callback contenente i test per i vari metodi.
+Mi sono confrontato poi con un mio collega stagista che stava lavorando sullo stesso database, per
+un altro progetto di stage collegato a Smart Parking.
 \\
-A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe che deve
-contenere il nome del metodo e una funzione callback contenente tutti i test su quel metodo.
+Anche lui era d'accordo a ristrutturare il database e mi ha dato un aiuto a rilevare altri possibili
+problemi durante la fase di progettazione della ristrutturazione del database.
+\\\\
+Abbiamo poi presentato il progetto di ristrutturazione al proponente che si è mostrato d'accordo con
+noi sull'esistenza dei problemi rilevati ed è stato molto soddisfatto della soluzione proposta.
+\\\\
+Il modello logico esistente era il seguente:
+\begin{figure}[!h]
+  \centering
+  \includegraphics[height=9cm]{modello-logico-vecchio}
+\end{figure}
+
+\section{Problemi rilevati}
+Nomi tabelle incoerenti
+\\\\
+I nomi di alcune tabelle erano incoerenti con la funzionalità che andavano a svolgere.
 \\
-\begin{lstlisting}
-describe('MaintainersRegistryService', () => {
-  describe('getMaintainerById', () => {
-    it('should return the maintainer if found', async () => {
-      jest.spyOn(maintainersRegistryRepository, 'findOne')
-        .mockImplementation(() => Promise.resolve(maintainerRegistry));
-
-      const response = maintainersRegistryService.getMaintainerById('1');
-
-      await expect(response).resolves.toEqual(maintainerRegistry);
-    });
-
-    it('should thrown a NotFoundError if the maintainer was not found', async () => {
-      jest.spyOn(maintainersRegistryRepository, 'findOne')
-        .mockImplementation(() => Promise.resolve(null));
-
-      const response = maintainersRegistryService.getMaintainerById('1');
-
-      await expect(response).rejects.toThrow(NotFoundError);
-    });
-  });
-\end{lstlisting}
-
-\subsection{Progettazione}
-Per i criteri di verifica stabiliti con la proponente si è deciso di testare tutti i metodi dei service che
-avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore
-dato che i metodi con un solo branch (solitamente metodi di get delle informazioni di un'entità) in caso 
-di errore non contengono logica di business per lanciare errori custom ma al massimo lanciano eccezioni
-TypeORM o NestJS catturate dall'exception filter che conforma la risposta per il client.
+sensors\_maintainer è la tabella che contiene i dati di manutenzione dei sensori, un 
+nome più appropriato potrebbe essere sensors\_maintenance.
 \\\\
-Scrivendo dei test che vanno a controllare i metodo con più branch si assicura che:
-\begin{itemize}
-    \item ogni branch può essere raggiunto
-    \item ogni branch si comporta come aspettato
-    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore (id passato non trovato, 
-    aggiornamento non riuscito ecc..) non vengano eliminati e si assicura il mantenimento della loro
-    conformità con quanto stabilito con la proponente. 
-    \\
-    Ad esempio si assicura che venga mantenuto il controllo che in caso di errore di aggiornamento di un'entità
-    venga lanciata, dal service, un eccezione di tipo UpdateError.
-\end{itemize}
-\leavevmode\newline
-Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei mock per tutte le dipendenze
-della classe da testare, repository compresi.
+parking\_area è la tabella che rappresenta la piazzola di parcheggio, un nome più appropriato
+potrebbe essere parking\_spots.
 \\\\
-Fornire dei mock per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
-il comportamento della componente originale. 
+Duplicazione di dati
 \\\\
-Le componenti fittizie sono molto più piccole delle componenti originali e implementano solo la parte di codice 
-necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
+La tabella parking\_area\_stats non serve a nulla, in quanto duplica soltanto dei dati già presenti
+nella tabella parking\_area, creando un'inutile ridondanza di dati.
 \\\\
-Jest fornisce dei metodi molto utili per creare il mock di un metodo di una classe e sovrascriverne il comportamento.
-Tramite il metodo spyOn infatti si va a specificare l'oggetto e il suo metodo di cui si vuole effettuare il mock.
+Cardinalità delle relazioni errata
 \\\\
-Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il mock dei loro metodi, è stata
-usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
-il mock e restituisce un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
-dei metodi vuoto, 
-alleggerendo quindi notevolmente il peso della componente.
-\\\\
-Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test tramite il metodo
-spyOn, come descritto in precedenza.
-
-\subsection{Realizzazione}
-Come risultato di quanto progettato sono stata creata una suite di 16 casi di test, per un totale di 59 unit test.
+La relazione sensors -> parking\_area ha cardinalità uno a molti, nel senso che una piazzola può avere
+più sensori e un sensore può essere associato solo a una piazzola. 
 \\
-\begin{table}
-    \begin{tabular}{|p{5cm}|p{1.4cm}|p{1.5cm}|p{1.4cm}| p{1.4cm} |} 
-    \hline
-    File & \% Stmts & \% Branch &  \% Funcs & \% Lines \\ 
-    \hline
-    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
-    \hline
-    parking-areas.service.ts & 82.14 & 100 & 46.15 & 72.13 \\ 
-    \hline
-    parking-sensors.service.ts & 94.11 & 100 & 94.11 & 92.3 \\ 
-    \hline
-    parking-spots.service.ts & 88.88 & 100 & 50 & 87.87 \\ 
-    \hline
-    sensors.service.ts & 38.46 & 100 & 0 & 27.27 \\ 
-    \hline
-    sensors-maintenance.service.ts & 86.11 & 90 & 71.42 & 84.84 \\ 
-    \hline
-    sensors-scraping.service.ts & 65.95 & 100 & 36.36 & 51.78 \\ 
-    \hline
-    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
-    \hline
-    \end{tabular}
-\end{table}
+La cosa è sbagliata, in quanto una piazzola può avere più sensori associati (un sensore di parcheggio e/o N
+sensori ambientali) ma anche un sensore può essere associato a più piazzole; in quanto un sensore ambientale
+può ricoprire un area di N piazzole.
+\\\\
+Mancanza di tabelle fondamentali
+\\\\
+Manca una tabella fondamentale che rappresenti un parcheggio (un insieme di piazzole). 
+\\
+Tabella molto importante dato che essa ha un indirizzo e una posizione geografica (latitudine e longitudine), 
+riconosciute come tali dagli strumenti di navigazione più comuni, come Google Maps. 
+\\
+Ogni piazzola di uno stesso parcheggio hanno una posizione geografica, diversa dalle altre piazzole (discostata di qualche 
+metro) e potenzialmente diversa da quella del parcheggio. 
+\\
+Quindi con la struttura vecchia non è possibile ricercare un parcheggio a sistema, passando le coordinate rilevate da Google
+Maps ad esempio e nemmeno identificare un parcheggio.
+\\\\
+Database poco modulare
+\\\\
+Il valore del sensore viene salvato all'interno della tabella parking\_area. Questa cosa non crea problemi ora che 
+si è deciso, dall'analisi fatta, di salvare solo l'ultima misurazione di un sensore di parcheggio.
+\\\\
+Se però in futuro si decide di salvare uno storico di misurazioni dei sensori di parcheggio (cosa molto probabile che
+avvenga e cosa che viene già fatta con i sensori ambientali), con la struttura attuale non è possibile farlo e i costi
+per modificare la struttura del database in futuro, con il progetto in produzione da tempo, sarebbero molto più
+alti rispetto a farlo adesso.
+\\\\
+Inoltre l'aggiunta di una tabella per lo storico non ha un impatto negativo sulla struttura del database.
+
+\section{Ristrutturazione}
+
+Il modello logico ristrutturato è il seguente:
+\begin{figure}[!h]
+  \centering
+  \includegraphics[height=9cm]{modello-logico-ristrutturato}
+\end{figure}
+\\\\
+Operazioni effettuate
+\\\\
+Sono stati modificati i nomi di alcune tabelle per renderle più coerenti alla loro funzionalità:
+\\\\
+parking\_area è stata modificata in parking\_spots.
+\\
+sensors\_maintainer è stata modificata in sensors\_maintenance.
+\\\\
+E' stata eliminata la tabella parking\_area\_stats.
+\\\\
+Sono state modificate le cardinalità di alcune relazioni:
+\\\\
+La relazione sensors -> parking\_area è diventata una relazione molti a molti.
+\\
+E' stato reso facoltativo il fatto che il sensore debba essere associato a una piazzola.
+\\
+E' stato reso facoltativo il fatto che il manutentore debba essere associato a un sensore.
+\\
+E' stato reso facoltativo il fatto che il sensore debba essere associato a un manutentore.
+\\\\
+E' stata aggiunta la tabella parking\_areas che rappresenta i parcheggi, dotati di indirizzo, latitudine e 
+longitudine.
+\\\\
+E' stata creata la tabella parking\_sensors per salvare la misurazione del sensore di parcheggio ed è
+stato tolto il campo value dalla nuova tabella parking\_spots; in quanto avendo la tabella parking\_sensors,
+il campo value rappresentava una ridondanza inutile.
+\\\\
+Per ogni sensore di parcheggio ora viene salvata solo una misurazione nella tabella parking\_sensors, ovvero
+l'ultima, che sovrascrive la precedente ma a differenza del modello logico precedente, se in qualsiasi momento
+si decide di salvare lo storico delle misurazioni dei sensori di parcheggio, si può fare semplicemente togliendo
+il vincolo unique dalla foreign key fk\_sensor\_id, senza modificare la struttura delle tabelle.

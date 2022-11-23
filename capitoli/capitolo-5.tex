@@ -3,207 +3,132 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Analisi comparativa}
-\label{cap:analisi-comparativa}
+\chapter{Verifica e validazione}
+\label{cap:verifica-e-validazione}
 %**************************************************************
 
-La proponente ha deciso di realizzare questo progetto di stage allo scopo di effettuare 
-un'analisi comparativa tra la versione in NestJS e la versione in Spring.
+\section{Verifica}
+\subsection{Criteri di verifica}
+E' stato stabilito con il proponente che il prodotto finale dovesse avere 
+una suite di test automatici per testare la business logic del progetto
+con una copertura a livello di branch stabilita >= al 90\% e una copertura
+a livello linee di codice >= al 60\%.
 \\\\
-Essendo NestJS un framework abbastanza giovane (rilasciato nel 2016), il proponente si 
-è interessato a questa tecnologia, nell'ottica di poter sviluppatore futuri progetti 
-aziendali con NestJS e sfruttarne i benefici che porta.
+La motivazione che ha portato a richiedere una copertura così alta a livello
+branch è dovuta al fatto che si vuole assicurare il corretto funzionamento di 
+tutti i possibili casi di errore anche in caso di futura manutenzione del software.
 \\\\
-E' stato ritenuto troppo rischioso però affrontare una nuova tecnologia per realizzare i
-progetti senza conoscerla nel dettaglio. 
+E' inoltre importante che sia mantenuta la coerenza stabilita per i casi di errore e
+nel caso alcuni branch non fossero coperti da casi di test, uno sviluppatore potrebbe
+inconsciamente modificare il comportamento del programma in caso di un errore, generando
+un comportamento inaspettato del programma per l'utente finale. 
+\\\\
+E' molto importante per la proponente che questa cosa non succeda e quindi è stata richiesta
+una copertura a livello branch >= al 90\%.
+
+\subsection{Strumenti utilizzati}
+NestJS fornisce al suo interno uno strumento per scrivere vari tipi di test, tra cui unit test, 
+end to end test, integration test e così via. 
+\\\\
+Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
+il mock dei componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
+Angular, Vue.
+\\\\
+I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
+a testare e devono terminare in .spec.ts se vogliamo che vengano visti da NestJS ed eseguiti.
+\\\\
+Ogni caso di test deve essere racchiuso all'interno della dicitura describe, specificando nome della
+classe che si va a testare e una funzione di callback contenente i test per i vari metodi.
 \\
-Si è deciso quindi di migrare un progetto già 
-esistente in NestJS con lo scopo di conoscerlo meglio e fare un'analisi comparativa
-con un progetto scritto in un framework che è già ben conosciuto dal proponente come Spring.
-\\\\
-Nel caso l'analisi comparativa dia dei buoni punti a favore di NestJS, il proponente può 
-decidere di utilizzare in produzione il progetto realizzato in NestJS anziché quello realizzato
-in Spring.
-\\\\
-In caso contrario viene mantenuto in produzione il software in Spring senza gravi perdite in termine 
-di costo.
-\\\\
-Se fosse stato realizzato un progetto in NestJS da zero senza una controparte in Spring (o un framework conosciuto)
-e fossero sorti dei problemi proprio dovuti al tipo di tecnologia utilizzata per la realizzazione del prodotto, i
-costi per dover riscrivere il progetto sarebbero stati molto più alti.
+A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe che deve
+contenere il nome del metodo e una funzione callback contenente tutti i test su quel metodo.
+\\
+\begin{lstlisting}
+describe('MaintainersRegistryService', () => {
+  describe('getMaintainerById', () => {
+    it('should return the maintainer if found', async () => {
+      jest.spyOn(maintainersRegistryRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(maintainerRegistry));
 
-\section{I due prodotti}
-I due prodotti realizzano lo stesso progetto: un set di REST API, per la gestione delle operazioni CRUD.
-\\\\
-Il prodotto già esistente è stato realizzato in Spring, l'altro in NestJS:
-\\\\
-Spring è un framework che si basa sul linguaggio Java, rilasciato nel 2003. Ci sono molti progetti scritti
-sopra a Spring, come Spring Boot. Spring Boot è stato utilizzato per creare questo progetto da un altro 
-stagista.
-\\\\
-Questo strumento permette di creare un'applicativo rapidamente, in quanto si occupa Spring Boot di gestire
-e fornire tutte le librerie di Spring o di terze parti in base alla configurazione di cui abbiamo bisogno.
-\\\\
-NestJS è un framework basato sul linguaggio JavaScript, in particolare sul linguaggio TypeScript. NestJS è
-stato rilasciato nel 2016.
-\\\\
-Attualmente non sono molti i prodotti realizzati in NestJS, ma questo framework sta prendendo piede in quanto
-usa Node.js per eseguire il codice JavaScript.
-\\\\
-Node.js è uno strumento molto utilizzato, il suo problema è che la vastità di librerie di cui è fornito non 
-risolvono la mancanza di Node.js, ovvero la presenza di architettura ben strutturata come in Spring, che 
-permetta la realizzazione di applicazioni altamente testabili, scalabili, con basso grado di accoppiamento
-e facili da manutenere.
-\\\\
-NestJS copre questa mancanza di Node.js, fornendo un livello di astrazione aggiuntivo che fornisce un
-architettura simile a quella di Spring.
+      const response = maintainersRegistryService.getMaintainerById('1');
 
-\section{Punti di valutazione}
-Per effettuare quest'analisi comparativa tra i 2 prodotti finali, sono stati presi in considerazione i seguenti 
-punti:
+      await expect(response).resolves.toEqual(maintainerRegistry);
+    });
+
+    it('should thrown a NotFoundError if the maintainer was not found', async () => {
+      jest.spyOn(maintainersRegistryRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(null));
+
+      const response = maintainersRegistryService.getMaintainerById('1');
+
+      await expect(response).rejects.toThrow(NotFoundError);
+    });
+  });
+\end{lstlisting}
+
+\subsection{Progettazione}
+Per i criteri di verifica stabiliti con la proponente si è deciso di testare tutti i metodi dei service che
+avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore
+dato che i metodi con un solo branch (solitamente metodi di get delle informazioni di un'entità) in caso 
+di errore non contengono logica di business per lanciare errori custom ma al massimo lanciano eccezioni
+TypeORM o NestJS catturate dall'exception filter che conforma la risposta per il client.
+\\\\
+Scrivendo dei test che vanno a controllare i metodo con più branch si assicura che:
 \begin{itemize}
-    \item Facilità di sviluppo.
-    \item Strumenti di supporto allo sviluppo (documentazione, community, video, ecc..).
-    \item Facilità di accesso agli strumenti di supporto.
-    \item Prestazioni.
-    \item Qualità del codice.
+    \item ogni branch può essere raggiunto
+    \item ogni branch si comporta come aspettato
+    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore (id passato non trovato, 
+    aggiornamento non riuscito ecc..) non vengano eliminati e si assicura il mantenimento della loro
+    conformità con quanto stabilito con la proponente. 
+    \\
+    Ad esempio si assicura che venga mantenuto il controllo che in caso di errore di aggiornamento di un'entità
+    venga lanciata, dal service, un eccezione di tipo UpdateError.
 \end{itemize}
+\leavevmode\newline
+Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei mock per tutte le dipendenze
+della classe da testare, repository compresi.
+\\\\
+Fornire dei mock per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
+il comportamento della componente originale. 
+\\\\
+Le componenti fittizie sono molto più piccole delle componenti originali e implementano solo la parte di codice 
+necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
+\\\\
+Jest fornisce dei metodi molto utili per creare il mock di un metodo di una classe e sovrascriverne il comportamento.
+Tramite il metodo spyOn infatti si va a specificare l'oggetto e il suo metodo di cui si vuole effettuare il mock.
+\\\\
+Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il mock dei loro metodi, è stata
+usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
+il mock e restituisce un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
+dei metodi vuoto, 
+alleggerendo quindi notevolmente il peso della componente.
+\\\\
+Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test tramite il metodo
+spyOn, come descritto in precedenza.
 
-\section{Valutazione}
-\subsection{Facilità si sviluppo}
-Spring
-\\\\
-Spring Boot si basa sul concetto di Dependency Injection e usa il pattern controller-service-repository
-per sviluppare le applicazioni. Questa struttura permette uno sviluppo rapido dell'applicazione dato
-che si occupa il framework per noi di iniettare le dipendenze dichiarate nei costruttori dei componenti e 
-il pattern controller-service-repository permette di creare un'applicazione ben strutturata e con una 
-buona separazione delle responsabilità.
-\\\\
-NestJS
-\\\\
-Anche NestJS si basa sul concetto di Dependency Injection e usa il pattern controller-service-repository, per
-cui ne trae gli stessi benefici di facilità di sviluppo di Spring.
-
-\subsection{Strumenti di supporto allo sviluppo}
-Spring
-\\\\
-Spring nel suo sito ufficiale offre una documentazione molto ricca per imparare in dettaglio il framework.
-\\\\
-Essendo questo framework nato 19 anni fa, si è formata una grande community di supporto attorno al framework. 
+\subsection{Realizzazione}
+Come risultato di quanto progettato sono stata creata una suite di 16 casi di test, per un totale di 59 unit test.
 \\
-Infatti negli anni sono state pubblicate domande ai problemi più comuni che si presentano agli sviluppatori
-che affrontano questo framework per la prima volta. 
-\\
-Tali discussioni sono reperibili nei blog appositi o in siti come stack overflow. Le risposte alle domande
-degli sviluppatori sono tante, molte sono quindi da evitare ma non è difficile imbattersi in risposte
-corrette e molto accurate scritte da sviluppatori con molta esperienza pregressa col framework.
-\\\\
-Ci sono anche molti video tutorial, in piattaforme come il sito Udemy, per imparare il framework.
-\\\\
-NestJS
-\\\\
-NestJS nel suo sito ufficiale offre una documentazione molto ricca per imparare in dettaglio il framework.
-\\\\
-Questo framework è relativamente giovane, nato 6 anni fa. Di conseguenza le aziende e gli sviluppatori che hanno
-deciso di utilizzarlo non sono molti rispetto a quelli che usano Spring e la community è molto piccola.
-\\\\
-Le discussioni sui problemi che si presentano agli sviluppatori che affrontano il framework per la prima volta
-o sui problemi in generale che si possono avere sviluppando con questo framework sono molto poche. 
-\\\\
-Molto spesso se si cerca la risposta a un problema che si sta avendo con NestJS non si trova nessuna discussione
-a riguardo oppure si trova la domanda posta da uno sviluppatore ma senza alcuna risposta.
-\\\\
-A volte invece si viene a scoprire tramite la discussione ufficiale sul repository GitHub di NestJS, che il 
-problema che si sta avendo è dovuto a un bug di NestJS ancora in fase di fix e previsto in rilascio per le versioni
-successive.
-\\\\
-I video tutorial sono molto pochi e non sufficienti per imparare in dettaglio il framework.
-
-\subsection{Facilità di accesso agli strumenti di supporto}
-Spring 
-\\\\
-La documentazione di NestJS è molto pedante e ricca. Imparare l'uso del framework solo dalla documentazione 
-ufficiale richiede molto tempo. 
-\\\\
-Leggendo interamente la documentazione si diventa dei veri esperti del framework, ma con le ridotte tempistiche
-dello stage non è possibile effettuare questa cosa.
-\\\\
-Per iniziare è bene integrare la documentazione ai video tutorial e al materiale online, comprese le discussioni 
-della community. 
-\\
-In questo modo si può essere operativi in tempi più brevi, assicurando di avere una conoscenza
-del framework alle spalle sufficiente larga da poter fare le cose in modo coerente.
-\\\\
-NestJS
-Lo strumento principale da usare per imparare NestJS è la documentazione ufficiale.
-\\\\
-La documentazione è fatta molto bene, non è eccessivamente grande, come quella di Spring. Spiega in maniera dettagliata
-e in modo molto chiaro tutti i concetti di cui si ha bisogno per sviluppare con questo framework.
-\\\\
-Ho usato principalmente la documentazione ufficiale per imparare il framework durante lo stage e sono riuscito a essere
-operativo in tempi ragionevoli per lo sviluppo del software e a fare le cose in maniera coerente.
-
-\subsection{Prestazioni}
-% //TODO: implementare questa sezione
-\subsection{Qualità del codice}
-Spring
-\\\\
-Spring permette di usare degli zuccheri sintattici che nascondono la complessità del codice e lo rendono più
-pulito.
-\\
-Come ad esempio le annotazioni, che permettono in maniera chiara e pulita di definire delle proprietà della classe;
-ad esempio di marcarla come Controller semplicemente applicando l'annotazione @Controller sopra la definizione della
-classe.
-\\\\
-Inoltre l'architettura interna del framework permette di per se di scrivere codice pulito, in quanto la separazione delle
-componenti per livello di responsabilità, permette di scrivere metodi con poche righe di codice, facili da interpretare e
-da manutenere.
-\\\\
-NestJS
-\\\\
-NestJS è dotato degli stessi zuccheri sintattici per nascondere la complessità del codice e renderlo più pulito di Spring.
-\\\\
-La differenza rispetto a Spring è che su NestJS le annotazioni si chiamano decorator, ma a livello implementativo hanno lo 
-stesso significato.
-\\\\
-Dato che l'architettura di NestJS è la stessa usata da Spring, anche su NestJS si riflettono gli stessi vantaggi di
-qualità del codice dovuti all'architettura.
-\\\\
-L'uso dei moduli in NestJS permette di organizzare meglio la struttura dei file rispetto a Spring.
-\\\\
-Inoltre TypeOrm, lo strumento ORM di NestJS per interfacciarsi con il database permette di scrivere query leggermente più
-pulite, a livello di codice, rispetto a Hibernate lo strumento ORM di Spring.
-% //TODO: Valutare se inserire qui uno script che mostra come NestJS includa le dipendenze nelle query rispetto a Spring
-
-\section{Esito}
-Da quanto emerso dall'analisi comparativa risulta più semplice creare un software in Spring, per l'elevato materiale di
-supporto al framework presente in rete e per la presenza di una community molto attiva e professionale, che negli
-anni ha risolto problemi comuni agli sviluppatori che si sono interfacciati al framework per la prima volta. 
-\\\\
-Dall'altra parte NestJS risulta povero di materiale di supporto, infatti oltre alla documentazione ufficiale (fatta molto
-bene), è praticamente sprovvisto di materiale di supporto e di una community.
-\\\\
-Infatti molti dei problemi che si presentano agli sviluppatori che affrontano il framework per la prima volta, non sono
-stati risolti da una community online e questo è fonte di elevato costo in termini di tempo per lo sviluppatore, che con 
-una scarsa conoscenza del framework, deve cercare di risolvere il problema da solo.
-\\\\
-Il fatto di risolvere in maniera autonoma il problema, oltre che a portare un costo in termini di tempo, non assicura 
-che la soluzione trovata sia il modo corretto di procedere; si vengono quindi a creare potenziali inconsistenze nel codice
-scritto.
-\\\\
-A livello di prestazioni non sono state rilevate sostanziali differenze, nemmeno la possibilità di scrivere query 
-leggermente più pulite con TypeOrm rispetto a Spring è stato valutato come parametro sufficiente per scegliere 
-NestJS rispetto a Spring.
-\\\\
-Il proponente ha valutato come molto importante il punto di valutazione riguardo la facilità di scrittura del codice
-e la facilità/disponibilità di accesso agli strumenti di supporto.
-\\\\
-Il costo in termini di tempo per lo sviluppo di un progetto in NestJS è ancora troppo alto rispetto a Spring, proprio
-per la difficoltà di reperire materiale di supporto.
-\\\\
-Per questo motivo l'analisi comparativa ha portato alla scelta del utilizzo del software scritto in Spring, come back-end
-di produzione del progetto Smart Parking.
-\\\\
-La realizzazione del progetto è stata comunque molto utile al proponente, che ha conosciuto un nuovo
-framework; il che potrebbe rivelarsi utile in un futuro prossimo se NestJS prenderà piede e quindi il materiale a 
-disposizione e la community cresceranno, rendendo il framework competitivo a livello di Spring.
+\begin{table}
+    \begin{tabular}{|p{5cm}|p{1.4cm}|p{1.5cm}|p{1.4cm}| p{1.4cm} |} 
+    \hline
+    File & \% Stmts & \% Branch &  \% Funcs & \% Lines \\ 
+    \hline
+    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
+    \hline
+    parking-areas.service.ts & 82.14 & 100 & 46.15 & 72.13 \\ 
+    \hline
+    parking-sensors.service.ts & 94.11 & 100 & 94.11 & 92.3 \\ 
+    \hline
+    parking-spots.service.ts & 88.88 & 100 & 50 & 87.87 \\ 
+    \hline
+    sensors.service.ts & 38.46 & 100 & 0 & 27.27 \\ 
+    \hline
+    sensors-maintenance.service.ts & 86.11 & 90 & 71.42 & 84.84 \\ 
+    \hline
+    sensors-scraping.service.ts & 65.95 & 100 & 36.36 & 51.78 \\ 
+    \hline
+    maintainers-registry.service.ts & 91.66 & 100 & 83.33 & 91.17 \\ 
+    \hline
+    \end{tabular}
+\end{table}
