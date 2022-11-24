@@ -6,40 +6,51 @@
 \chapter{Analisi dei requisiti}
 \label{cap:analisi-requisiti}
 %**************************************************************
+\intro{In questo capitolo viene descrive la fase di analisi dei requisiti effettuata per
+la realizzazione del progetto.}
+
+\section{Scopo del progetto}
+Uno sviluppatore prima di me ha realizzato un set di REST API per gestire le funzionalità del progetto Smart Parking 
+e un servizio di polling che va a prendere lo stato dei sensori di parcheggio, aggiornato 
+in un file XML online e salva le variazioni nel servizio di persistenza.
+\\\\
+Lo scopo di questo progetto è migrare le REST API e il servizio di polling, dalla soluzione
+realizzata con il framework Spring, in una soluzione realizzata con il framework NestJS.
 
 \section{Confronto con gli stakeholders}
 E' stato fatto un incontro iniziale con il proponente, ovvero l'azienda Sync Lab,
 per definire con chiarezza i requisiti richiesti.
 \subsection{Servizio REST API}
-Nell'incontro sono state prese in considerazione le REST API scritte col framework Spring 
-già esistenti di cui doveva esserne fatta la migrazione nel framework NestJS.
-E' emerso subito che la quantità di REST API da realizzare era troppo elevata per la
-quantità di tempo a disposizione. 
+Nell'incontro sono state prese in considerazione le REST API esistenti (realizzate con il framework Spring) 
+di cui doveva essere fatta la migrazione.
+E' emerso subito che la quantità di REST API da realizzare era troppo elevata per il
+tempo di stage a disposizione. 
 \\\\
 E' stato quindi necessario fare una valutazione di quali fossero i servizi fondamentali che
 il servizio di REST API avrebbe dovuto esporre, per poter essere utilizzato senza che venissero
-a mancare funzionalità fondamentali per l'utilizzo a livello base del sistema.
+a mancare funzionalità fondamentali per un utilizzo a livello base del sistema.
 
 \subsection{Servizio di polling}
-Abbiamo poi valutato il secondo servizio importante da realizzare per questo progetto, ovvero
-la necessità di avere una lista sempre aggiornata dei sensori disponibili e del loro stato.
+Abbiamo poi valutato il secondo punto importante per questo progetto, ovvero
+la necessità di avere le informazioni sullo stato dei sensori sempre aggiornate.
 \\\\
 La rete dei sensori cresce in maniera dinamica, in quanto un nuovo sensore viene aggiunto/spostato
-da un parcheggio senza un utenza manuale che informi il sistema di ciò che avviene. 
+da un parcheggio senza che un utenza manuale informi il sistema. 
 \\
 Ma è necessario che quando un sensore si aggiunge alla rete, il sistema lo rilevi e ne mantenga lo stato
-aggiornato e la stessa cosa deve avvenire per quanto riguarda lo spostamento di un sensore, solo che in 
+aggiornato. La stessa cosa deve avvenire per quanto riguarda lo spostamento di un sensore, solo che in 
 questo caso il sistema deve aggiornare le coordinate del sensore esistente, anziché aggiungerne uno nuovo.
 \\\\
 Sono stati scelti una tipologia di sensori con GPS integrato, che ad ogni variazione di stato vanno ad 
-aggiornare un record a loro associato in un file XML online contenente le loro informazioni compreso 
-il loro stato.
+aggiornare un record a loro associato in un file XML online, dove ogni record contiene le informazioni e
+lo stato del sensore.
+% //TODO: inserie immagine file XML sensori
 \\\\
 Non avendo controllo sui sensori e quindi su dove vengano scritti i dati, con la proponente si è deciso
-di effettuare un polling ogni 2 minuti al file XML e aggiornare lo stato del back-end.
+di effettuare un polling ogni due minuti al file XML e aggiornare lo stato del back-end.
 \\\\
-Lo stato dei sensori è stato duplicato nel back-end del progetto oltre che sul file poiché questo da dei
-benefici:
+Lo stato dei sensori è quindi ridondante in quanto è presente sia nel back-end del progetto che sul file XML online. 
+La scelta di duplicare lo stato dei sensori nel back-end è stata fatta per trarne i seguenti benefici:
 \begin{itemize}
     \item permette di organizzare i dati in maniera più consona e organizzata.
     \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file XML online
@@ -47,27 +58,31 @@ benefici:
         di cui abbiamo pieno controllo.
 \end{itemize}
 \leavevmode\newline
-\\
 La motivazione che ha portato ad eseguire il polling ogni due minuti è la seguente:
 \\
-il tipo di servizio offerto non ha bisogno di essere un real-time system in quanto non crea problemi all'utente
+il tipo di servizio offerto non ha bisogno di essere un real-time system, in quanto non crea problemi all'utente
 vedere una piazzola che si libera/occupa con un delta di intervallo di ritardo. 
 \\\\
 L'importante è che questo delta non sia troppo elevato, in tal caso i dati mostrati agli utenti sarebbero troppo
-inconsistenti per essere utili, mentre un delta troppo piccolo genera un carico di lavoro per l'applicazione troppo
+inconsistenti per risultare utili. Mentre un delta troppo piccolo genera un carico di lavoro per l'applicazione molto
 elevato.
-\\
-Infatti effettuare il polling con un basso intervallo, degli ordini dei millisecondi, genera la produzione di molte 
-chiamate http da parte del back-end per l'accesso al file XML e molti accessi al database in caso ci siano dati da 
+\\\\
+Infatti effettuare il polling con un piccolo intervallo di tempo tra un polling e il successivo (dell'ordine dei millisecondi
+ad esempio),
+genera la produzione di molte 
+chiamate http da parte del back-end per accedere al contenuto del file XML e molti accessi al database in caso ci siano dati da 
 inserire/aggiornare.
 \\\\
-Vediamo un esempio pratico con una tabella che mostra il costo delle chiamate e accessi al database giornalieri al variare 
+Vediamo un esempio pratico con una tabella che mostra il costo di chiamate e accessi al database giornalieri al variare 
 dell'intervallo di tempo del polling:
 \\
+% //TODO: aumentare altezza celle tabelle
+% //TODO: aggiungere caption immagini
+% //TODO: ridimensionare immagini
 \begin{table}
-    \begin{tabular}{|p{2.85cm}|p{2.85cm}|p{2.85cm}|p{2.85cm}|} 
+    \begin{tabular}{|p{2.85cm}|p{3.05cm}|p{3.05cm}|p{3.35cm}|} 
     \hline
-    Polling & \# chiamate http  & \# accessi lettura & \# accessi scrittura \\ 
+    \textbf{Polling} & \textbf{\# chiamate http}  & \textbf{\# accessi lettura} & \textbf{\# accessi scrittura} \\ 
     \hline
     60 minuti & 24 & 24 * $10^3$ & 24 * $10^3$ \\
     \hline
@@ -92,33 +107,33 @@ ogni cinque minuti la metà dei sensori abbiano bisogno di un aggiornamento (qui
 acceduti in scrittura ad ogni minuto). 
 \\\\
 Quindi si verificano 1000 accessi in lettura ad ogni polling per verificare quali abbiano bisogno di aggiornamento.
-Gli accessi in scrittura variano in base al tempo trascorso dall'ultimo polling (gli accessi in scrittura sono molto
+Gli accessi in scrittura variano in base al tempo trascorso dall'ultimo polling (da ricordare che gli accessi in scrittura sono molto
 più costosi di quelli in lettura).
 \\\\
 Come vediamo dalla tabella e come auspicabile, con il polling ad un intervallo di ogni ora si effettuano solo
 24 richieste http al giorno ma il delta di latenza di aggiornamento dei dati ad ogni ora li rende inutilizzabili.
 \\\\
-D'altra parte un intervallo di un millisecondo per il polling rende i dati aggiornati quasi in tempo reale ma 
+D'altra parte un intervallo di un millisecondo rende i dati aggiornati quasi in tempo reale ma 
 non è sostenibile effettuare un numero di richieste giornaliere dal back-end pari a 864 * $10^5$ (più di 86 milioni).
 \leavevmode
 \\\\
 Un numero di richieste giornaliere pari a 720 è stato ritenuto accettabile, così come il numero di accessi al database
 indicati per la colonna dei 2 minuti e si è optato quindi per questa scelta; ritenendo il delta di ritardo di
-aggiornamento un valore accettabile per l'utente finale e il costo non di sovraccarico per il sistema.
+aggiornamento un valore accettabile per l'utente finale e che i costi delle chiamate e di accessi al database non
+siano di sovraccarico per il sistema.
 \\\\
-Il servizio per il polling dei sensori deve essere realizzato in modo che sia separato da quello di REST API.
+Il servizio per il polling dei sensori deve essere realizzato in modo che sia separato da quello delle REST API.
 \\
 Sia per una separazione di responsabilità, che per una futura migrazione a un'applicazione basata su microservizi,
 in cui il servizio di polling deve diventare un microservizio a se stante, gestibile in maniera indipendente rispetto
 agli altri microservizi.
 
 \section{Entità}
-Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità è stato necessario
-documentare le entità di dominio, coinvolte nelle funzionalità fondamentali delle REST API, di cui si
-è deciso effettuare la migrazione.
+Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità, si è ritenuto necessario
+documentare le entità di dominio coinvolte nelle funzionalità fondamentali delle REST API.
+\\\\\\
+\textbf{Piazzola}
 \\\\
-Piazzola
-\\
 Modella il rettangolo bianco dipinto sull'asfalto che delimita la zona in cui l'automobile viene messa
 in sosta. Ogni piazzola deve essere associata ad un parcheggio. Una piazzola può avere un solo sensore
 di parcheggio.
@@ -130,8 +145,8 @@ Ogni piazzola è caratterizzata da:
     \item longitudine: stringa.
 \end{itemize}
 \leavevmode\newline
-Parcheggio
-\\
+\textbf{Parcheggio}
+\\\\
 Modella l'insieme di piazzole.
 \\
 Ogni parcheggio è caratterizzato da:
@@ -141,14 +156,14 @@ Ogni parcheggio è caratterizzato da:
     \item longitudine: stringa.
 \end{itemize}
 \leavevmode\newline
-Sensore
-\\
+\textbf{Sensore}
+\\\\
 Modella il sensore. Esistono due tipi di sensore:
 \begin{itemize}
-    \item ambientale: misurano la qualità dell'aria e altri parametri nel parcheggio e possono 
+    \item ambientale: misurana la qualità dell'aria e altri parametri nel parcheggio e possono 
         coprire un'area di N piazzole.
         Sono gestiti da un'altro progetto di tirocinio, quindi non sono facenti parte di questo dominio di progetto.
-    \item di parcheggio: sensore posizionato sotto l'auto nella piazzola, che rileva la presenza o meno
+    \item di parcheggio: sensore posizionato sotto l'auto nella piazzola. Rileva la presenza o meno
         del veicolo. Questo tipo di sensore può essere associato a una sola piazzola.
 \end{itemize}
 Ogni sensore può avere una sola azienda manutentrice a lui associata.
@@ -160,14 +175,14 @@ Ogni sensore è caratterizzato da:
     \item carica: stringa, indica il livello di carica della batteria (da 1 a 3).
     \item type: stringa, indica il tipo di sensore (ambientale o di parcheggio).
     \item attivo: booleano.
-    \item ultimo sondaggio: data, indica l'ultima volta che è stato aggiornato lo stato del sensore.
+    \item ultimo sondaggio: timestamp, indica l'ultima volta che è stato aggiornato lo stato del sensore.
     \item da riparare: booleano, indica se il sensore deve essere riparato.
     \item da caricare: booleano, indica se la batteria del sensore è scarica.
-    \item in aggiornamento: booleano, indica se il sensore stà aggiornando il suo software.
+    \item in aggiornamento: booleano, indica se il sensore sta aggiornando il suo software.
 \end{itemize}
 \leavevmode\newline
-Manutentore
-\\
+\textbf{Manutentore}
+\\\\
 Modella l'azienda incaricata alla manutenzione dei sensori.
 Ogni manutentore è caratterizzato da:
 \begin{itemize}
@@ -179,8 +194,8 @@ Ogni manutentore è caratterizzato da:
     \item email: stringa.
 \end{itemize}
 \leavevmode\newline
-Misurazione sensore parcheggio.
-\\
+\textbf{Misurazione sensore parcheggio}
+\\\\
 Modella la misurazione effettuata dal sensore di parcheggio. A differenza di un sensore ambientale, un sensore
 di parcheggio non salva uno storico di misurazioni fatte ma viene inserita solo l'ultima misurazione effettuata,
 sovrascrivendo la precedente.
@@ -191,7 +206,7 @@ Ogni misurazione di un sensore di parcheggio è caratterizzata da:
     \item latitudine: stringa.
     \item longitudine: stringa.
     \item valore: booleano, indica se il veicolo è presente o meno sopra al sensore.
-    \item marca temporale: data, indica la data in cui è stata effettuata la misurazione.
+    \item marca temporale: timestamp, indica la data in cui è stata effettuata la misurazione.
 \end{itemize}
 
 \section{Casi d'uso}
@@ -199,77 +214,77 @@ Definite le entità di dominio si è proceduto con la creazione dei casi d'uso.
 \\
 Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio di appartenenza.
 \\\\
-
 % parcheggio
 \begin{figure}[!h]
     \centering
     \includegraphics[height=9cm]{usecase/parking-area}
 \end{figure}
-UC1 - Ottenimento lista di tutti i parcheggi.
+\leavevmode\newline
+\textbf{UC1 - Ottenimento lista di tutti i parcheggi}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutti i parcheggi.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutti i parcheggi.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutti i parcheggi.
     \item l'utente ottiene una lista di tutti i parcheggi.
 \end{enumerate}
 \leavevmode\newline
-UC2 - Ottenimento dati di un parcheggio.
+\textbf{UC2 - Ottenimento dati di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto i dati di un parcheggio.
 \\
-Post-condizioni: l'utente ha ottenuto i dati di un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede i dati di un parcheggio.
     \item l'utente ottiene i dati di un parcheggio.
 \end{enumerate}
 \leavevmode\newline
-UC3 - Creazione di un parcheggio.
+\textbf{UC3 - Creazione di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha creato un parcheggio.
 \\
-Post-condizioni: l'utente ha creato un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la creazione di un parcheggio.
     \item l'utente crea un parcheggio.
 \end{enumerate}
 \leavevmode\newline
-UC4 - Modifica dati di un parcheggio.
+\textbf{UC4 - Modifica dati di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha modificato un parcheggio.
 \\
-Post-condizioni: l'utente ha modificato un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la modifica di un parcheggio.
     \item l'utente modifica un parcheggio.
 \end{enumerate}
 \leavevmode\newline
-UC5 - Eliminazione di un parcheggio.
+\textbf{UC5 - Eliminazione di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha eliminato un parcheggio.
 \\
-Post-condizioni: l'utente ha eliminato un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede l'eliminazione di un parcheggio.
     \item l'utente elimina un parcheggio.
@@ -282,71 +297,71 @@ Scenario principale:
     \centering
     \includegraphics[height=9cm]{usecase/maintainer}
 \end{figure}
-UC6 - Ottenimento lista di tutti i manutentori.
+\textbf{UC6 - Ottenimento lista di tutti i manutentori}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutti i manutentori.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutti i manutentori.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutti i manutentori.
     \item l'utente ottiene una lista di tutti i manutentori.
 \end{enumerate}
 \leavevmode\newline
-UC7 - Ottenimento dati di un manutentore.
+\textbf{UC7 - Ottenimento dati di un manutentore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto i dati di un manutentore.
 \\
-Post-condizioni: l'utente ha ottenuto i dati di un manutentore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede i dati di un manutentore.
     \item l'utente ottiene i dati di un manutentore.
 \end{enumerate}
 \leavevmode\newline
-UC8 - Creazione di un manutentore.
+\textbf{UC8 - Creazione di un manutentore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha creato un manutentore.
 \\
-Post-condizioni: l'utente ha creato un manutentore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la creazione di un manutentore.
     \item l'utente crea un manutentore.
 \end{enumerate}
 \leavevmode\newline
-UC9 - Modifica dati di un manutentore.
+\textbf{UC9 - Modifica dati di un manutentore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha modificato un manutentore.
 \\
-Post-condizioni: l'utente ha modificato un manutentore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la modifica di un manutentore.
     \item l'utente modifica un manutentore.
 \end{enumerate}
 \leavevmode\newline
-UC10 - Eliminazione di un manutentore.
+\textbf{UC10 - Eliminazione di un manutentore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha eliminato un manutentore.
 \\
-Post-condizioni: l'utente ha eliminato un manutentore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede l'eliminazione di un manutentore.
     \item l'utente elimina un manutentore.
@@ -358,57 +373,57 @@ Scenario principale:
     \centering
     \includegraphics[height=9cm]{usecase/sensor}
 \end{figure}
-UC11 - Ottenimento lista di tutti i sensori.
+\textbf{UC11 - Ottenimento lista di tutti i sensori}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutti i sensori.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutti i sensori.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutti i sensori.
     \item l'utente ottiene una lista di tutti i sensori.
 \end{enumerate}
 \leavevmode\newline
-UC12 - Ottenimento dati di un sensore.
+\textbf{UC12 - Ottenimento dati di un sensore}
+\\\\
+\textbf{Attori primari} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto i dati di un sensore.
 \\
-Post-condizioni: l'utente ha ottenuto i dati di un sensore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede i dati di un sensore.
     \item l'utente ottiene i dati di un sensore.
 \end{enumerate}
 \leavevmode\newline
-UC13 - Ottenimento lista di tutti i sensori di una piazzola.
+\textbf{UC13 - Ottenimento lista di tutti i sensori di una piazzola}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutti i sensori di una piazzola.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutti i sensori di una piazzola.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutti i sensori di una piazzola.
     \item l'utente ottiene una lista di tutti i sensori di una piazzola.
 \end{enumerate}
 \leavevmode\newline
-UC14 - Modifica dello stato di manutenzione di un sensore.
+\textbf{UC14 - Modifica dello stato di manutenzione di un sensore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha modificato lo stato di manutenzione di un sensore.
 \\
-Post-condizioni: l'utente ha modificato lo stato di manutenzione di un sensore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la modifica dello stato di manutenzione di un sensore.
     \item l'utente modifica lo stato di manutenzione di un sensore.
@@ -420,71 +435,71 @@ Scenario principale:
     \centering
     \includegraphics[height=9cm]{usecase/parking-spot}
 \end{figure}
-UC15 - Ottenimento lista di tutte le piazzole di un parcheggio.
+\textbf{UC15 - Ottenimento lista di tutte le piazzole di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutte le piazzole di un parcheggio.
     \item l'utente ottiene una lista di tutte le piazzole di un parcheggio.
 \end{enumerate}
 \leavevmode\newline
-UC16 - Ottenimento lista di tutte le piazzole di un sensore.
+\textbf{UC16 - Ottenimento lista di tutte le piazzole di un sensore}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutte le piazzole di un sensore.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutte le piazzole di un sensore.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutte le piazzole di un sensore.
     \item l'utente ottiene una lista di tutte le piazzole di un sensore.
 \end{enumerate}
 \leavevmode\newline
-UC17 - Creazione di una piazzola in un parcheggio.
+\textbf{UC17 - Creazione di una piazzola in un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha creato una piazzola in un parcheggio.
 \\
-Post-condizioni: l'utente ha creato una piazzola in un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la creazione di una piazzola in un parcheggio.
     \item l'utente crea una piazzola in un parcheggio.
 \end{enumerate}
 \leavevmode\newline
-UC18 - Modifica dati di una piazzola.
+\textbf{UC18 - Modifica dati di una piazzola}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha modificato una piazzola.
 \\
-Post-condizioni: l'utente ha modificato una piazzola.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la modifica di una piazzola.
     \item l'utente modifica una piazzola.
 \end{enumerate}
 \leavevmode\newline
-UC19 - Eliminazione di una piazzola.
+\textbf{UC19 - Eliminazione di una piazzola}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha eliminato una piazzola.
 \\
-Post-condizioni: l'utente ha eliminato una piazzola.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede l'eliminazione di una piazzola.
     \item l'utente elimina una piazzola.
@@ -496,15 +511,15 @@ Scenario principale:
     \centering
     \includegraphics[height=9cm]{usecase/parking-sensor}
 \end{figure}
-UC20 - Ottenimento ultima misurazione di un sensore di parcheggio.
+\textbf{UC20 - Ottenimento ultima misurazione di un sensore di parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto l'ultima misurazione di un sensore di parcheggio.
 \\
-Post-condizioni: l'utente ha ottenuto l'ultima misurazione di un sensore di parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede l'ultima misurazione di un sensore di parcheggio.
     \item l'utente ottiene l'ultima misurazione di un sensore di parcheggio.
@@ -512,19 +527,15 @@ Scenario principale:
 
 % polling sensore
 \leavevmode\newline
-\begin{figure}[!h]
-    \centering
-    \includegraphics[height=9cm]{usecase/sensor-scraping}
-\end{figure}
-UC21 - Ottenimento lista di tutte le piazzole di un parcheggio.
+\textbf{UC21 - Ottenimento lista di tutte le piazzole di un parcheggio}
+\\\\
+\textbf{Attori primari:} utente non autenticato.
 \\
-Attori primari: utente non autenticato.
+\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
 \\
-Precondizioni: l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
 \\
-Post-condizioni: l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
-\\
-Scenario principale:
+\textbf{Scenario principale:}
 \begin{enumerate}
     \item l'utente richiede la lista di tutte le piazzole di un parcheggio.
     \item l'utente ottiene una lista di tutte le piazzole di un parcheggio.
@@ -544,7 +555,8 @@ Ogni requisito è identificato da un codice univoco nel seguente formato:
     \item un numero progressivo che identifica in modo univoco il requisito.
 \end{itemize}
 Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio di appartenenza.
-
+% //TODO: inserire casi d'uso sensors-scraping
+% //TODO: inserire requisiti funzionali sensors-scraping
 % parcheggio
 \leavevmode\newline
 \begin{table}

@@ -8,19 +8,20 @@
 
 % %**************************************************************
 \section{Architettura del progetto}
-Dato le dimensioni contenute del progetto e per il fatto che deve essere fatta un'analisi 
-comparativa con un'altro progetto, si è deciso di strutturarlo con un'architettura a monolite
-basata sulla layered architecture.
-\\
-In questo modo viene velocizzata la realizzazione del progetto, a discapito della facilità di
-manutenzione ma non è un problema essendo questo progetto di dimensioni contenute ed in caso
+Le dimensioni di questo progetto allo stato attuale sono contenute, inoltre deve essere fatta un'analisi
+comparativa tra la soluzione finale di questo progetto con un progetto già esistente. Per rendere 
+l'analisi comparativa più efficace, è stato scelto di usare la stessa architettura dell'altro progetto, 
+ovvero la layered architecture.
+\\\\
+Questo tipo di architettura velocizza la realizzazione del progetto, a discapito della facilità di
+manutenzione ma non è un problema essendo il progetto di dimensioni contenute. In caso
 il progetto dovesse crescere fino al punto in cui risulti difficile manutenerlo è sempre possibile
-migrarlo in un progetto con un'architettura a microservizi.
+migrarlo a un'architettura a microservizi.
 
 % ref: https://cs.uwaterloo.ca/~m2nagapp/courses/CS446/1195/Arch_Design_Activity/Layered.pdf
 \subsection{Layered architecture}
-La layered architecture è uno degli stili architetturali più utilizzati. L'idea che sta dietro a
-questo tipo di architettura è che i moduli o i componenti con funzionalità simili sono organizzati
+La layered architecture è uno degli stili architetturali più utilizzati al giorno d'oggi. L'idea che sta dietro a
+questo tipo di architettura è organizzare i moduli o i componenti con funzionalità simili
 in livelli orizzontali. Di conseguenza ogni livello svolge un ruolo specifico nell'applicazione.
 \\
 La layered architecture non ha restrizioni sul numero di strati che l'applicazione può avere, in quanto 
@@ -34,27 +35,27 @@ Solitamente ogni livello comunica solo con il livello sottostante. Il connettore
 essere una chiamata di funzione, una richiesta di query, un oggetto dati o qualsiasi connettore che
 trasmetta richieste o informazioni.
 \\
-La denominazione dei livelli è abbastanza flessibile ma di solito un livello di presentazione, un livello
-di business e un livello fisico sono sempre presenti
+La denominazione dei livelli è abbastanza flessibile ma di solito sono sempre presenti almeno: un livello di presentazione, un livello
+di business e un livello fisico.
+\\\\\\
+\textbf{Livello di presentazione}
 \\\\
-Livello di presentazione
-\\
 Il livello di presentazione contiene tutte le classi responsabili di presentare la visualizzazione delle
 delle informazioni all'utente finale. Idealmente questo è il solo livello con cui l'utente finale 
-interagisce.
+interagisce direttamente.
+\\\\\\
+\textbf{Livello di business}
 \\\\
-Livello di business
-\\
 Il livello di business contiene tutta la logica che è richiesta dall'applicazione per poter soddisfare i 
 suoi requisiti funzionali. Solitamente questo livello si occupa dell'aggregazione dei dati, della computazione
 e della richiesta dei dati. Quindi qui è dove viene implementata la logica principale dell'applicazione.
+\\\\\\
+\textbf{Livello fisico}
 \\\\
-Livello fisico
-\\
 Qui è dove sono salvati tutti i dati recuperabili dell'applicazione. Solitamente questo livello è chiamato
 anche livello di persistenza. Questo livello si occupa di interagire con il sistema in cui i dati 
 sono mantenuti in maniera persistente, come ad esempio un database.
-\leavevmode\newline
+
 \subsection{Motivazioni della scelta}
 Le motivazione che hanno portato a scegliere questo stile architetturale sono le seguenti:
 \begin{itemize}
@@ -69,33 +70,41 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
         in quanto le componenti di cui fare il mock sono poche.
     \item L'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
         gli altri livelli.
-    \item Nel caso l'applicazione diventi molto grande è possibile senza troppo sforzo avviare un processo
-        di migrazione ad un'architettura a microservizi. La layered architecture lavora bene come monolite 
-        in un sistema con un'architettura ibrida tra un monolite e un sistema a microservizi. Questa architettura
-        ibrida andrà a formarsi nel mentre che il monolite viene migrato in un sistema a microservizi, quindi 
-        è importante avere un architettura a monolite che lavori bene in questo tipo di sistema.
+    \item Nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
+        di migrazione ad un'architettura a microservizi. La layered architecture lavora bene (lato monolite) anche
+        in un sistema con un'architettura ibrida monolite/microservizi. Questo tipo di architettura
+        ibrida solitamente si forma nel processo di migrazione di un sistema monolitico in un sistema a microservizi.
         \\
-        Inoltre grazie alla separazione delle responsabilità della layered architecture è più facile andare
+        Di conseguenza, in ottica di una futura migrazione in un sistema a microservizi (molto probabile che avvenga), è
+        bene scegliere un monolite che lavori bene in un'architettura ibrida e quindi che sia facile da migrare
+        in un sistema a microservizi.
+        \\
+        Infatti grazie alla separazione delle responsabilità della layered architecture, è facile andare
         a trasformare i componenti del monolite in microservizi.
 \end{itemize}
 
 \section{Struttura software}
-E' stato scelto NestJS come framework di sviluppo del progetto dato che si adatta bene con la layered architecture,
-dato che usa il pattern controller-service-repository, un pattern basato sulla layered architecture,  
-per permettere allo sviluppatore di sviluppare le proprie applicazioni.
+E' stato scelto NestJS come framework di sviluppo del progetto dato che utilizza la layered architecture,
+tramite il pattern controller-service-repository. Vediamo questo design pattern:
 \begin{figure}[!h]
     \centering
     \includegraphics[height=6cm]{controller-service-repository-pattern}
 \end{figure}
 \leavevmode\newline
-Il controller è il livello responsabile per gestire le richieste in arrivo e ritornare le risposte al client.
+Il controller-service-repository pattern suddivide i componenti dell'applicazione su tre livelli fondamentali:
+il controller, il service e il repository.
+\\
+Il controller è il livello più alto, mentre il repository quello più basso, in mezzo ai due c'è il service.
+\\
+Il controller è il livello responsabile per gestire le richieste in arrivo e ritornare le risposte all'utente finale.
 Esiste un meccanismo di routing che gestisce a quale controller inviare le richieste.
 \\
 Il service è il livello responsabile della business logic.
 \\
-Il repository è il livello chiamato livello di persistenza nella layered architecture.
+Il repository è il livello che viene anche chiamato livello di persistenza nella layered architecture e quindi interagisce
+con il sistema di persistenza dati, come il database.
 \\\\
-Analizziamo in dettaglio la struttura del software:
+Analizziamo in dettaglio le componenti che vanno a formare struttura del software:
 
 \subsection{IoC container}
 L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
@@ -104,21 +113,21 @@ del pattern Dependency Injection all'interno di NestJS.
 L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come controller o provider.
 \\\\
 Il funzionamento dell'IoC container è il seguente:
-\\
+\\\\
 quando viene avviata un'applicazione NestJS, il sistema runtime ricerca tutti controller e provider che 
-sono stati dichiarati in dei moduli importati dal modulo root. Per ognuna di queste classi crea un'istanza
+sono stati dichiarati all'interno di moduli importati dal modulo root. Per ognuna di queste classi crea un'istanza
 usando il pattern singleton e la inserisce nell'IoC container. 
 \\
-Se però la classe da istanziare dichiarava una dipendenza con un altro controller o provider nel proprio 
+Se però la classe da istanziare dichiara una dipendenza con un altro controller o provider nel proprio 
 costruttore, il sistema runtime applica in maniera automatica il pattern Dependency Injection; ovvero
-va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe nell'IoC container, se
+va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe, nell'IoC container, se
 presente la inietta nella classe e crea l'istanza della nuova classe da inserire nell'IoC container. 
 \\
-Altrimenti va a creare
+Altrimenti va a creare prima
 l'istanza della classe che deve essere iniettata, prima della classe che dichiara la dipendenza (se possibile, in quanto la
 classe da iniettare potrebbe a sua volta richiedere una dipendenza e in tal caso si segue la successione di 
 dipendenze fino a che non si trova una classe che possa essere istanziata) e la inietta nella classe che dichiara
-la dipendenza, poi ne crea un'istanza e la inserisce nell'IoC container.
+la dipendenza, poi crea un'istanza della classe che ha dichiarato la dipendenza e la inserisce nell'IoC container.
 
 \subsection{Controller e provider}
 I due componenti fondamentali di NestJS sono i controller e i provider. 
@@ -248,11 +257,10 @@ export class MaintainersRegistryController {
 \leavevmode\newline
 \\
 E' possibile marcare con il decorator @Injectable
-anche classi non service o repository di cui si vuole che NestJS si occupi
-in maniera automatica di istanziare, iniettare le dipendenze dichiarate nel costruttore e inserire nell'IoC 
-container.
+anche classi non service o repository per fare in modo che NestJS, in maniera automatica, istanzi, inietti le dipendenze 
+dichiarate nel costruttore e le inserisca nell'IoC container.
 \\\\
-I controller individuati sono i seguenti:
+I controller dell'applicazione individuati sono i seguenti:
 \begin{itemize}
     \item MaintainersRegistryController: gestisce le richieste/risposte relative al dominio dei manutentori.
     \item ParkingAreasController: gestisce le richieste/risposte relative al dominio dei parcheggi.
@@ -271,7 +279,7 @@ I controller individuati sono i seguenti:
     \item SensorsMaintenanceSensorsController: gestisce le richieste/risposte relative al dominio della manutenzione dei
     sensori di un sensore.
 \end{itemize}
-
+% //TODO: inserire i service individuati
 \subsection{Repository}
 I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno quindi il compito di
 comunicare con la componente di archiviazione dati come un database. Nel progetto è stato utilizzato un database
@@ -279,32 +287,32 @@ relazionale di tipo postgreSQL.
 \\\\
 NestJS è indipendente dal tipo di database scelto (relazionale o non relazionale). Infatti NestJS si interfaccia
 al database tramite uno strumento che si chiama TypeORM. TypeORM implementa una tecnica di programmazione chiamata 
-ORM che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione OOP.
+ORM, che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione OOP.
 \\\\
 Uno strumento ORM incapsula il codice necessario per manipolare i dati, senza aver bisogno di scrivere manualmente
 le query al database ma si interagisce direttamente con un oggetto nello stesso linguaggio che si sta usando. 
 \\
 In questo modo il database viene astratto e si diventa indipendenti dal tipo di database utilizzato, in quanto è compito dell'ORM
-tradurre la richiesta fatta in linguaggio di programmazione ad alto livello nella query al database. 
+tradurre la richiesta fatta, in linguaggio di programmazione ad alto livello, nella query al database. 
 \\\\
-Uno strumento come TypeORM offre quindi una grande flessibilità in quanto è possibile decidere di passare da un database
-relazionale a un database non relazionale in qualsiasi momento senza dover effettuare modifiche al livello di persistenza.
+Uno strumento come TypeORM offre quindi una grande flessibilità, in quanto è possibile decidere di passare da un database
+relazionale a un database non relazionale in qualsiasi momento, senza dover effettuare modifiche al livello di persistenza.
 \\\\
 Senza un'ORM la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
 \\\\
-Il repository viene fornito e creato in maniera automatica da NestJS. Per fare in modo che ciò avvenga però è necessario
-dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository, nell'array di imports tramite 
-il metodo forFeature della classe TypeOrmModule la lista di entità di cui si vuole creare un repository.
+Il repository viene fornito e creato in maniera automatica da NestJS. Per fare in modo che ciò avvenga è però necessario
+dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository e in particolare nell'array di imports, con 
+il metodo forFeature della classe TypeOrmModule, la lista di entità di cui si vuole creare un repository.
 \\\\
 Il repository creato da NestJS include tutti i metodi necessari per le operazioni basilari CRUD (find(), save(), update(), 
 delete() ecc..).
 \\\\
 Spesso però abbiamo bisogno di effettuare query al database più complesse rispetto a quelle a disposizione nel repository
-creato da NestJS. Per fare ciò dobbiamo creare una nostra classe repository che estenda la classe Repository, che è una
-classe Generics definita all'interno di NestJS e si aspetta come tipo del Generic il tipo dell'entità di cui vogliamo 
+creato da NestJS. Per fare ciò dobbiamo creare una nostra classe repository custom che estenda la classe Repository, che è una
+classe Generic definita all'interno di NestJS e si aspetta come tipo del Generic il tipo dell'entità di cui vogliamo 
 creare il repository.
 \\\\
-Creato il repository custom non è più necessario usare il metodo forFeature nella classe modulo, ma va importato il repository custom
+Se creiamo un repository custom non è più necessario usare il metodo forFeature nella classe modulo, ma va importato il repository custom
 come provider.
 \\ 
 
@@ -327,47 +335,50 @@ export class SensorsRepository extends Repository<Sensor>{
 }
 \end{lstlisting}
 \leavevmode\newline
-Nel nostro repository oltre che ai metodi ereditati dalla classe padre Repository, possiamo creare i nostri metodi personalizzati
-per poter inserire le nostre query custom. 
+Nel repository custom, oltre che ai metodi ereditati dalla classe padre Repository, possiamo creare i nostri metodi personalizzati
+che eseguono le nostre query custom. 
 \\\\
 Ci sono 2 modi per creare le query:
 \begin{itemize}
-    \item tramite notazione pura SQL 
-    \item tramite i metodi del Query Builder
+    \item tramite notazione pura SQL;
+    \item tramite i metodi del Query Builder;
 \end{itemize}
 \leavevmode\newline
-E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazione SQL per 2 motivi:
+E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazione SQL pura per 2 motivi:
 \begin{enumerate}
     \item La concatenazione dei metodi del Query Builder rende molto più chiaro e pulito il codice, quindi più facile
         da manutenere.
-    \item Nel caso di cambio di tipo di database le query continuano a funzionare, in quanto grazie al Query Builder,
+    \item Nel caso di cambio di tipo di database (ad esempio passando da PostgreSQL a Oracle) le query continuano a funzionare, in 
+        quanto grazie al Query Builder,
         TypeORM le converte adattandole alla sintassi del database che si stà utilizzando. Mentre non viene 
         effettuata alcun tipo di conversione per le query in notazione pura SQL.
 \end{enumerate}
 \leavevmode\newline
-I repository custom individuati sono i seguenti:
+I repository custom dell'applicazione individuati sono i seguenti:
 \begin{itemize}
-    \item ParkingSensorsRepository: ha un metodo custom per aggiornare i timestamp dei parcheggi passati come parametro.
+    \item ParkingSensorsRepository: ha un metodo custom per aggiornare i timestamp delle misurazioni dei sensori di parcheggio 
+        passate come parametro.
     \item SensorsRepository: ha un metodo custom per ottenere i sensori che non hanno almeno una manutenzione.
 \end{itemize}
 % rel: https://it.wikipedia.org/wiki/Object-relational_mapping
 
 \subsection{Moduli}
-Un modulo è un concetto fondamentale in NestJS. Ogni applicazione ha almeno un modulo, chiamato modulo root. 
-Avere solo un modulo non è un caso tipico per un'applicazione, solitamente ce ne sono svariati.
-I moduli sono utilizzati come modo per organizzare i componenti di un'applicazione.
+Un modulo è una componente fondamentale di NestJS. Ogni applicazione ha almeno un modulo, chiamato modulo root. 
+Avere solo un modulo non è un caso tipico per un'applicazione, solitamente ce ne sono molti.
+I moduli sono utilizzati per organizzare i componenti di un'applicazione.
 \\\\
 All'interno di uno stesso modulo devono essere presenti componenti appartenenti allo stesso dominio. Ad esempio
 il controller, il service e il repository dei sensori di parcheggio sono tre buoni candidati per essere racchiusi 
 all'interno dello stesso modulo.
 \\\\
-Grazie ai moduli si riesce a mantenere il codice ben organizzato separando le componenti per dominio di appartenenza
-e stabiliscono dei confini chiari tra i vari componenti. In questo modo NestJS ci aiuta a gestire la complessità e a 
+Grazie ai moduli si riesce a mantenere il codice ben organizzato, separando le componenti per dominio di appartenenza
+e stabilendo dei confini chiari tra i vari componenti. In questo modo NestJS ci aiuta a gestire la complessità e a 
 sviluppare con principi SOLID, specialmente quando le dimensioni dell'applicazione crescono e/o quando il team cresce.
 \\\\
-Per inserire una componente in un modulo deve essere dichiarata come controller o provider, all'interno del decorator
-@Module della classe modulo (i moduli da controller devono essere dichiarati nell'array controllers di @Module,
-mentre i moduli provider devono essere dichiarati nell'array providers di @Module). 
+In un modulo possiamo inserire solo componenti controller o provider. Per inserire un componente in un modulo, dobbiamo
+specificare il nome del componente all'interno del decorator
+@Module della classe modulo (i controller devono essere dichiarati nell'array controllers di all'interno di @Module,
+mentre i provider devono essere dichiarati nell'array providers all'interno di @Module). 
 \\\\
 Se un controller o un provider non è dichiarato in un modulo che viene incluso dal modulo
 root, NestJS non istanzierà la classe del componente e non verrà inserito nell'IoC container.
@@ -377,16 +388,16 @@ come appartenenti ad un modulo hanno uno scope locale al modulo, quindi sono vis
 i componenti appartenenti ad altri moduli.
 \\
 E' un caso comune però che un componente di un modulo abbia bisogno di un componente appartenente ad un altro modulo
-e quindi lo dichiara come dipendenza. In questo caso NestJS darebbe errore in fase di compilazione, poiché come 
-spiegato sopra un componente di un modulo A, non può vedere un componente di un modulo B.
+e quindi lo dichiara come dipendenza. Facendo una cosa del genere NestJS genera un errore in fase di compilazione, poiché come 
+spiegato sopra, un componente di un modulo A, non può vedere un componente di un modulo B.
 \\\\
-Per risolvere questo problema NestJS permette di definire nel decorator @Module della classe modulo i componenti che
+Per risolvere questo problema NestJS permette di definire nel decorator @Module della classe modulo, i componenti che
 quel modulo vuole esportare e quindi che abbiano visibilità pubblica (i componenti da esportare devono essere dichiarati 
-nell'array exports di @Module). 
+nell'array exports all'interno di @Module). 
 \\
-In questo caso se una classe di un modulo B dichiara una 
-dipendenza da un componente esportato da un modulo A, nel decorator @Module della classe modulo B deve essere dichiarato il
-modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array imports di @Module).
+In questo caso se un componente di un modulo B dichiara una 
+dipendenza da un componente esportato da un modulo A, nel decorator @Module, della classe modulo B, deve essere dichiarato il
+modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array imports all'interno di @Module).
 \\
 % //TODO: sistemare colori codice
 \begin{lstlisting}
@@ -410,7 +421,7 @@ modulo del componente che si vuole importare (i moduli da importare devono esser
 export class ParkingSpotsModule {}
 \end{lstlisting}
 \leavevmode\newline
-I moduli individuati sono i seguenti:
+I moduli dell'applicazione individuati sono i seguenti:
 \begin{itemize}
     \item AutomapperCustomModule: contiene i componenti per effettuare il mappaggio da DTO a entità.
     \item DtoValidatorModule: contiene i componenti per validare i campi di un DTO.
@@ -467,36 +478,37 @@ export class SensorScrapingDto{
 NestJS ha un livello built-in che è responsabile di processare tutte le eccezioni non catturate durante 
 l'esecuzione di un'applicazione.
 \\\\
-Quando un'eccezione non viene catturata dal codice dell'applicazione viene catturata da questo livello,
-che in maniera automatica invia una risposta http al client user-friendly, evitando di far interrompere 
+Quando un'eccezione non viene catturata dal codice dell'applicazione, viene catturata da questo livello,
+che in maniera automatica invia una risposta user-friendly http al client, evitando di far interrompere 
 l'esecuzione del programma. Questa componente si chiama exception filter.
 \\\\
-La risposta al client è user-friendly e con un messaggio appropriato se l'eccezione è di tipo HttpException o 
+La risposta inviata al client dall'exception filter è user-friendly e contiene un messaggio appropriato, solo se l'eccezione è di tipo HttpException o 
 una sua sottoclasse. 
-\\\\
-Altrimenti viene risposto al client con un messaggio "internal server error" e status code 500.
+Altrimenti viene inviata una risposta al client con un messaggio "internal server error" e status code 500.
 \\\\
 Possono capitare eccezioni anche durante l'esecuzione di query tramite TypeORM. Essendo TypeORM una libreria
-esterna nessuna eccezione da lei lanciata viene catturata dal livello descritto sopra di NestJS.
+esterna, nessuna eccezione da lei lanciata viene catturata dal livello descritto sopra di NestJS.
 \\\\
-Per evitare di interrompere l'esecuzione del programma in eccezioni non presenti in NestJS si è deciso di 
+Per evitare di interrompere l'esecuzione del programma al lancio di eccezioni non catturabili dall'exception filter di NestJS,
+ si è deciso di 
 sovrascrivere l'exception filter globale fornito da NestJS con uno custom e di creare un set di eccezioni
-custom che vengono lanciate per problemi di persistenza nella business logic.
+custom che vengono lanciate per problemi collegati al servizio di persistenza.
 \\\\
 Questo exception filter è stato chiamato TypeOrmExceptionFilter e implementa l'interfaccia ExceptionFilter di
 NestJS. 
 \\
 TypeOrmExceptionFilter simula il comportamento dell'exception filter di NestJS catturando qualsiasi
-tipo di errore, rispondendo con "internal server error" e status code 500 in caso l'eccezione non sia riconosciuta
-e in più funziona anche se si verificano eccezioni da librerie esterne; garantendo un buon livello di resilienza
+tipo di eccezione, rispondendo con "internal server error" e status code 500 in caso l'eccezione non sia riconosciuta.
+Inoltre funziona anche se si verificano eccezioni da librerie esterne; garantendo un buon livello di resilienza
 del programma. 
 \\\\
-Se le eccezioni sono dei tipi custom per TypeORM, lo status code e il messaggio viene vengono inviati in maniera
+Se l'eccezione lanciata è quella custom, definita per i problemi del servizio di persistenza, lo status code e il messaggio 
+vengono inviati in maniera
 appropriata all'utente finale.
 \\\\
-Altri tipi di eccezione di TypeORM di tipo QueryFailedError, vengono analizzati in base al codice di errore; 
-lo status code e il messaggio anche in questo caso vengono inviati in maniera appropriata al client.
-Ad esempio un eccezione di tipo QueryFailedError con codice errore 23505 indica un confitto nel database, quindi
+Eccezioni di TypeORM di tipo QueryFailedError, vengono analizzate in base al loro codice di errore; 
+lo status code e il messaggio anche in questo caso vengono inviati in maniera appropriata all'utente finale.
+Un esempio di eccezione di tipo QueryFailedError con codice errore 23505, indica un confitto nel database, quindi
 viene inviata una risposta al client con status code 409 e messaggio "database error on unique constraint".
 \\\\
 Avere un exception filter permette di spostare la responsabilità della gestione delle eccezioni in un livello
@@ -506,13 +518,14 @@ Senza un exception filter dovrebbero essere i controller a gestire le eccezioni 
 in base al tipo di eccezione ricevuta dal service (che ha usufruito del metodo del repository che ha lanciato
 l'eccezione).
 \\\\
-In questo modo però si creano controller di grandi dimensioni rendendo meno pulito il codice e più difficile
+In questo modo però si creano controller di grandi dimensioni rendendo il codice meno pulito e più difficile
 da manutenere. Inoltre questo approccio non garantisce che tutti i controller gestiscano la stessa eccezione
 allo stesso modo. 
 \\
-Ad esempio sviluppatori diversi potrebbero gestire in maniera diversa la stessa eccezione (messaggio di errore diverso,
-più messaggi di errore, numero e tipo di parametri di risposta diversi ecc..)
-generando confusione per il cliente finale.
+Ad esempio sviluppatori diversi potrebbero gestire in maniera diversa la stessa eccezione (ad esempio rispondendo
+all'utente finale con un messaggio di errore diverso,
+più messaggi di errore, inserendo un numero e tipo di parametri di risposta diversi ecc..)
+generando confusione per l'utente finale.
 \\\\
 Le eccezioni custom per TypeORM individuate sono le seguenti:
 \begin{itemize}

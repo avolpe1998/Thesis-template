@@ -85,15 +85,19 @@ Il modello logico ristrutturato è il seguente:
 \\\\
 Operazioni effettuate
 \\\\
+Nomi tabelle incoerenti
+\\\\
 Sono stati modificati i nomi di alcune tabelle per renderle più coerenti alla loro funzionalità:
 \\\\
 parking\_area è stata modificata in parking\_spots.
 \\
 sensors\_maintainer è stata modificata in sensors\_maintenance.
 \\\\
+Duplicazione di dati
+\\\\
 E' stata eliminata la tabella parking\_area\_stats.
 \\\\
-Sono state modificate le cardinalità di alcune relazioni:
+Cardinalità delle relazioni errata:
 \\\\
 La relazione sensors -> parking\_area è diventata una relazione molti a molti.
 \\
@@ -103,8 +107,12 @@ E' stato reso facoltativo il fatto che il manutentore debba essere associato a u
 \\
 E' stato reso facoltativo il fatto che il sensore debba essere associato a un manutentore.
 \\\\
+Mancanza di tabelle fondamentali
+\\\\
 E' stata aggiunta la tabella parking\_areas che rappresenta i parcheggi, dotati di indirizzo, latitudine e 
 longitudine.
+\\\\
+Database poco modulare
 \\\\
 E' stata creata la tabella parking\_sensors per salvare la misurazione del sensore di parcheggio ed è
 stato tolto il campo value dalla nuova tabella parking\_spots; in quanto avendo la tabella parking\_sensors,
