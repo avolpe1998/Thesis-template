@@ -5,7 +5,7 @@
 BUILD_DIR="build"
 
 # Thesis root .tex file name
-THESIS="tesi"
+THESIS="Volpe_Andrea"
 
 loadParams() {
   GLOSSARY=true
