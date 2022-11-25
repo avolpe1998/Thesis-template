@@ -19,6 +19,7 @@ il progetto dovesse crescere fino al punto in cui risulti difficile manutenerlo 
 migrarlo a un'architettura a microservizi.
 
 % ref: https://cs.uwaterloo.ca/~m2nagapp/courses/CS446/1195/Arch_Design_Activity/Layered.pdf
+
 \subsection{Layered architecture}
 La layered architecture è uno degli stili architetturali più utilizzati al giorno d'oggi. L'idea che sta dietro a
 questo tipo di architettura è organizzare i moduli o i componenti con funzionalità simili
@@ -26,9 +27,10 @@ in livelli orizzontali. Di conseguenza ogni livello svolge un ruolo specifico ne
 \\
 La layered architecture non ha restrizioni sul numero di strati che l'applicazione può avere, in quanto 
 lo scopo è avere livelli che promuovano il concetto di separazione delle responsabilità.
-\begin{figure}[!h]
+
+\begin{figure}[H]
     \centering
-    \includegraphics[height=6cm]{layered-architecture}
+    \includegraphics[height=5cm]{layered-architecture}
 \end{figure}
 \leavevmode\newline
 Solitamente ogni livello comunica solo con il livello sottostante. Il connettore tra ogni livello può 
@@ -86,7 +88,7 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
 \section{Struttura software}
 E' stato scelto NestJS come framework di sviluppo del progetto dato che utilizza la layered architecture,
 tramite il pattern controller-service-repository. Vediamo questo design pattern:
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[height=6cm]{controller-service-repository-pattern}
 \end{figure}
@@ -744,9 +746,9 @@ di attendere che il back-end venga realizzato per sviluppare la parte di front-e
 Le REST API, suddivise per dominio di appartenenza, sono le seguenti:
 % //TODO: valutare se inserire anche i codici di errore
 \\\\
-Parcheggio
+\textbf{Parcheggio}
 \\
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
     \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
@@ -763,11 +765,11 @@ Parcheggio
     \hline
     \end{tabular}
 \end{table}
+\clearpage
 \leavevmode\newline
+\textbf{Manutentore}
 \\
-Manutentore
-\\
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
     \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
@@ -785,10 +787,9 @@ Manutentore
     \end{tabular}
 \end{table}
 \leavevmode\newline
+\textbf{Sensore}
 \\
-Sensore
-\\
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
     \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
@@ -811,10 +812,9 @@ Sensore
     \end{tabular}
 \end{table}
 \leavevmode\newline
+\textbf{Piazzola}
 \\
-Piazzola
-\\
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
     \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
@@ -834,11 +834,11 @@ Piazzola
     \hline
     \end{tabular}
 \end{table}
+\clearpage
 \leavevmode\newline
+\textbf{Misurazione sensore di parcheggio}
 \\
-Misurazione sensore di parcheggio
-\\
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
     \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 

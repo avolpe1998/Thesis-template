@@ -72,14 +72,13 @@ ad esempio),
 genera la produzione di molte 
 chiamate http da parte del back-end per accedere al contenuto del file XML e molti accessi al database in caso ci siano dati da 
 inserire/aggiornare.
-\\\\
+\clearpage
+\leavevmode\newline
 Vediamo un esempio pratico con una tabella che mostra il costo di chiamate e accessi al database giornalieri al variare 
 dell'intervallo di tempo del polling:
-\\
 % //TODO: aumentare altezza celle tabelle
 % //TODO: aggiungere caption immagini
-% //TODO: ridimensionare immagini
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{2.85cm}|p{3.05cm}|p{3.05cm}|p{3.35cm}|} 
     \hline
     \textbf{Polling} & \textbf{\# chiamate http}  & \textbf{\# accessi lettura} & \textbf{\# accessi scrittura} \\ 
@@ -101,7 +100,6 @@ dell'intervallo di tempo del polling:
     \end{tabular}
 \end{table}
 \leavevmode\newline
-\\
 Per calcolare il numero medio di accessi al database è stata ipotizzata la presenza di 1000 sensori a sistema e che 
 ogni cinque minuti la metà dei sensori abbiano bisogno di un aggiornamento (quindi 100 sensori devono essere 
 acceduti in scrittura ad ogni minuto). 
@@ -215,7 +213,7 @@ Definite le entità di dominio si è proceduto con la creazione dei casi d'uso.
 Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio di appartenenza.
 \\\\
 % parcheggio
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/parking-area}
 \end{figure}
@@ -289,11 +287,11 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
     \item l'utente richiede l'eliminazione di un parcheggio.
     \item l'utente elimina un parcheggio.
 \end{enumerate}
-
+\clearpage
 % manutentore
 \leavevmode\newline
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/maintainer}
 \end{figure}
@@ -366,10 +364,10 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
     \item l'utente richiede l'eliminazione di un manutentore.
     \item l'utente elimina un manutentore.
 \end{enumerate}
-
+\clearpage
 % sensore
 \leavevmode\newline
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/sensor}
 \end{figure}
@@ -431,7 +429,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 
 % piazzola
 \leavevmode\newline
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/parking-spot}
 \end{figure}
@@ -507,9 +505,9 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 
 % misurazione
 \leavevmode\newline
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
-    \includegraphics[height=9cm]{usecase/parking-sensor}
+    \includegraphics[height=3cm]{usecase/parking-sensor}
 \end{figure}
 \textbf{UC20 - Ottenimento ultima misurazione di un sensore di parcheggio}
 \\\\
@@ -558,8 +556,8 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 % //TODO: inserire casi d'uso sensors-scraping
 % //TODO: inserire requisiti funzionali sensors-scraping
 % parcheggio
-\leavevmode\newline
-\begin{table}
+\leavevmode
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -578,8 +576,8 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 \end{table}
 
 % manutentore
-\leavevmode\newline
-\begin{table}
+
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -598,8 +596,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 \end{table}
 
 % sensore
-\leavevmode\newline
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -614,10 +611,9 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \hline
     \end{tabular}
 \end{table}
-
+\clearpage
 % piazzola
-\leavevmode\newline
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -636,8 +632,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 \end{table}
 
 % misurazione
-\leavevmode\newline
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -648,8 +643,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
 \end{table}
 
 % requisiti di qualità
-\leavevmode\newline
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
@@ -665,10 +659,9 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \hline
     \end{tabular}
 \end{table}
-
+\clearpage
 % requisiti di vincolo
-\leavevmode\newline
-\begin{table}
+\begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
