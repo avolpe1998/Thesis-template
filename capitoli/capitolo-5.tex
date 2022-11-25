@@ -6,43 +6,59 @@
 \chapter{Verifica e validazione}
 \label{cap:verifica-e-validazione}
 %**************************************************************
+\intro{In questo capitolo viene descritta la fase di verifica e validazione realizzata durante il progetto.}
 
 \section{Verifica}
 \subsection{Criteri di verifica}
 E' stato stabilito con il proponente che il prodotto finale dovesse avere 
-una suite di test automatici per testare la business logic del progetto
+una suite di test automatici per testare la business logic del progetto,
 con una copertura a livello di branch stabilita >= al 90\% e una copertura
 a livello linee di codice >= al 60\%.
 \\\\
 La motivazione che ha portato a richiedere una copertura così alta a livello
 branch è dovuta al fatto che si vuole assicurare il corretto funzionamento di 
-tutti i possibili casi di errore anche in caso di futura manutenzione del software.
+tutti i possibili casi di errore, anche in caso di futura manutenzione del software.
+\\\\
+Con casi di errore sono intesi tutti quei comportamenti inaspettati che si possono verificare
+durante l'esecuzione di un pezzo del programma. Ad esempio l'errore che viene generato quando 
+si vuole modificare un parcheggio ma l'operazione non può essere fatta perché l'id del
+parcheggio passato non esiste.
 \\\\
 E' inoltre importante che sia mantenuta la coerenza stabilita per i casi di errore e
 nel caso alcuni branch non fossero coperti da casi di test, uno sviluppatore potrebbe
 inconsciamente modificare il comportamento del programma in caso di un errore, generando
-un comportamento inaspettato del programma per l'utente finale. 
+un comportamento inaspettato per l'utente finale. Ad esempio potrebbe eliminare per sbaglio
+il lancio dell'eccezione NotFoundError in caso l'id del parcheggio passato non esista.
 \\\\
-E' molto importante per la proponente che questa cosa non succeda e quindi è stata richiesta
+Senza questo controllo, nel caso venga passato un id inesistente, il programma invece
+di ritornare uno status code 404 (NOT FOUND), ritornerebbe lo status code 200 con corpo
+della risposta vuoto, in quanto la query non avendo trovato l'id richiesto, semplicemente non
+ritorna nulla ma questo tipo di risposta non è coerente con la pianificazione effettuata
+e quindi genera un programma poco solido.
+\\\\
+E' molto importante per il proponente che questa cosa non succeda e quindi è stata richiesta
 una copertura a livello branch >= al 90\%.
 
 \subsection{Strumenti utilizzati}
-NestJS fornisce al suo interno uno strumento per scrivere vari tipi di test, tra cui unit test, 
+NestJS fornisce uno strumento built-in per scrivere vari tipi di test, tra cui unit test, 
 end to end test, integration test e così via. 
 \\\\
 Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
-il mock dei componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
+il mock delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
 Angular, Vue.
 \\\\
 I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
 a testare e devono terminare in .spec.ts se vogliamo che vengano visti da NestJS ed eseguiti.
 \\\\
 Ogni caso di test deve essere racchiuso all'interno della dicitura describe, specificando nome della
-classe che si va a testare e una funzione di callback contenente i test per i vari metodi.
+classe che si va a testare e una funzione di callback contenente i test per i vari metodi di quella classe.
 \\
-A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe che deve
-contenere il nome del metodo e una funzione callback contenente tutti i test su quel metodo.
+A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe, che deve
+contenere il nome del metodo da testare e una funzione callback contenente tutti i test su quel metodo.
 \\
+Ogni test va scritto all'interno della dicitura it, che richiede il nome del test e una funzione callback
+contenente il caso di test.
+\\\\
 \begin{lstlisting}
 describe('MaintainersRegistryService', () => {
   describe('getMaintainerById', () => {
@@ -67,22 +83,23 @@ describe('MaintainersRegistryService', () => {
 \end{lstlisting}
 
 \subsection{Progettazione}
-Per i criteri di verifica stabiliti con la proponente si è deciso di testare tutti i metodi dei service che
-avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore
+Per i criteri di verifica stabiliti con il proponente si è deciso di testare tutti i metodi dei service che
+avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore,
 dato che i metodi con un solo branch (solitamente metodi di get delle informazioni di un'entità) in caso 
-di errore non contengono logica di business per lanciare errori custom ma al massimo lanciano eccezioni
-TypeORM o NestJS catturate dall'exception filter che conforma la risposta per il client.
+di errore, avendo solo un branch, non hanno delle ramificazioni per gestirlo in modo custom ma 
+semplicemente non catturano l'eccezione (lanciata da TypeORM o NestJS) che viene rilanciata al chiamante 
+e poi eventualmente catturata dall'exception filter che conforma la risposta per il client.
 \\\\
-Scrivendo dei test che vanno a controllare i metodo con più branch si assicura che:
+Scrivendo dei test automatici che vanno a testare i metodi con più di un branch si assicura che:
 \begin{itemize}
     \item ogni branch può essere raggiunto
-    \item ogni branch si comporta come aspettato
-    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore (id passato non trovato, 
+    \item ogni branch si comporta nel modo atteso
+    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore gestiti in maniera custom (id passato non trovato, 
     aggiornamento non riuscito ecc..) non vengano eliminati e si assicura il mantenimento della loro
-    conformità con quanto stabilito con la proponente. 
+    conformità con quanto stabilito con il proponente. 
     \\
-    Ad esempio si assicura che venga mantenuto il controllo che in caso di errore di aggiornamento di un'entità
-    venga lanciata, dal service, un eccezione di tipo UpdateError.
+    Ad esempio si assicura che venga mantenuto il controllo in caso di errore di aggiornamento di un'entità e
+    venga lanciata dal service un eccezione di tipo UpdateError.
 \end{itemize}
 \leavevmode\newline
 Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei mock per tutte le dipendenze
@@ -95,19 +112,19 @@ Le componenti fittizie sono molto più piccole delle componenti originali e impl
 necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
 \\\\
 Jest fornisce dei metodi molto utili per creare il mock di un metodo di una classe e sovrascriverne il comportamento.
-Tramite il metodo spyOn infatti si va a specificare l'oggetto e il suo metodo di cui si vuole effettuare il mock.
+Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il mock.
 \\\\
 Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il mock dei loro metodi, è stata
 usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
-il mock e restituisce un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
+il mock e viene restituito un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
 dei metodi vuoto, 
-alleggerendo quindi notevolmente il peso della componente.
+alleggerendo notevolmente il peso della componente.
 \\\\
-Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test tramite il metodo
+Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test, tramite il metodo
 spyOn, come descritto in precedenza.
 
 \subsection{Realizzazione}
-Come risultato di quanto progettato sono stata creata una suite di 16 casi di test, per un totale di 59 unit test.
+Come risultato di quanto progettato sono stata creata una suite di 8 test, per un totale di 40 unit test.
 \\
 \begin{table}
     \begin{tabular}{|p{5cm}|p{1.4cm}|p{1.5cm}|p{1.4cm}| p{1.4cm} |} 
@@ -132,3 +149,5 @@ Come risultato di quanto progettato sono stata creata una suite di 16 casi di te
     \hline
     \end{tabular}
 \end{table}
+
+% //TODO: inserire fase di validazione
