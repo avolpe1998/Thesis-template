@@ -537,13 +537,14 @@ Le eccezioni custom per TypeORM individuate sono le seguenti:
 \leavevmode\newline
 
 \subsection{Scheduler}
-Si è deciso di implementare il polling dei dati del sensore dal file XML online
-tramite la libreria @nestjs/schedule che integra il package cron di Node.js.
+Come spiegato nel capitolo di analisi dei requisiti, si è deciso di implementare il servizio di polling dei dati
+dei sensori con un intervallo di tempo pari a due minuti. Per fare questa cosa utilizzo 
+la libreria @nestjs/schedule che integra il package cron di Node.js.
 \\\\
 Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
 di una classe ad intervalli di tempo regolari.
 \\\\
-Per fare ciò bisogna importare nel modulo root, il modulo della libreria schedule in questo modo:
+Per poter usare la libreria bisogna importare, nel modulo root dell'applicazione, il modulo della libreria schedule in questo modo:
 \begin{lstlisting}
 @Module({
   imports: [
@@ -553,32 +554,35 @@ Per fare ciò bisogna importare nel modulo root, il modulo della libreria schedu
 export class AppModule {}
 \end{lstlisting}
 \leavevmode\newline
-Successivamente abbiamo a disposizione un decorator @Cron, da indicare sopra al metodo che vogliamo venga 
+Avendo importato la libreria abbiamo a disposizione un decorator @Cron, da specificare sopra al metodo che vogliamo venga 
 schedulato. 
 \\\\
-Come parametro del @Cron dobbiamo inserire la stringa, rispettando il cron pattern, che indica
+Come parametro del @Cron dobbiamo inserire una stringa contenente un cron pattern, con
 l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
 \\\\
-Nel nostro caso vogliamo eseguirlo ogni due minuti quindi gli passiamo la stringa "*/2 * * * *".
+Nel nostro caso vogliamo eseguirlo ogni due minuti, quindi gli passiamo la stringa "*/2 * * * *".
+\\\\
+In particolare, il metodo da schedulare è il metodo all'interno del service SensorsScrapingService, che si occupa
+di effettuare il polling, la persistenza dei dati dei sensori di parcheggio e delle misurazioni dei sensori di parcheggio.
 
 \subsection{Logging}
-Il logging in un'applicazione è un processo fondamentale che serve a salvare gli eventi che accadono durante
+Il logging in un'applicazione è un processo fondamentale, che serve a salvare gli eventi che accadono durante
 la sua esecuzione.
 \\\\
-Con queste informazioni in mano, gli sviluppatori possono accorgersi di potenziali attacchi o analizzare gli
+Grazie al logging, gli sviluppatori possono accorgersi di potenziali attacchi o analizzare gli
 errori prima che questi interrompano i flussi di lavoro aziendali.
 \\\\
 Il logging viene effettuato salvando su un file (solitamente con estensione .log) le informazioni rilevanti
-accadute in un particolare evento di cui si è deciso di effettuare il logging, come la richiesta da parte
+accadute in un particolare evento che si è deciso di loggare, come la richiesta da parte
 dell'utente finale di un servizio dell'applicazione.
 \\\\
 Solitamente questi file di log diventano molto grandi, quindi possono aver bisogno di un server dedicato per 
-memorizzarli.
+persisterli.
 \\\\
 Per questo progetto è stato deciso di fare il logging di tutte le richieste alle REST API da parte dell'utente
 finale e tutte le volte che viene eseguito il servizio di polling schedulato.
 \\
-In particolare per le richieste alle REST API dell'utente finale si vuole effettuare il logging delle seguenti 
+In particolare, per le richieste alle REST API dell'utente finale, si vuole effettuare il logging delle seguenti 
 informazioni:
 \begin{itemize}
     \item metodo della richiesta (GET, POST, PUT, DELETE);
@@ -591,26 +595,25 @@ informazioni:
     \item timestamp della richiesta;
 \end{itemize}
 \leavevmode\newline
-Per il servizio di polling si vogliono salvare le seguenti informazioni:
+Per il servizio di polling si vuole effettuare il logging delle seguenti informazioni:
 \begin{itemize}
     \item timestamp del momento di avvio del polling;
     \item timestamp del momento di fine del polling;
 \end{itemize}
 \leavevmode\newline
-
-NestJS integra al suo interno una semplice classe logger che è possibile usare per effettuare il logging 
+NestJS ha una classe built-in, chiamata Logger, che è possibile usare per effettuare il logging 
 dell'applicazione. 
 \\\\
-Questa classe permette solo di effettuare operazioni basilari e come descritto nella 
-guida ufficiale, per effettuare operazioni più complesse come il salvataggio delle informazioni di 
-logging su file è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
+Questa classe però permette solo di effettuare operazioni basilari e come spiegato nella 
+guida ufficiale, per effettuare operazioni più complesse, come il salvataggio delle informazioni di 
+logging su file, è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
 Winston.
 \\\\
-Con Winston è possibile definire l'output dei nostri log (nel nostro caso un file .log in una directory logs nel
+Con Winston è possibile definire la destinazione di output dei nostri log (nel nostro caso un file .log in una directory logs nel
 progetto) e la formattazione nel testo (nel nostro caso abbiamo usato una funzionalità di Winston che permette
 di usare la stessa formattazione dei log di NestJS).
 \\\\
-Esistono vari livelli di informazioni di cui si può effettuare il logging tramite winston. Il livello del log 
+Le informazioni di cui si può effettuare il logging tramite Winston, assumono diversi livelli. Il livello del log 
 indica la sua importanza:
 \begin{itemize}
     \item error: log critico, qualcosa nell'applicazione non ha funzionato correttamente e
@@ -619,18 +622,19 @@ indica la sua importanza:
     \item info: log di informazione, è successo un evento all'interno dell'applicazione;
 \end{itemize}
 \leavevmode\newline
-Esistono poi altri livelli di log che non sono stati però usti nel progetto, quindi si è deciso di non elencarli.
+Esistono poi altri livelli di log che non sono stati però usati in questo progetto, quindi si è deciso di non specificarli.
 \\\\
-Winston permette di scegliere a che livello registrare i log, per questo progetto è stato effettuato il logging
+Winston permette di scegliere quali sono i livelli di informazione che vogliamo loggare, per questo progetto è stato effettuato il logging
 a livello error e info.
 \\\\
-Le richieste dell'utente finale e il servizio di polling sono stati loggati come livello info.
+Le informazioni riguardanti le richieste dell'utente finale e il servizio di polling, sono stati loggate a livello info.
 \\\\
-E' stato implementato un middleware LoggerMiddleware per intercettare tutte le richieste dell'utente finale, prima che 
-vengano passate ai controller e salvarne i log.
+Per loggare le richieste dell'utente finale è stato implementato un middleware LoggerMiddleware che intercetta tutte le 
+richieste dell'utente finale prima che 
+vengano passate ai controller e salva in delle variabili interne le informazioni sulla richiesta.
 \\\\
-Per avere anche lo status code della risposta inviata all'utente finale dal controller, il LoggerMiddleware, imposta un 
-listener sull'evento close del'oggetto response. In questo modo il log viene scritto solo quando il controller ha terminato di
+Per avere nel log, anche lo status code della risposta inviata all'utente finale dal controller, il LoggerMiddleware imposta un 
+listener sull'evento close dell'oggetto response. In questo modo il log viene scritto solo quando il controller ha terminato di
 gestire la richiesta e abbiamo tutti i dati a disposizione per poterla loggare.
 % ref: https://www.loggly.com/use-cases/application-logging-best-practices/
 
@@ -662,7 +666,7 @@ export class LoggerMiddleware implements NestMiddleware {
 \end{lstlisting}
 
 \section{Servizio di polling}
-Sono state proposte due varianti in cui sviluppare il servizio di polling. Queste due varianti riguardano il
+Sono state proposte due varianti per sviluppare il servizio di polling. Queste due varianti riguardano il
 modo in cui il servizio SensorsScrapingService, che si occupa di effettuare il polling dei dati dei sensori
 da un file XML online, debba comunicare col servizio di persistenza.
 \\\\
@@ -670,18 +674,19 @@ Le due varianti:
 \begin{enumerate}
     \item Far comunicare il SensorsScrapingService col servizio di persistenza effettuando delle chiamate http 
         alle REST API di cui ha bisogno.
-    \item Far comunicare il SensorsScrapingService direttamente col livello di servizio dei sensori e dei parcheggi.
+    \item Far comunicare il SensorsScrapingService direttamente col livello di servizio dei sensori e delle misurazioni 
+    dei sensori di parcheggio.
 \end{enumerate}
 \leavevmode\newline
-
-E' stato scelto il punto 2. Vediamo le motivazioni che hanno portato a effettuare questa scelta, analizzando pro e 
+E' stato scelto di implementare il punto 2. Vediamo le motivazioni che hanno portato a effettuare questa scelta, analizzando pro e 
 contro dei due rispettivi punti.
 \\\\
 Pro del punto 1
 \begin{itemize}
-    \item Far comunicare il SensorsScrapingService con un servizio il servizio di REST API, separa bene le responsabilità e 
-        nel caso di migrazione a un applicazione basata su microservizi, il microservizi non deve cambiare il modo in cui interagisce
-        con il servizio di persistenza, in quanto continua a chiamare le stesse REST API tramite il protocollo http.
+    \item Far comunicare il SensorsScrapingService con un servizio di REST API, separa bene le responsabilità e 
+        nel caso di migrazione a un applicazione basata su microservizi, il microservizio dedicato al polling dei sensori 
+        non deve cambiare il modo in cui interagisce
+        con il servizio di persistenza, in quanto continua a chiamare le stesse REST API tramite il protocollo HTTP.
 \end{itemize}
 \leavevmode\newline
 Contro del punto 1
@@ -692,29 +697,48 @@ Contro del punto 1
         Quindi come minimo deve effettuare 720 chiamate http giornaliere anche alle REST API, per verificare se ci sono sensori
         da aggiornare. 
         \\
-        Nella pratica le chiamate http da fare sono di più poiché dopo aver verificato se ci sono sensori da aggiornare ed
-        eventualmente aggiornarli, bisogna fare un'altra chiamata http alle REST API per verificare se ci sono anche misurazioni dei sensori
+        Nella pratica le chiamate http da fare sono di più, poiché dopo aver verificato se ci sono sensori da aggiornare ed
+        eventualmente aggiornati, bisogna fare un'altra chiamata http alle REST API per verificare se ci sono anche misurazioni dei sensori
         da aggiornare ed eventualmente aggiornarle. 
-        \\
-        Questo poiché grazie al DTO i dati dei sensori e delle misurazioni dei sensori vengono suddivisi in due entità diverse e quindi 
-        le chiamate http alle REST API da fare sono diverse, in quanto sensori e misurazioni dei sensori appartengono a domini diversi, quindi
-        hanno diverse REST API dedicate.
         \\
         Il che porta il numero di chiamate http da effettuare al servizio di REST API, pari ad un minimo di 1440 giornaliere.
 \end{itemize}
-
 \leavevmode\newline
+Pro del punto 2
+\begin{itemize}
+    \item Far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e delle misurazioni dei sensori di parcheggio
+        riduce notevolmente i costi in termini di carico dell'applicazione, in quanto per persistere i dati è sufficiente chiamare un
+        metodo del servizio da cui si dipende, senza dover fare chiamate HTTP che sono molto costose. 
+\end{itemize}
+\leavevmode\newline
+Contro del punto 2
+\begin{itemize}
+    \item Nel caso di migrazione a un'applicazione basata su microservizi bisogna modificare il modo in cui il SensorsScrapingService 
+        persiste i dati dei sensori
+        e delle misurazioni dei sensori di parcheggio. Probabilmente bisogna passare a effettuare chiamate HTTP al servizio di REST API(come il punto 1),
+        in quanto il servizio di polling diventerà un microservizio indipendente, quindi non saranno più a lui visibili il servizio dei 
+        sensori e delle misurazioni di parcheggio.
+    \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile per il
+        concetto di separazione delle responsabilità.
+\end{itemize}
+\leavevmode\newline
+Si è optato per il punto 2, in quanto questo è un progetto nato con lo scopo di fare un'analisi comparativa con un altro progetto esistente
+e quindi per non avere differenze prestazionali si è implementato il servizio usando la variante più simile al modo in cui il 
+servizio di polling è implementato nell'altro progetto. Inoltre è vero che è bene evitare le dipendenze tra servizi per ridurre
+l'accoppiamento tra le componenti e separare le responsabilità ma molto spesso non è possibile farlo e capita frequentemente
+di avere dipendenze tra loro.
+
 \section{REST API}
-Tramite lo strumento Stoplight sono state progettate 22 REST API. Stoplight light è uno strumento molto buono realizzato
+Tramite lo strumento Stoplight sono state progettate 17 REST API. Stoplight light è uno strumento molto buono realizzato
 appositamente per progettare REST API.
 \\\\
-Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle api da utilizzare.
+Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle API da utilizzare.
 \\\\
-Stoplight permette di definire l'end point dell'api, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
-eventuale corpo della richiesta da fornire, eventuale corpo della risposta, status code delle varie risposte e altre informazioni
-utili a chi deve sviluppare le api o all'utente finale che deve effettuare le richieste.
+Stoplight permette di definire l'specificare dell'API, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
+eventuale corpo della richiesta, eventuale corpo della risposta, status code della risposta e altre informazioni
+utili a chi deve sviluppare le API o all'utente finale che deve effettuare le richieste.
 \\\\
-Definita un'api su Stoplight è possibile generare il mock della risposta, in questo modo gli sviluppatori front-end non hanno bisogno
+Progettata un'API su Stoplight è possibile generare il mock della risposta, in questo modo gli sviluppatori front-end non hanno bisogno
 di attendere che il back-end venga realizzato per sviluppare la parte di front-end.
 \\\\
 Le REST API, suddivise per dominio di appartenenza, sono le seguenti:
@@ -723,9 +747,9 @@ Le REST API, suddivise per dominio di appartenenza, sono le seguenti:
 Parcheggio
 \\
 \begin{table}
-    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
-    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
     \hline
     /parking-areas & GET & 200 & Restituisce tutti i parcheggi \\ 
     \hline
@@ -744,9 +768,9 @@ Parcheggio
 Manutentore
 \\
 \begin{table}
-    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
-    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
     \hline
     /maintainers & GET & 200 & Restituisce tutti i manutentori \\ 
     \hline
@@ -765,9 +789,9 @@ Manutentore
 Sensore
 \\
 \begin{table}
-    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
-    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
     \hline
     /sensors & GET & 200 & Restituisce tutti i sensori \\ 
     \hline
@@ -791,9 +815,9 @@ Sensore
 Piazzola
 \\
 \begin{table}
-    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
-    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
     \hline
     /parking-areas/\{id\}/parking-spots & GET & 200 & Restituisce tutte le piazzole del parcheggio con l'id 
     richiesto \\ 
@@ -815,9 +839,9 @@ Piazzola
 Misurazione sensore di parcheggio
 \\
 \begin{table}
-    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.3cm}|p{5.8cm}|} 
+    \begin{tabular}{|p{3.2cm}|p{1.4cm}|p{1.4cm}|p{5.8cm}|} 
     \hline
-    Endpoint & Metodo & Codice risposta & Descrizione \\ 
+    \textbf{Endpoint} & \textbf{Metodo} & \textbf{Codice risposta} & \textbf{Descrizione} \\ 
     \hline
     /sensors/{id}/parking-sensors & GET & 200 & Restituisce tutte le misurazioni del sensore di parcheggio con l'id 
     richiesto (ogni sensore di parcheggio ha solo una misurazione: l'ultima effettuata) \\ 
