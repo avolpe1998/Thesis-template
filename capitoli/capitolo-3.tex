@@ -34,6 +34,7 @@ lo scopo è avere livelli che promuovano il concetto di separazione delle respon
 \begin{figure}[H]
     \centering
     \includegraphics[height=5cm]{layered-architecture}
+    \caption{Layered architecture}
 \end{figure}
 \leavevmode\newline
 Solitamente ogni livello comunica solo con il livello sottostante. Il connettore tra ogni livello può 
@@ -94,6 +95,7 @@ tramite il pattern controller-service-repository. Vediamo questo design pattern:
 \begin{figure}[H]
     \centering
     \includegraphics[height=6cm]{controller-service-repository-pattern}
+    \caption{Controller-service-repository pattern}
 \end{figure}
 \leavevmode\newline
 Il controller-service-repository pattern suddivide i componenti dell'applicazione su tre livelli fondamentali:
@@ -766,6 +768,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     /parking-areas/\{id\} & DELETE & 204 & Elimina il parcheggio con l'id richiesto \\ 
     \hline
     \end{tabular}
+    \caption{API REST parcheggio}
 \end{table}
 \clearpage
 \leavevmode\newline
@@ -787,6 +790,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     /maintainers/\{id\} & DELETE & 204 & Elimina il manutentore con l'id richiesto \\ 
     \hline
     \end{tabular}
+    \caption{API REST manutentore}
 \end{table}
 \leavevmode\newline
 \textbf{Sensore}
@@ -812,6 +816,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     /parking-spots/\{id\}/sensors & GET & 200 & Restituisce tutti i sensori della piazzola con l'id richiesto \\ 
     \hline
     \end{tabular}
+    \caption{API REST sensore}
 \end{table}
 \leavevmode\newline
 \textbf{Piazzola}
@@ -835,6 +840,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     richiesto \\ 
     \hline
     \end{tabular}
+    \caption{API REST piazzola}
 \end{table}
 \clearpage
 \leavevmode\newline
@@ -849,4 +855,5 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     richiesto (ogni sensore di parcheggio ha solo una misurazione: l'ultima effettuata) \\ 
     \hline
     \end{tabular}
+    \caption{API REST misurazione sensore di parcheggio}
 \end{table}

@@ -96,7 +96,7 @@ inserire/aggiornare.
 \leavevmode\newline
 Vediamo un esempio pratico con una tabella che mostra il costo di chiamate e accessi al database giornalieri al variare 
 dell'intervallo di tempo del polling:
-% //TODO: aggiungere caption immagini
+
 \renewcommand{\arraystretch}{1.5}
 \begin{table}[H]
     \begin{tabular}{|p{2.85cm}|p{3.05cm}|p{3.05cm}|p{3.35cm}|} 
@@ -118,6 +118,7 @@ dell'intervallo di tempo del polling:
     1 millisecondo & 864 * $10^5$ & 864 * $10^8$ & 1440 * $10^2$ \\
     \hline
     \end{tabular}
+    \caption{Costi giornalieri di chiamate http e accessi al database}
 \end{table}
 \leavevmode\newline
 Per calcolare il numero medio di accessi al database è stata ipotizzata la presenza di 1000 sensori a sistema e che 
@@ -236,6 +237,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/parking-area}
+    \caption{Casi d'uso parcheggio}
 \end{figure}
 \leavevmode\newline
 \textbf{UC1 - Ottenimento lista di tutti i parcheggi}
@@ -314,6 +316,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/maintainer}
+    \caption{Casi d'uso manutentore}
 \end{figure}
 \textbf{UC6 - Ottenimento lista di tutti i manutentori}
 \\\\
@@ -390,6 +393,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/sensor}
+    \caption{Casi d'uso sensore}
 \end{figure}
 \textbf{UC11 - Ottenimento lista di tutti i sensori}
 \\\\
@@ -452,6 +456,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{usecase/parking-spot}
+    \caption{Casi d'uso piazzola}
 \end{figure}
 \textbf{UC15 - Ottenimento lista di tutte le piazzole di un parcheggio}
 \\\\
@@ -528,6 +533,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \begin{figure}[H]
     \centering
     \includegraphics[height=3cm]{usecase/parking-sensor}
+    \caption{Casi d'uso misurazione sensore di parcheggio}
 \end{figure}
 \textbf{UC20 - Ottenimento ultima misurazione di un sensore di parcheggio}
 \\\\
@@ -545,18 +551,61 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 
 % polling sensore
 \leavevmode\newline
-\textbf{UC21 - Ottenimento lista di tutte le piazzole di un parcheggio}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=4.5cm]{usecase/sensor-scraping}
+    \caption{Casi d'uso polling sensore}
+\end{figure}
+\textbf{UC21 - Ottenimento dati sensori da file XML}
 \\\\
-\textbf{Attori primari:} utente non autenticato.
+\textbf{Attori primari:} sistema.
 \\
-\textbf{Precondizioni:} l'utente è in possesso degli strumenti per poter effettuare la richiesta al sistema.
+\textbf{Attori secondari:} timer.
 \\
-\textbf{Post-condizioni:} l'utente ha ottenuto una lista di tutte le piazzole di un parcheggio.
+\textbf{Precondizioni:} il timer è scaduto segnalando di effettuare la richiesta al file \gls{XML}.
+\\
+\textbf{Post-condizioni:} il sistema ha ottenuto una lista di tutti i dati dei sensori aggiornati.
 \\
 \textbf{Scenario principale:}
 \begin{enumerate}
-    \item l'utente richiede la lista di tutte le piazzole di un parcheggio.
-    \item l'utente ottiene una lista di tutte le piazzole di un parcheggio.
+    \item il timer scade e segnala al sistema di effettuare una richiesta al file \gls{XML}.
+    \item il sistema effettua la richiesta al file \gls{XML}.
+\end{enumerate}
+
+\leavevmode\newline
+\textbf{UC22 - Creazione sensori}
+\\\\
+\textbf{Attori primari:} sistema.
+\\
+\textbf{Attori secondari:} timer.
+\\
+\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{XML}.
+\\
+\textbf{Post-condizioni:} il sistema ha creato i nuovi sensori.
+\\
+\textbf{Scenario principale:}
+\begin{enumerate}
+    \item il sistema ha ottenuto i dati aggiornati dal file \gls{XML}.
+    \item il sistema verifica la presenza di nuovi sensori nei dati ottenuti.
+    \item il sistema crea i nuovi sensori.
+\end{enumerate}
+
+\leavevmode\newline
+\textbf{UC22 - Modifica dati sensori}
+\\\\
+\textbf{Attori primari:} sistema.
+\\
+\textbf{Attori secondari:} timer.
+\\
+\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{XML}.
+\\
+\textbf{Post-condizioni:} il sistema ha modificato sensori.
+\\
+\textbf{Scenario principale:}
+\begin{enumerate}
+    \item il sistema ha ottenuto i dati aggiornati dal file \gls{XML}.
+    \item il sistema verifica la presenza di variazioni nei dati ottenuti rispetto ai dati dei sensori esistenti.
+    \item il sistema modifica i sensori.
 \end{enumerate}
 
 \section{Tracciamento dei requisiti}
@@ -574,8 +623,10 @@ Ogni requisito è identificato da un codice univoco nel seguente formato:
 Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio di appartenenza.
 % //TODO: inserire casi d'uso sensors-scraping
 % //TODO: inserire requisiti funzionali sensors-scraping
+\\\\
+\textbf{Requisiti funzionali}
+
 % parcheggio
-\leavevmode
 \begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
     \hline
@@ -592,6 +643,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     RF5 & L'utente non autenticato deve poter eliminare un parcheggio. & Obbligatorio & UC5 \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti funzionali parcheggio}
 \end{table}
 
 % manutentore
@@ -612,6 +664,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     RF10 & L'utente non autenticato deve poter eliminare un manutentore. & Obbligatorio & UC10 \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti funzionali manutentore}
 \end{table}
 
 % sensore
@@ -629,6 +682,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     RF14 & L'utente non autenticato deve poter modificare lo stato di manutenzione di un sensore. & Obbligatorio & UC14 \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti funzionali sensore}
 \end{table}
 \clearpage
 % piazzola
@@ -648,6 +702,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     RF19 & L'utente non autenticato deve poter eliminare una piazzola. & Obbligatorio & UC19 \\
     \hline
     \end{tabular}
+    \caption{Requisiti funzionali piazzola}
 \end{table}
 
 % misurazione
@@ -659,7 +714,26 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     RF20 & L'utente non autenticato deve poter ottenere l'ultima misurazione di un sensore di parcheggio. & Obbligatorio & UC20 \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti funzionali misurazione sensore di parcheggio}
 \end{table}
+
+% polling sensore
+\begin{table}[H]
+    \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
+    \hline
+    Codice & Descrizione & Rilevanza &  Fonti \\ 
+    \hline
+    RF21 & Il sistema deve richiedere ogni due minuti i dati dei sensori aggiornati da un file \gls{XML} online. & Obbligatorio & UC21 \\ 
+    \hline
+    RF22 & Il sistema deve creare i nuovi sensori ottenuti dal file \gls{XML}. & Obbligatorio & UC22 \\ 
+    \hline
+    RF23 & Il sistema deve modificare i sensori esistenti in base ai dati ottenuti dal file \gls{XML}. & Obbligatorio & UC23 \\ 
+    \hline
+    \end{tabular}
+    \caption{Requisiti funzionali polling sensore}
+\end{table}
+\leavevmode\newline
+\textbf{Requisiti di qualità}
 
 % requisiti di qualità
 \begin{table}[H]
@@ -677,8 +751,12 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
         tali scelte. & Obbligatorio & Capitolato \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti di qualità}
 \end{table}
 \clearpage
+\leavevmode\newline
+\textbf{Requisiti di vincolo}
+
 % requisiti di vincolo
 \begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
@@ -704,4 +782,5 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
         Obbligatorio & Capitolato \\ 
     \hline
     \end{tabular}
+    \caption{Requisiti di vincolo}
 \end{table}
