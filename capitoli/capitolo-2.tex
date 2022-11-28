@@ -6,28 +6,28 @@
 \chapter{Analisi dei requisiti}
 \label{cap:analisi-requisiti}
 %**************************************************************
-\intro{In questo capitolo viene descrive la fase di analisi dei requisiti effettuata per
+\intro{In questo capitolo viene descritta la fase di analisi dei requisiti effettuata per
 la realizzazione del progetto.}
 
 \section{Scopo del progetto}
-Uno sviluppatore prima di me ha realizzato un set di REST API per gestire le funzionalità del progetto Smart Parking 
+Uno sviluppatore prima di me ha realizzato un set di \gls{API} \gls{REST} per gestire le funzionalità del progetto Smart Parking 
 e un servizio di polling che va a prendere lo stato dei sensori di parcheggio, aggiornato 
-in un file XML online e salva le variazioni nel servizio di persistenza.
+in un file \gls{XML} online e salva le variazioni nel servizio di persistenza.
 \\\\
-Lo scopo di questo progetto è migrare le REST API e il servizio di polling, dalla soluzione
+Lo scopo di questo progetto è migrare le \gls{API} \gls{REST} e il servizio di polling, dalla soluzione
 realizzata con il framework Spring, in una soluzione realizzata con il framework NestJS.
 
 \section{Confronto con gli stakeholders}
 E' stato fatto un incontro iniziale con il proponente, ovvero l'azienda Sync Lab,
 per definire con chiarezza i requisiti richiesti.
-\subsection{Servizio REST API}
-Nell'incontro sono state prese in considerazione le REST API esistenti (realizzate con il framework Spring) 
+\subsection{Servizio API REST}
+Nell'incontro sono state prese in considerazione le \gls{API} \gls{REST} esistenti (realizzate con il framework Spring) 
 di cui doveva essere fatta la migrazione.
-E' emerso subito che la quantità di REST API da realizzare era troppo elevata per il
+E' emerso subito che la quantità di \gls{API} \gls{REST} da realizzare era troppo elevata per il
 tempo di stage a disposizione. 
 \\\\
 E' stato quindi necessario fare una valutazione di quali fossero i servizi fondamentali che
-il servizio di REST API avrebbe dovuto esporre, per poter essere utilizzato senza che venissero
+il servizio di \gls{API} \gls{REST} avrebbe dovuto esporre, per poter essere utilizzato senza che venissero
 a mancare funzionalità fondamentali per un utilizzo a livello base del sistema.
 
 \subsection{Servizio di polling}
@@ -41,26 +41,46 @@ Ma è necessario che quando un sensore si aggiunge alla rete, il sistema lo rile
 aggiornato. La stessa cosa deve avvenire per quanto riguarda lo spostamento di un sensore, solo che in 
 questo caso il sistema deve aggiornare le coordinate del sensore esistente, anziché aggiungerne uno nuovo.
 \\\\
-Sono stati scelti una tipologia di sensori con GPS integrato, che ad ogni variazione di stato vanno ad 
-aggiornare un record a loro associato in un file XML online, dove ogni record contiene le informazioni e
+Sono stati scelti una tipologia di sensori con \gls{GPS}\glsfirstoccur integrato, che ad ogni variazione di stato vanno ad 
+aggiornare un record a loro associato in un file \gls{XML} online, dove ogni record contiene le informazioni e
 lo stato del sensore.
-% //TODO: inserie immagine file XML sensori
-\\\\
+\\
+% //TODO: sistemare grandezza font:
+\begin{lstlisting}[style=XML]
+<markers>
+    <marker id="1" name="156A2C71" address="Padova Galleria Spagna" lat="45.389040" lng="11.928577" state="0" battery="3,7V" active="1"/>
+    <marker id="2" name="156A2A71" address="Padova Galleria Spagna" lat="45.389029" lng="11.928598" state="1" battery="3,7V" active="1"/>
+    <marker id="3" name="156A2B71" address="Padova Galleria Spagna" lat="45.389028" lng="11.928631" state="0" battery="3,7V" active="1"/>
+    <marker id="4" name="156A2C72" address="Via Forcellini" lat="45.392648" lng="11.904846" state="0" battery="3,7V" active="1"/>
+    <marker id="5" name="156A2A73" address="Via Forcellini" lat="45.392618" lng="11.904963" state="1" battery="3,7V" active="1"/>
+    <marker id="6" name="156A2B74" address="Via Forcellini" lat="45.392622" lng="11.904921" state="1" battery="3,7V" active="1"/>
+    <marker id="7" name="156A2C75" address="Piazza Capitaniato" lat="45.407958" lng="11.872594" state="0" battery="3,7V" active="1"/>
+    <marker id="8" name="156A2A76" address="Piazza Capitaniato" lat="45.407936" lng="11.872584" state="1" battery="3,7V" active="1"/>
+    <marker id="9" name="156A2B77" address="Piazza Capitaniato" lat="45.407913" lng="11.872580" state="0" battery="3,7V" active="1"/>
+    <marker id="10" name="156A2C78" address="Prato della valle" lat="45.397848" lng="11.875080" state="1" battery="3,7V" active="1"/>
+    <marker id="11" name="156A2A79" address="Prato della valle" lat="45.397838" lng="11.875102" state="0" battery="3,7V" active="1"/>
+    <marker id="12" name="156A2B710" address="Prato della valle" lat="45.397822" lng="11.875126" state="0" battery="3,7V" active="1"/>
+    <marker id="13" name="156A2C711" address="Via Sorio" lat="45.400546" lng="11.855238" state="0" battery="3,7V" active="1"/>
+    <marker id="14" name="156A2A712" address="Via Sorio" lat="45.400547" lng="11.855173" state="0" battery="3,7V" active="1"/>
+    <marker id="15" name="156A2B7113" address="Via Sorio" lat="45.400546" lng="11.855015" state="1" battery="3,7V" active="1"/>
+</markers>
+\end{lstlisting}
+\leavevmode\newline
 Non avendo controllo sui sensori e quindi su dove vengano scritti i dati, con la proponente si è deciso
-di effettuare un polling ogni due minuti al file XML e aggiornare lo stato del back-end.
+di effettuare un polling ogni due minuti al file \gls{XML} e aggiornare lo stato del \gls{back-end}.
 \\\\
-Lo stato dei sensori è quindi ridondante in quanto è presente sia nel back-end del progetto che sul file XML online. 
-La scelta di duplicare lo stato dei sensori nel back-end è stata fatta per trarne i seguenti benefici:
+Lo stato dei sensori è quindi ridondante in quanto è presente sia nel \gls{back-end} del progetto che sul file \gls{XML} online. 
+La scelta di duplicare lo stato dei sensori nel \gls{back-end} è stata fatta per trarne i seguenti benefici:
 \begin{itemize}
     \item permette di organizzare i dati in maniera più consona e organizzata.
-    \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file XML online
-        in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza del back-end, 
+    \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file \gls{XML} online
+        in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza del \gls{back-end}, 
         di cui abbiamo pieno controllo.
 \end{itemize}
 \leavevmode\newline
 La motivazione che ha portato ad eseguire il polling ogni due minuti è la seguente:
 \\
-il tipo di servizio offerto non ha bisogno di essere un real-time system, in quanto non crea problemi all'utente
+il tipo di servizio offerto non ha bisogno di essere un \gls{real-time system}\glsfirstoccur, in quanto non crea problemi all'utente
 vedere una piazzola che si libera/occupa con un delta di intervallo di ritardo. 
 \\\\
 L'importante è che questo delta non sia troppo elevato, in tal caso i dati mostrati agli utenti sarebbero troppo
@@ -70,14 +90,14 @@ elevato.
 Infatti effettuare il polling con un piccolo intervallo di tempo tra un polling e il successivo (dell'ordine dei millisecondi
 ad esempio),
 genera la produzione di molte 
-chiamate http da parte del back-end per accedere al contenuto del file XML e molti accessi al database in caso ci siano dati da 
+chiamate \gls{HTTP} da parte del \gls{back-end} per accedere al contenuto del file \gls{XML} e molti accessi al database in caso ci siano dati da 
 inserire/aggiornare.
 \clearpage
 \leavevmode\newline
 Vediamo un esempio pratico con una tabella che mostra il costo di chiamate e accessi al database giornalieri al variare 
 dell'intervallo di tempo del polling:
-% //TODO: aumentare altezza celle tabelle
 % //TODO: aggiungere caption immagini
+\renewcommand{\arraystretch}{1.5}
 \begin{table}[H]
     \begin{tabular}{|p{2.85cm}|p{3.05cm}|p{3.05cm}|p{3.35cm}|} 
     \hline
@@ -109,10 +129,10 @@ Gli accessi in scrittura variano in base al tempo trascorso dall'ultimo polling 
 più costosi di quelli in lettura).
 \\\\
 Come vediamo dalla tabella e come auspicabile, con il polling ad un intervallo di ogni ora si effettuano solo
-24 richieste http al giorno ma il delta di latenza di aggiornamento dei dati ad ogni ora li rende inutilizzabili.
+24 richieste \gls{HTTP} al giorno ma il delta di latenza di aggiornamento dei dati ad ogni ora li rende inutilizzabili.
 \\\\
 D'altra parte un intervallo di un millisecondo rende i dati aggiornati quasi in tempo reale ma 
-non è sostenibile effettuare un numero di richieste giornaliere dal back-end pari a 864 * $10^5$ (più di 86 milioni).
+non è sostenibile effettuare un numero di richieste giornaliere dal \gls{back-end} pari a 864 * $10^5$ (più di 86 milioni).
 \leavevmode
 \\\\
 Un numero di richieste giornaliere pari a 720 è stato ritenuto accettabile, così come il numero di accessi al database
@@ -120,7 +140,7 @@ indicati per la colonna dei 2 minuti e si è optato quindi per questa scelta; ri
 aggiornamento un valore accettabile per l'utente finale e che i costi delle chiamate e di accessi al database non
 siano di sovraccarico per il sistema.
 \\\\
-Il servizio per il polling dei sensori deve essere realizzato in modo che sia separato da quello delle REST API.
+Il servizio per il polling dei sensori deve essere realizzato in modo che sia separato da quello delle \gls{API} \gls{REST}.
 \\
 Sia per una separazione di responsabilità, che per una futura migrazione a un'applicazione basata su microservizi,
 in cui il servizio di polling deve diventare un microservizio a se stante, gestibile in maniera indipendente rispetto
@@ -128,7 +148,7 @@ agli altri microservizi.
 
 \section{Entità}
 Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità, si è ritenuto necessario
-documentare le entità di dominio coinvolte nelle funzionalità fondamentali delle REST API.
+documentare le entità di dominio coinvolte nelle funzionalità fondamentali delle \gls{API} \gls{REST}.
 \\\\\\
 \textbf{Piazzola}
 \\\\
@@ -539,7 +559,6 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
     \item l'utente ottiene una lista di tutte le piazzole di un parcheggio.
 \end{enumerate}
 
-% //TODO: inserire sotto casi d'uso specificando i campi da visualizzare / modificare
 \section{Tracciamento dei requisiti}
 Ogni requisito è identificato da un codice univoco nel seguente formato:
 \begin{itemize}
@@ -670,7 +689,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \hline
     RV2 & Utilizzo di database PostgreSQL. & Desiderabile & Capitolato \\ 
     \hline
-    RV3 & Le REST API devono poter essere chiamate tramite protocollo HTTP. & Obbligatorio & Capitolato \\ 
+    RV3 & Le \gls{API} \gls{REST} devono poter essere chiamate tramite protocollo \gls{HTTP}. & Obbligatorio & Capitolato \\ 
     \hline
     RV4 & La richiesta di ottenimento delle entità, all'applicazione, deve essere fatta tramite metodo GET. & 
         Obbligatorio & Capitolato \\ 

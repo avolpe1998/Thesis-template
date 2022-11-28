@@ -116,36 +116,53 @@
                                         % 2. eseguire: biber tesi
                                         % 3. compilare ancora tesi.tex.
 
-% \lstdefinelanguage{JavaScript}{
-%   keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
-%   keywordstyle=\color{blue}\bfseries,
-%   ndkeywords={class, export, boolean, throw, implements, import, this},
-%   ndkeywordstyle=\color{darkgray}\bfseries,
-%   identifierstyle=\color{black},
-%   sensitive=false,
-%   comment=[l]{//},
-%   morecomment=[s]{/*}{*/},
-%   commentstyle=\color{purple}\ttfamily,
-%   stringstyle=\color{red}\ttfamily,
-%   morestring=[b]',
-%   morestring=[b]"
-% }
-% \lstset{frame=tb,
-%   language=Java,
-%   aboveskip=3mm,
-%   belowskip=3mm,
-%   showstringspaces=false,
-%   columns=flexible,
-%   basicstyle={\small\ttfamily},
-%   numbers=none,
-%   numberstyle=\tiny\color{gray},
-%   keywordstyle=\color{blue},
-%   commentstyle=\color{dkgreen},
-%   stringstyle=\color{mauve},
-%   breaklines=true,
-%   breakatwhitespace=true,
-%   tabsize=3
-% }
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{forestgreen}{RGB}{34,139,34}
+\definecolor{orangered}{RGB}{239,134,64}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+
+\lstdefinestyle{XML} {
+    language=XML,
+    extendedchars=true, 
+    breaklines=true,
+    breakatwhitespace=true,
+    emph={},
+    emphstyle=\color{red},
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    commentstyle=\color{gray}\upshape,
+    morestring=[b]",
+    morecomment=[s]{<?}{?>},
+    morecomment=[s][\color{forestgreen}]{<!--}{-->},
+    keywordstyle=\color{orangered},
+    stringstyle=\ttfamily\color{black}\normalfont,
+    tagstyle=\color{darkblue}\bf,
+    morekeywords={attribute,xmlns,version,type,release},
+}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, async},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{basicstyle=\fontsize{1}{1}}
 
 \input{tesi-config}                     % file con le impostazioni personali
 
@@ -156,9 +173,9 @@
 \frontmatter
 \input{inizio-fine/frontespizio}
 \input{inizio-fine/colophon}
-%\input{inizio-fine/dedica}
-%\input{inizio-fine/sommario}
-%\input{inizio-fine/ringraziamenti}
+\input{inizio-fine/dedica}
+\input{inizio-fine/sommario}
+\input{inizio-fine/ringraziamenti}
 \input{inizio-fine/indici}
 \cleardoublepage
 
@@ -174,13 +191,13 @@
 \input{capitoli/capitolo-6}
 \input{capitoli/capitolo-7}
 \appendix                               
-%\input{capitoli/capitolo-A}             % Appendice A
+\input{capitoli/capitolo-A}             % Appendice A
 
 %**************************************************************
 % Materiale finale
 %**************************************************************
 \backmatter
-%\printglossary[type=\acronymtype, title=Acronimi e abbreviazioni, toctitle=Acronimi e abbreviazioni]
-%\printglossary[type=main, title=Glossario, toctitle=Glossario]
-%\input{inizio-fine/bibliografia}
+\printglossary[type=\acronymtype, title=Acronimi e abbreviazioni, toctitle=Acronimi e abbreviazioni]
+\printglossary[type=main, title=Glossario, toctitle=Glossario]
+\input{inizio-fine/bibliografia}
 \end{document}

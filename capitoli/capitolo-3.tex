@@ -6,6 +6,9 @@
 \chapter{Progettazione}
 \label{cap:progettazione}
 
+\intro{In questo capitolo viene descritta la fase di progettazione effettuata per
+la realizzazione del progetto.}
+
 % %**************************************************************
 \section{Architettura del progetto}
 Le dimensioni di questo progetto allo stato attuale sono contenute, inoltre deve essere fatta un'analisi
@@ -69,7 +72,7 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
         dell'applicazione. La layered architecture separando bene le responsabilità tra i livelli, 
         permette di suddividere l'applicazione in componenti ben separati e quindi più facili da testare.
         Essendo ogni livello isolato dagli altri, è possibile creare casi di test di dimensione ridotta, 
-        in quanto le componenti di cui fare il mock sono poche.
+        in quanto le componenti di cui fare il \gls{mock} sono poche.
     \item L'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
         gli altri livelli.
     \item Nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
@@ -137,7 +140,7 @@ Per dichiarare una classe come controller, bisogna applicare il decorator @Contr
 definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
 @Injectable sopra la definizione della classe.
 \\
-\begin{lstlisting}
+\begin{lstlisting}[language=JavaScript]
 @Injectable()
 export class MaintainersRegistryService {
     constructor(private readonly maintainersRegistryRepository: 
@@ -289,24 +292,24 @@ relazionale di tipo postgreSQL.
 \\\\
 NestJS è indipendente dal tipo di database scelto (relazionale o non relazionale). Infatti NestJS si interfaccia
 al database tramite uno strumento che si chiama TypeORM. TypeORM implementa una tecnica di programmazione chiamata 
-ORM, che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione OOP.
+\gls{ORM}\glsfirstoccur, che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione \gls{OOP}\glsfirstoccur.
 \\\\
-Uno strumento ORM incapsula il codice necessario per manipolare i dati, senza aver bisogno di scrivere manualmente
+Uno strumento \gls{ORM} incapsula il codice necessario per manipolare i dati, senza aver bisogno di scrivere manualmente
 le query al database ma si interagisce direttamente con un oggetto nello stesso linguaggio che si sta usando. 
 \\
-In questo modo il database viene astratto e si diventa indipendenti dal tipo di database utilizzato, in quanto è compito dell'ORM
+In questo modo il database viene astratto e si diventa indipendenti dal tipo di database utilizzato, in quanto è compito dell'\gls{ORM}
 tradurre la richiesta fatta, in linguaggio di programmazione ad alto livello, nella query al database. 
 \\\\
 Uno strumento come TypeORM offre quindi una grande flessibilità, in quanto è possibile decidere di passare da un database
 relazionale a un database non relazionale in qualsiasi momento, senza dover effettuare modifiche al livello di persistenza.
 \\\\
-Senza un'ORM la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
+Senza un'\gls{ORM} la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
 \\\\
 Il repository viene fornito e creato in maniera automatica da NestJS. Per fare in modo che ciò avvenga è però necessario
 dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository e in particolare nell'array di imports, con 
 il metodo forFeature della classe TypeOrmModule, la lista di entità di cui si vuole creare un repository.
 \\\\
-Il repository creato da NestJS include tutti i metodi necessari per le operazioni basilari CRUD (find(), save(), update(), 
+Il repository creato da NestJS include tutti i metodi necessari per le operazioni basilari \gls{CRUD} (find(), save(), update(), 
 delete() ecc..).
 \\\\
 Spesso però abbiamo bisogno di effettuare query al database più complesse rispetto a quelle a disposizione nel repository
@@ -437,11 +440,11 @@ I moduli dell'applicazione individuati sono i seguenti:
 \end{itemize}
 
 \subsection{DTO}
-E' stata usata una classe di tipo DTO chiama SensorsScrapingDto. Questa classe viene utilizzata per rappresentare
-il contenuto del file XML online contente lo stato dei sensori. Da questo oggetto vengono estratte le informazioni
+E' stata usata una classe di tipo \gls{DTO}\glsfirstoccur chiamata SensorsScrapingDto. Questa classe viene utilizzata per rappresentare
+il contenuto del file \gls{XML} online contente lo stato dei sensori. Da questo oggetto vengono estratte le informazioni
 utili per rappresentare le entità di tipo sensore e misurazioni sensore con cui si va ad aggiornare il database.
 \\\\
-Prima di effettuare la conversione da DTO a entità, i campi del DTO vengono validati, lanciando un'eccezione nel caso 
+Prima di effettuare la conversione da \gls{DTO} a entità, i campi del \gls{DTO} vengono validati, lanciando un'eccezione nel caso 
 la validazione fallisca.
 \\
 \begin{lstlisting}
@@ -475,13 +478,13 @@ export class SensorScrapingDto{
     }
 }
 \end{lstlisting}
-
+% //TODO: mettere in corsivo parole collegate a elementi del codice
 \subsection{Eccezioni}
 NestJS ha un livello built-in che è responsabile di processare tutte le eccezioni non catturate durante 
 l'esecuzione di un'applicazione.
 \\\\
 Quando un'eccezione non viene catturata dal codice dell'applicazione, viene catturata da questo livello,
-che in maniera automatica invia una risposta user-friendly http al client, evitando di far interrompere 
+che in maniera automatica invia una risposta user-friendly \gls{HTTP} al client, evitando di far interrompere 
 l'esecuzione del programma. Questa componente si chiama exception filter.
 \\\\
 La risposta inviata al client dall'exception filter è user-friendly e contiene un messaggio appropriato, solo se l'eccezione è di tipo HttpException o 
@@ -581,14 +584,14 @@ dell'utente finale di un servizio dell'applicazione.
 Solitamente questi file di log diventano molto grandi, quindi possono aver bisogno di un server dedicato per 
 persisterli.
 \\\\
-Per questo progetto è stato deciso di fare il logging di tutte le richieste alle REST API da parte dell'utente
+Per questo progetto è stato deciso di fare il logging di tutte le richieste alle \gls{API} \gls{REST} da parte dell'utente
 finale e tutte le volte che viene eseguito il servizio di polling schedulato.
 \\
-In particolare, per le richieste alle REST API dell'utente finale, si vuole effettuare il logging delle seguenti 
+In particolare, per le richieste alle \gls{API} \gls{REST} dell'utente finale, si vuole effettuare il logging delle seguenti 
 informazioni:
 \begin{itemize}
     \item metodo della richiesta (GET, POST, PUT, DELETE);
-    \item endpoint richiesto;
+    \item \gls{endpoint} richiesto;
     \item corpo della richiesta;
     \item user agent dell'utente finale;
     \item ip dell'utente finale;
@@ -670,12 +673,12 @@ export class LoggerMiddleware implements NestMiddleware {
 \section{Servizio di polling}
 Sono state proposte due varianti per sviluppare il servizio di polling. Queste due varianti riguardano il
 modo in cui il servizio SensorsScrapingService, che si occupa di effettuare il polling dei dati dei sensori
-da un file XML online, debba comunicare col servizio di persistenza.
+da un file \gls{XML} online, debba comunicare col servizio di persistenza.
 \\\\
 Le due varianti:
 \begin{enumerate}
-    \item Far comunicare il SensorsScrapingService col servizio di persistenza effettuando delle chiamate http 
-        alle REST API di cui ha bisogno.
+    \item Far comunicare il SensorsScrapingService col servizio di persistenza effettuando delle chiamate \gls{HTTP} 
+        alle \gls{API} \gls{REST} di cui ha bisogno.
     \item Far comunicare il SensorsScrapingService direttamente col livello di servizio dei sensori e delle misurazioni 
     dei sensori di parcheggio.
 \end{enumerate}
@@ -685,39 +688,39 @@ contro dei due rispettivi punti.
 \\\\
 Pro del punto 1
 \begin{itemize}
-    \item Far comunicare il SensorsScrapingService con un servizio di REST API, separa bene le responsabilità e 
+    \item Far comunicare il SensorsScrapingService con un servizio di \gls{API} \gls{REST}, separa bene le responsabilità e 
         nel caso di migrazione a un applicazione basata su microservizi, il microservizio dedicato al polling dei sensori 
         non deve cambiare il modo in cui interagisce
-        con il servizio di persistenza, in quanto continua a chiamare le stesse REST API tramite il protocollo HTTP.
+        con il servizio di persistenza, in quanto continua a chiamare le stesse \gls{API} \gls{REST} tramite il protocollo \gls{HTTP}.
 \end{itemize}
 \leavevmode\newline
 Contro del punto 1
 \begin{itemize}
-    \item Come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate http giornaliere
+    \item Come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate \gls{HTTP} giornaliere
         per scaricare i dati dei sensori aggiornati. 
         \\
-        Quindi come minimo deve effettuare 720 chiamate http giornaliere anche alle REST API, per verificare se ci sono sensori
+        Quindi come minimo deve effettuare 720 chiamate \gls{HTTP} giornaliere anche alle \gls{API} \gls{REST}, per verificare se ci sono sensori
         da aggiornare. 
         \\
-        Nella pratica le chiamate http da fare sono di più, poiché dopo aver verificato se ci sono sensori da aggiornare ed
-        eventualmente aggiornati, bisogna fare un'altra chiamata http alle REST API per verificare se ci sono anche misurazioni dei sensori
+        Nella pratica le chiamate \gls{HTTP} da fare sono di più, poiché dopo aver verificato se ci sono sensori da aggiornare ed
+        eventualmente aggiornati, bisogna fare un'altra chiamata \gls{HTTP} alle \gls{API} \gls{REST} per verificare se ci sono anche misurazioni dei sensori
         da aggiornare ed eventualmente aggiornarle. 
         \\
-        Il che porta il numero di chiamate http da effettuare al servizio di REST API, pari ad un minimo di 1440 giornaliere.
+        Il che porta il numero di chiamate \gls{HTTP} da effettuare al servizio di \gls{API} \gls{REST}, pari ad un minimo di 1440 giornaliere.
 \end{itemize}
 \leavevmode\newline
 Pro del punto 2
 \begin{itemize}
     \item Far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e delle misurazioni dei sensori di parcheggio
         riduce notevolmente i costi in termini di carico dell'applicazione, in quanto per persistere i dati è sufficiente chiamare un
-        metodo del servizio da cui si dipende, senza dover fare chiamate HTTP che sono molto costose. 
+        metodo del servizio da cui si dipende, senza dover fare chiamate \gls{HTTP} che sono molto costose. 
 \end{itemize}
 \leavevmode\newline
 Contro del punto 2
 \begin{itemize}
     \item Nel caso di migrazione a un'applicazione basata su microservizi bisogna modificare il modo in cui il SensorsScrapingService 
         persiste i dati dei sensori
-        e delle misurazioni dei sensori di parcheggio. Probabilmente bisogna passare a effettuare chiamate HTTP al servizio di REST API(come il punto 1),
+        e delle misurazioni dei sensori di parcheggio. Probabilmente bisogna passare a effettuare chiamate \gls{HTTP} al servizio di \gls{API} \gls{REST} (come il punto 1),
         in quanto il servizio di polling diventerà un microservizio indipendente, quindi non saranno più a lui visibili il servizio dei 
         sensori e delle misurazioni di parcheggio.
     \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile per il
@@ -730,21 +733,20 @@ servizio di polling è implementato nell'altro progetto. Inoltre è vero che è 
 l'accoppiamento tra le componenti e separare le responsabilità ma molto spesso non è possibile farlo e capita frequentemente
 di avere dipendenze tra loro.
 
-\section{REST API}
-Tramite lo strumento Stoplight sono state progettate 17 REST API. Stoplight light è uno strumento molto buono realizzato
-appositamente per progettare REST API.
+\section{API REST}
+Tramite lo strumento Stoplight sono state progettate 17 \gls{API} \gls{REST}. Stoplight light è un ottimo strumento realizzato
+appositamente per progettare \gls{API} \gls{REST}.
 \\\\
-Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle API da utilizzare.
+Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle \gls{API} da utilizzare.
 \\\\
-Stoplight permette di definire l'specificare dell'API, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
+Stoplight permette di definire l'specificare dell'\gls{API}, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
 eventuale corpo della richiesta, eventuale corpo della risposta, status code della risposta e altre informazioni
-utili a chi deve sviluppare le API o all'utente finale che deve effettuare le richieste.
+utili a chi deve sviluppare le \gls{API} o all'utente finale che deve effettuare le richieste.
 \\\\
-Progettata un'API su Stoplight è possibile generare il mock della risposta, in questo modo gli sviluppatori front-end non hanno bisogno
-di attendere che il back-end venga realizzato per sviluppare la parte di front-end.
+Progettata un'\gls{API} su Stoplight è possibile generare il \gls{mock} della risposta, in questo modo gli sviluppatori \gls{front-end} non hanno bisogno
+di attendere che il \gls{back-end} venga realizzato per sviluppare la parte di \gls{front-end}.
 \\\\
-Le REST API, suddivise per dominio di appartenenza, sono le seguenti:
-% //TODO: valutare se inserire anche i codici di errore
+Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti:
 \\\\
 \textbf{Parcheggio}
 \\

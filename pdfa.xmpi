@@ -63,7 +63,7 @@
   <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/"> 
    <dc:format>application/pdf</dc:format> 
    <dc:title><rdf:Alt><rdf:li xml:lang="x-default">Migrazione e analisi comparativa di un back-end per un servizio di smart parking</rdf:li></rdf:Alt></dc:title>
-   <dc:creator><rdf:Seq><rdf:li>Volpe_Andrea</rdf:li></rdf:Seq></dc:creator>
+   <dc:creator><rdf:Seq><rdf:li>Andrea Volpe</rdf:li></rdf:Seq></dc:creator>
    <dc:language><rdf:Bag><rdf:li>it-IT</rdf:li></rdf:Bag></dc:language>
    <dc:description><rdf:Alt><rdf:li xml:lang="x-default">The abstract, or short description.</rdf:li></rdf:Alt></dc:description>
    <dc:subject><rdf:Bag><rdf:li>keyword1</rdf:li>
@@ -80,15 +80,15 @@
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/"> 
    <xmp:CreatorTool>LaTeX with hyperref</xmp:CreatorTool> 
-   <xmp:ModifyDate>2022-11-25T18:40:10+01:00</xmp:ModifyDate> 
-   <xmp:CreateDate>2022-11-25T18:40:10+01:00</xmp:CreateDate> 
-   <xmp:MetadataDate>2022-11-25T18:40:10+01:00</xmp:MetadataDate> 
+   <xmp:ModifyDate>2022-11-28T17:49:51+01:00</xmp:ModifyDate> 
+   <xmp:CreateDate>2022-11-28T17:49:51+01:00</xmp:CreateDate> 
+   <xmp:MetadataDate>2022-11-28T17:49:51+01:00</xmp:MetadataDate> 
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmpRights = "http://ns.adobe.com/xap/1.0/rights/"> 
   </rdf:Description> 
   <rdf:Description rdf:about="" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"> 
-   <xmpMM:DocumentID>uuid:03D28DDE-F9EC-3F33-FD10-51B5A3A279A6</xmpMM:DocumentID> 
-   <xmpMM:InstanceID>uuid:2389DB28-E530-F3BD-D56D-0AB0CDC521BA</xmpMM:InstanceID> 
+   <xmpMM:DocumentID>uuid:E0DBB325-4111-3E4D-55CA-FE8F72DB0BE7</xmpMM:DocumentID> 
+   <xmpMM:InstanceID>uuid:96976D74-9FB8-8F02-12DE-A7551FA46771</xmpMM:InstanceID> 
   </rdf:Description> 
  </rdf:RDF> 
 </x:xmpmeta> 

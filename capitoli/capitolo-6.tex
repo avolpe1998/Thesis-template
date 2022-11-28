@@ -7,6 +7,9 @@
 \label{cap:analisi-comparativa}
 %**************************************************************
 
+\intro{In questo capitolo viene descritta la fase di analisi comparativa effettuata al termine
+della realizzazione del progetto.}
+
 Il proponente ha deciso di realizzare questo progetto di stage allo scopo di effettuare 
 un'analisi comparativa tra la versione del prodotto finale in NestJS e quella in Spring.
 \\\\
@@ -37,7 +40,7 @@ costi per dover riscrivere il progetto sarebbero stati molto più alti.
 Avendo invece una controparte funzionante e in ambiente di produzione non si corre questo tipo di rischio.
 
 \section{Le due soluzioni}
-Le due soluzioni sviluppano un prodotto con le stesse funzionalità: un set di REST API, per la gestione delle operazioni CRUD del
+Le due soluzioni sviluppano un prodotto con le stesse funzionalità: un set di \gls{API} \gls{REST}, per la gestione delle operazioni \gls{CRUD} del
 progetto Smart Parking.
 \\\\
 Il prodotto già esistente è stato realizzato in Spring, l'altro in NestJS:
@@ -111,7 +114,7 @@ Ci sono anche molti video tutorial, in piattaforme come il sito Udemy, per impar
 NestJS nel suo sito ufficiale offre una documentazione molto ricca per imparare in dettaglio il framework.
 \\\\
 Questo framework è relativamente giovane, nato 6 anni fa. Di conseguenza le aziende e gli sviluppatori che hanno
-deciso di utilizzarlo non sono molte rispetto a quelli che usano Spring e la community è molto piccola.
+deciso di utilizzarlo non sono molte rispetto a quelle che usano Spring e la community è molto piccola.
 \\\\
 Le discussioni sui problemi che si presentano agli sviluppatori che affrontano il framework per la prima volta
 o sui problemi in generale che si possono avere sviluppando con questo framework sono molto poche. 
@@ -154,7 +157,7 @@ operativo in tempi ragionevoli e a fare le cose in maniera coerente.
 Per valutare le due soluzioni in termini di prestazioni è stato considerato il tempo medio di risposta delle due soluzioni, caricate sullo stesso 
 server e eseguite a parità di condizioni.
 \\\\
-Per tutte le API la differenza di risposta tra la soluzione in Spring e in NestJS è troppo piccola per rappresentare un punto
+Per tutte le \gls{API} la differenza di risposta tra la soluzione in Spring e in NestJS è troppo piccola per rappresentare un punto
 di valutazione significativo (dell'ordine dei millisecondi).
 \\\\
 Le prestazioni a livello di carico non sono state prese in considerazione, dato che per il momento non si prevede che l'applicazione 
@@ -187,7 +190,6 @@ L'uso dei moduli in NestJS permette di organizzare meglio la struttura dei file 
 \\\\
 Inoltre TypeOrm, lo strumento ORM di NestJS per interfacciarsi con il database, permette di scrivere query leggermente più
 pulite rispetto ad Hibernate, lo strumento ORM di Spring.
-% //TODO: Valutare se inserire qui uno script che mostra come NestJS includa le dipendenze nelle query rispetto a Spring
 
 \section{Esito}
 Da quanto emerso dall'analisi comparativa risulta più semplice creare un software in Spring, per l'elevato materiale di
@@ -215,7 +217,7 @@ e la facilità/disponibilità di accesso agli strumenti di supporto.
 Il costo in termini di tempo per lo sviluppo di un progetto in NestJS è ancora troppo alto rispetto a Spring, proprio
 per la difficoltà di reperire materiale di supporto.
 \\
-Per questo motivo l'analisi comparativa ha portato a preferire l'utilizzo del software scritto in Spring come back-end
+Per questo motivo l'analisi comparativa ha portato a preferire l'utilizzo del software scritto in Spring come \gls{back-end}
 di produzione del progetto Smart Parking.
 \\\\
 La realizzazione del progetto è stata comunque molto utile al proponente, che ha conosciuto un nuovo

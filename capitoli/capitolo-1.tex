@@ -44,13 +44,12 @@ sia nel governo del cambiamento organizzativo.
 
 %**************************************************************
 \section{Scelta dell'azienda}
-
 Sono venuto a conoscenza dell'azienda Sync Lab grazie al progetto d'ingegneria del
 software, dove l'azienda è stata il proponente del mio progetto.
 \\\\
 Sono venuto a conoscenza del progetto di stage di Sync Lab grazie all'evento stage-it 2022. 
 L’evento promosso da Assindustria Venetocentro in collaborazione con l’Università 
-di Padova per favorire l’incontro tra aziende con progetti innovativi in ambito IT e 
+di Padova per favorire l’incontro tra aziende con progetti innovativi in ambito \gls{IT} e 
 studenti dei corsi di laurea in Informatica, Ingegneria informatica e Statistica.
 \\\\
 
@@ -59,8 +58,8 @@ studenti dei corsi di laurea in Informatica, Ingegneria informatica e Statistica
 \section{Introduzione al progetto}
 
 Lo scopo del progetto di stage consiste nell'effettuare la migrazione di un servizio di
-API REST, lato back-end, realizzato da un precedente studente tirocinante con il framework
-Spring, in un servizio di API REST, lato back-end, realizzato con un diverso framework chiamato
+\gls{API}\glsfirstoccur \gls{REST}\glsfirstoccur, lato back-end, realizzato da un precedente studente tirocinante con il framework
+Spring, in un servizio di \gls{API} \gls{REST}, lato \gls{back-end}\glsfirstoccur, realizzato con un diverso framework chiamato
 NestJS. Il proponente ha deciso di fare la migrazione per effettuare un'analisi comparativa tra le due soluzioni, in
 modo da valutarne le caratteristiche e decidere quale dei due meglio si adatta alle esigenze
 del progetto.
@@ -78,12 +77,12 @@ anche la disponibilità di posti auto in un parcheggio e il tutto viene fatto in
 E' prevista poi la realizzazione di una sezione dedicata ai manutentori, in modo che possano monitorare
 in tempo reale lo stato dei sensori, facilitando quindi il processo di manutenzione.
 \\\\
-Il progetto è formato da una parte di front-end, realizzata con il framework Angular e una 
-parte di back-end che consiste di un servizio di REST API, realizzato in due versioni: una 
+Il progetto è formato da una parte di \gls{front-end}\glsfirstoccur, realizzata con il framework Angular e una 
+parte di \gls{back-end} che consiste di un servizio di \gls{API} \gls{REST}, realizzato in due versioni: una 
 con il framework Spring e una con il framework NestJS.
 \\
-Questo progetto di stage riguarda la parte di back-end, un altro mio collega stagista si sta occupando
-della parte di front-end.
+Questo progetto di stage riguarda la parte di \gls{back-end}, un altro mio collega stagista si sta occupando
+della parte di \gls{front-end}.
 \clearpage
 \begin{figure}[H]
     \centering
@@ -98,17 +97,17 @@ di conoscenza delle tecnologie da utilizzare.
 Le problematiche riscontrate:
 
 \begin{itemize}
-    \item Architettura a microservizi: avevo solo una conoscenza basilare
+    \item architettura a microservizi: avevo solo una conoscenza basilare
           della tecnologia, grazie al corso d'ingegneria del software ma non
           sufficiente per fare un'analisi di migrazione futura del progetto, in un progetto con 
-          architettura a microservizi. % //TODO: sistemare questa parte.
-    \item Framework Spring: la conoscenza di questo framework era completamente assente
+          architettura a microservizi.
+    \item framework Spring: la conoscenza di questo framework era completamente assente
         ed era importante conoscerlo per poter comprendere con chiarezza il software esistente,
         di cui doveva essere effettuata la migrazione.
-    \item Framework Node.js e NestJS: la conoscenza di questi due framework era completamente
+    \item framework Node.js e NestJS: la conoscenza di questi due framework era completamente
         assente ed era di fondamentale importanza conoscerli per poter implementare il servizio
-        di REST API, lato back-end, richiesto.
-    \item La quantità di REST API da migrare era troppo elevata per il tempo a disposizione.
+        di \gls{API} \gls{REST}, lato back-end, richiesto.
+    \item La quantità di \gls{API} \gls{REST} da migrare era troppo elevata per il tempo a disposizione.
     \item Il database in uso si è rivelato avere dei problemi, quindi è stato necessario ristrutturarlo.
 \end{itemize}
 
@@ -125,8 +124,8 @@ sufficienti per comprendere ruoli e le responsabilità dei singoli livelli e le 
 che intercorrono tra loro.
 \\\\
 La motivazione che ha portato alla scelta di questo stile architetturale è un'analisi fatta,
-che ha rivelato, che la layered si adatta molto bene al servizio di REST API che
-si vuole andare a realizzare. Inoltre molti framework per lo sviluppo di applicativi back-end si basano su questo tipo di architettura, tra cui
+che ha rivelato, che la layered si adatta molto bene al servizio di \gls{API} \gls{REST} che
+si vuole andare a realizzare. Inoltre molti framework per lo sviluppo di applicativi \gls{back-end} si basano su questo tipo di architettura, tra cui
 Spring e NestJS, che sono fondati sul pattern controller-service-repository. Un pattern
 che sfrutta la layered architecture, creando tre diversi livelli di astrazione: 
 \begin{itemize}
@@ -141,41 +140,41 @@ Quest'architettura viene utilizzata per effettuare una buona separazione delle r
 \\
 L'architettura usata da Spring e NestJS è proprio la stessa che si è deciso di usare nell'analisi progettuale fatta 
  e quindi questi due framework sono stati scelti per realizzare
-la parte di back-end del progetto.
+la parte di \gls{back-end} del progetto.
 \leavevmode\newline
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{controller-service-repository-pattern}
 \end{figure}
 \leavevmode\newline
-Non è prevista la creazione di un sistema di autenticazione per l'uso delle REST API, in quanto 
+Non è prevista la creazione di un sistema di autenticazione per l'uso delle \gls{API} \gls{REST}, in quanto 
 un altro studente tirocinante si sta occupando della creazione di questa parte.
 
 %**************************************************************
 \section{Descrizione del prodotto ottenuto}
 
-Al momento è disponibile un back-end contenente le REST API sviluppate in NestJS, utilizzabile in produzione,
-anche se non potendo migrare l'intero set di REST API disponibili nella soluzione realizzata in Spring, come preventivato,
-sono state sviluppate tutte le REST API più importanti per effettuare le operazioni CRUD più
+Al momento è disponibile un \gls{back-end} contenente le \gls{API} \gls{REST} sviluppate in NestJS, utilizzabile in produzione,
+anche se non potendo migrare l'intero set di \gls{API} \gls{REST} disponibili nella soluzione realizzata in Spring, come preventivato,
+sono state sviluppate tutte le \gls{API} \gls{REST} più importanti per effettuare le operazioni \gls{CRUD}\glsfirstoccur più
 comuni.
 \\\\
-Le REST API espongono un'interfaccia compatibile con quello che ormai è uno standard per la
-comunicazione con servizi di tipo REST. Ovvero per comunicare con le REST API bisogna fare
-delle richieste HTTP a degli specifici endpoint con i seguenti metodi HTTP:
+Le \gls{API} \gls{REST} espongono un'interfaccia compatibile con quello che ormai è uno standard per la
+comunicazione con servizi di tipo \gls{REST}. Ovvero per comunicare con le \gls{API} \gls{REST} bisogna fare
+delle richieste \gls{HTTP}\glsfirstoccur a degli specifici \gls{endpoint} con i seguenti metodi \gls{HTTP}:
 \begin{itemize}
-    \item GET: per ottenere delle risorse dal servizio REST;
-    \item POST: per creare una nuova risorsa nel servizio REST;
-    \item PUT: per modificare una risorsa nel servizio REST;
-    \item DELETE: per eliminare una risorsa dal servizio REST;
+    \item GET: per ottenere delle risorse dal servizio \gls{REST};
+    \item POST: per creare una nuova risorsa nel servizio \gls{REST};
+    \item PUT: per modificare una risorsa nel servizio \gls{REST};
+    \item DELETE: per eliminare una risorsa dal servizio \gls{REST};
 \end{itemize}
 \leavevmode\newline
-E' presente poi, nel back-end, un servizio schedulato che ogni due minuti in maniera autonoma va a fare il polling
-da un file XML online, contenente gli stati aggiornati dei sensori. Questo servizio registra poi 
+E' presente poi, nel \gls{back-end}, un servizio schedulato che ogni due minuti in maniera autonoma va a fare il polling
+da un file \gls{XML}\glsfirstoccur online, contenente gli stati aggiornati dei sensori. Questo servizio registra poi 
 le variazioni, rispetto
 al polling precedente, nel servizio di persistenza.
 \\\\
-Il file XML viene scritto e gestito dai produttori dei sensori di parcheggio, quindi non è compito di questo 
-progetto gestirne il funzionamento. Il funzionamento di questo file XML è comunque abbastanza banale,
+Il file \gls{XML} viene scritto e gestito dai produttori dei sensori di parcheggio, quindi non è compito di questo 
+progetto gestirne il funzionamento. Il funzionamento di questo file \gls{XML} è comunque abbastanza banale,
 in quanto ad ogni variazione di stato il sensore di parcheggio va semplicemente ad aggiornare 
 il record a lui associato
 all'interno del file.
@@ -200,18 +199,18 @@ compatibile con praticamente qualsiasi linguaggio di programmazione.
 \\\\\\
 \textbf{Postman}
 \\\\
-E' un'applicazione che viene utilizzata solitamente per testare API. E' un client HTTP che testa richieste
-HTTP utilizzando una GUI, attraverso la quale otteniamo diversi tipi di risposta in base alle API che 
+E' un'applicazione che viene utilizzata solitamente per testare \gls{API}. E' un client \gls{HTTP} che testa richieste
+\gls{HTTP} utilizzando una \gls{GUI}\glsfirstoccur, attraverso la quale otteniamo diversi tipi di risposta in base alle \gls{API} che 
 andiamo ad interrogare.
 \\\\\\
 \textbf{Stoplight}
 \\\\
-E' una piattaforma per progettare API. Grazie a questo strumento è possibile documentare in maniera rigorosa
-e su uno spazio in cloud un set di API. La piattaforma permette di specificare varie informazioni per ogni
-API, tra cui endpoint, parametri in ingresso attesi, possibili risposte con status code associato. Questo
-strumento è molto utile per gli sviluppatori front-end che devono chiamare le API di un servizio
-back-end, soprattutto grazie alla funzionalità che permette di generare il mock della risposta di un'API, 
-permettendo allo sviluppatore di effettuare le chiamate al back-end anche senza che questo sia stato ancora realizzato.
+E' una piattaforma per progettare \gls{API}. Grazie a questo strumento è possibile documentare in maniera rigorosa
+e su uno spazio in cloud un set di \gls{API}. La piattaforma permette di specificare varie informazioni per ogni
+\gls{API}, tra cui \gls{endpoint}\glsfirstoccur, parametri in ingresso attesi, possibili risposte con status code associato. Questo
+strumento è molto utile per gli sviluppatori \gls{front-end} che devono chiamare le \gls{API} di un servizio
+\gls{back-end}, soprattutto grazie alla funzionalità che permette di generare il \gls{mock}\glsfirstoccur della risposta di un'\gls{API}, 
+permettendo allo sviluppatore di effettuare le chiamate al \gls{back-end} anche senza che questo sia stato ancora realizzato.
 \\\\\\
 \textbf{TypeScript}
 \\\\
@@ -286,6 +285,4 @@ Riguardo la stesura del testo, relativamente al documento sono state adottate le
 \begin{itemize}
 	\item gli acronimi, le abbreviazioni e i termini ambigui o di uso non comune menzionati vengono definiti nel glossario, situato alla fine del presente documento;
 	\item per la prima occorrenza dei termini riportati nel glossario viene utilizzata la seguente nomenclatura: \emph{parola}\glsfirstoccur;
-	% //TODO: valutare se mettere e implementare questo:
-    % \item i termini in lingua straniera o facenti parti del gergo tecnico sono evidenziati con il carattere \emph{corsivo}.
 \end{itemize}

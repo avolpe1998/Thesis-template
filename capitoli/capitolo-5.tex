@@ -44,7 +44,7 @@ NestJS fornisce uno strumento built-in per scrivere vari tipi di test, tra cui u
 end to end test, integration test e così via. 
 \\\\
 Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
-il mock delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
+il \gls{mock} delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
 Angular, Vue.
 \\\\
 I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
@@ -102,25 +102,25 @@ Scrivendo dei test automatici che vanno a testare i metodi con più di un branch
     venga lanciata dal service un eccezione di tipo UpdateError.
 \end{itemize}
 \leavevmode\newline
-Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei mock per tutte le dipendenze
+Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei \gls{mock} per tutte le dipendenze
 della classe da testare, repository compresi.
 \\\\
-Fornire dei mock per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
+Fornire dei \gls{mock} per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
 il comportamento della componente originale. 
 \\\\
 Le componenti fittizie sono molto più piccole delle componenti originali e implementano solo la parte di codice 
 necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
 \\\\
-Jest fornisce dei metodi molto utili per creare il mock di un metodo di una classe e sovrascriverne il comportamento.
-Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il mock.
+Jest fornisce dei metodi molto utili per creare il \gls{mock} di un metodo di una classe e sovrascriverne il comportamento.
+Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il \gls{mock}.
 \\\\
-Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il mock dei loro metodi, è stata
+Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il \gls{mock} dei loro metodi, è stata
 usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
-il mock e viene restituito un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
+il \gls{mock} e viene restituito un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
 dei metodi vuoto, 
 alleggerendo notevolmente il peso della componente.
 \\\\
-Di queste componenti viene poi effettuato il mock dei metodi necessari all'esecuzione dei test, tramite il metodo
+Di queste componenti viene poi effettuato il \gls{mock} dei metodi necessari all'esecuzione dei test, tramite il metodo
 spyOn, come descritto in precedenza.
 \clearpage
 \subsection{Realizzazione}
