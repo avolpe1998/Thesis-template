@@ -594,8 +594,8 @@ Il logging viene effettuato salvando su un file (solitamente con estensione .log
 accadute in un particolare evento che si è deciso di loggare, come la richiesta da parte
 dell'utente finale di un servizio dell'applicazione.
 \\\\
-Solitamente questi file di log diventano molto grandi, quindi possono aver bisogno di un server dedicato per 
-persisterli.
+Solitamente questi file di log raggiungono dimensioni importanti a volte nell'ordine dei Gigabyte, quindi possono aver bisogno di
+un server dedicato per persisterli oppure di meccanismi di compressione file schedulati.
 \\\\
 Per questo progetto è stato deciso di fare il logging di tutte le richieste alle \gls{API} \gls{REST} da parte dell'utente
 finale e tutte le volte che viene eseguito il servizio di polling schedulato.

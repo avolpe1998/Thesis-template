@@ -9,22 +9,22 @@
 
 \intro{In questo capitolo viene descritta la fase di ristrutturazione del database per
 la realizzazione del progetto.}
-
-Durante la fase di studio del database mi sono reso conto che erano presenti dei problemi sufficientemente gravi 
-da richiederne una ristrutturazione.
+\\\\\\\\\\\\
+Durante la fase di studio del database ho rilevato la presenza di
+alcune criticità che hanno richiesto una revisione del modello logico.
 \\\\
-Analizzate le problematiche mi sono confrontato con un mio collega stagista che stava lavorando sullo stesso database per
-un altro progetto di stage collegato a Smart Parking.
-\\
-Anche lui si è dimostrato d'accordo con il fatto che il database necessitava di una ristrutturazione e mi ha aiutato a 
-rilevare altre possibili
-problematiche.
+Attraverso il confronto con un'altro stagista con il quale si condivideva lo stesso database 
+è emersa la necessità di una revisione del modello di persistenza.
 \\\\
-Abbiamo poi effettuato una progettazione della ristrutturazione correlata da un documento che spiegava le scelte fatte
-e le motivazioni che hanno portato a effettuare le scelte. 
-\\
-Successivamente abbiamo presentato il progetto di ristrutturazione al proponente, che si è mostrato d'accordo con
-noi sull'esistenza dei problemi rilevati ed è stato molto soddisfatto della soluzione proposta.
+Una revisione o modifica di un database all'interno di progetti ha impatti importanti, in questo
+particolare caso sono stati coinvolti tutor aziendale e sviluppatori interessati per condividere
+l'intervento. 
+\\\\
+Lavorando su branch indipendenti si sono riuscite a mantenere le modifiche 
+in isolamento senza impatti riuscendo a testare la correttezza dell'intervento in un database locale.
+\\\\
+Successivamente l'azienda valuterà in fase di rilascio le versioni adeguate da installare
+negli ambienti di sviluppo collaudo ed esercizio.
 \\\\
 \clearpage
 Il modello logico esistente era il seguente:
@@ -34,7 +34,17 @@ Il modello logico esistente era il seguente:
   \caption{Modello logico pre-ristrutturazione}
 \end{figure}
 
-\section{Problemi rilevati}
+\section{Anomalie rilevate}
+Partendo dalla premessa che il software è un prodotto in continua evoluzione, le prime versioni
+di prodotti possono presentare anomalie o bug.
+\\\\
+La stessa progettazione del modello dati iniziale può possedere mancanze, lacune oppure subire variazioni da nuovi requisiti. 
+\\
+I framework di persistenza (es. JPA) 
+riescono a facilitare questo tipo di interventi correttivi.
+\\
+Seguono una serie di anomalie rilevate e di adeguamenti eseguiti rispetto alla prima versione del modello dati:
+\\\\\\
 \textbf{Nomi tabelle incoerenti}
 \\\\
 I nomi di alcune tabelle erano incoerenti con la funzionalità che andavano a svolgere:
