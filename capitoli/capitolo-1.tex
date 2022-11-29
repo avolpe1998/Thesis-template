@@ -102,15 +102,15 @@ Le problematiche riscontrate:
     \item architettura a microservizi: avevo solo una conoscenza basilare
           della tecnologia, grazie al corso d'ingegneria del software ma non
           sufficiente per fare un'analisi di migrazione futura del progetto, in un progetto con 
-          architettura a microservizi.
+          architettura a microservizi;
     \item framework Spring: la conoscenza di questo framework era completamente assente
         ed era importante conoscerlo per poter comprendere con chiarezza il software esistente,
-        di cui doveva essere effettuata la migrazione.
+        di cui doveva essere effettuata la migrazione;
     \item framework Node.js e NestJS: la conoscenza di questi due framework era completamente
         assente ed era di fondamentale importanza conoscerli per poter implementare il servizio
-        di \gls{API} \gls{REST}, lato back-end, richiesto.
-    \item La quantità di \gls{API} \gls{REST} da migrare era troppo elevata per il tempo a disposizione.
-    \item Il modello della base dati ha dovuto subire adeguamenti rispetto alla prima versione
+        di \gls{API} \gls{REST}, lato back-end, richiesto;
+    \item la quantità di \gls{API} \gls{REST} da migrare era troppo elevata per il tempo a disposizione;
+    \item il modello della base dati ha dovuto subire adeguamenti rispetto alla prima versione
         per rappresentare nel modo migliore lo scenario funzionale.
 \end{itemize}
 
@@ -133,8 +133,8 @@ Spring e NestJS, che sono fondati sul pattern controller-service-repository. Un 
 che sfrutta la layered architecture, creando tre diversi livelli di astrazione: 
 \begin{itemize}
     \item controller: è il livello più alto ed è l'unico responsabile dell'esposizione delle
-        funzionalità, in modo che possano essere consumate da entità esterne.
-    \item service: livello centrale, gestisce tutta la business logic.
+        funzionalità, in modo che possano essere consumate da entità esterne;
+    \item service: livello centrale, gestisce tutta la business logic;
     \item repository: livello più basso, è responsabile di salvare e recuperare i dati da un
         sistema di persistenza, come un database.
 \end{itemize}
@@ -170,7 +170,7 @@ delle richieste \gls{HTTP}\glsfirstoccur a degli specifici \gls{endpoint} con i 
     \item GET: per ottenere delle risorse dal servizio \gls{REST};
     \item POST: per creare una nuova risorsa nel servizio \gls{REST};
     \item PUT: per modificare una risorsa nel servizio \gls{REST};
-    \item DELETE: per eliminare una risorsa dal servizio \gls{REST};
+    \item DELETE: per eliminare una risorsa dal servizio \gls{REST}.
 \end{itemize}
 \leavevmode\newline
 E' presente poi, nel \gls{back-end}, un servizio schedulato che ogni due minuti in maniera autonoma va a fare il polling
@@ -209,8 +209,8 @@ E' un'applicazione che viene utilizzata solitamente per testare \gls{API}. E' un
 andiamo ad interrogare.
 \\\\\\
 \clearpage
-\textbf{Stoplight}
 \leavevmode\newline
+\textbf{Stoplight}
 \\\\
 E' una piattaforma per progettare \gls{API}. Grazie a questo strumento è possibile documentare in maniera rigorosa
 e su uno spazio in cloud un set di \gls{API}. La piattaforma permette di specificare varie informazioni per ogni
@@ -293,5 +293,5 @@ per Node.js.
 Riguardo la stesura del testo, relativamente al documento sono state adottate le seguenti convenzioni tipografiche:
 \begin{itemize}
 	\item gli acronimi, le abbreviazioni e i termini ambigui o di uso non comune menzionati vengono definiti nel glossario, situato alla fine del presente documento;
-	\item per la prima occorrenza dei termini riportati nel glossario viene utilizzata la seguente nomenclatura: \emph{parola}\glsfirstoccur;
+	\item per la prima occorrenza dei termini riportati nel glossario viene utilizzata la seguente nomenclatura: \emph{parola}\glsfirstoccur.
 \end{itemize}

@@ -65,18 +65,18 @@ sono mantenuti in maniera persistente, come ad esempio un database.
 \subsection{Motivazioni della scelta}
 Le motivazione che hanno portato a scegliere questo stile architetturale sono le seguenti:
 \begin{itemize}
-    \item Dato che la separazione delle responsabilità è la proprietà principale di quest'architettura,
+    \item dato che la separazione delle responsabilità è la proprietà principale di quest'architettura,
         ogni livello di software ha la sua specifica funzione. Questo rende facile il dover aggiornare 
         singoli livelli e permette al team di sviluppo di separare bene i carichi di lavoro tra i vari 
-        membri, che possono lavorare in maniera contemporanea su livelli diversi.
-    \item Per la proponente è importante avere una suite di test automatici per testare i vari componenti
+        membri, che possono lavorare in maniera contemporanea su livelli diversi;
+    \item per la proponente è importante avere una suite di test automatici per testare i vari componenti
         dell'applicazione. La layered architecture separando bene le responsabilità tra i livelli, 
         permette di suddividere l'applicazione in componenti ben separati e quindi più facili da testare.
         Essendo ogni livello isolato dagli altri, è possibile creare casi di test di dimensione ridotta, 
-        in quanto le componenti di cui fare il \gls{mock} sono poche.
-    \item L'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
-        gli altri livelli.
-    \item Nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
+        in quanto le componenti di cui fare il \gls{mock} sono poche;
+    \item l'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
+        gli altri livelli;
+    \item nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
         di migrazione ad un'architettura a microservizi. La layered architecture lavora bene (lato monolite) anche
         in un sistema con un'architettura ibrida monolite/microservizi. Questo tipo di architettura
         ibrida solitamente si forma nel processo di migrazione di un sistema monolitico in un sistema a microservizi.
@@ -229,20 +229,20 @@ dichiarate nel costruttore e le inserisca nell'IoC container.
 \\\\
 I controller dell'applicazione individuati sono i seguenti:
 \begin{itemize}
-    \item MaintainersRegistryController: gestisce le richieste/risposte relative al dominio dei manutentori.
-    \item ParkingAreasController: gestisce le richieste/risposte relative al dominio dei parcheggi.
+    \item MaintainersRegistryController: gestisce le richieste/risposte relative al dominio dei manutentori;
+    \item ParkingAreasController: gestisce le richieste/risposte relative al dominio dei parcheggi;
     \item ParkingSensorsController: gestisce le richieste/risposte relative al dominio delle misurazioni
-    dei sensori di parcheggio.
+    dei sensori di parcheggio;
     \item ParkingSensorsSensorsController: gestisce le richieste/risposte relative al dominio delle misurazioni
-    dei sensori di parcheggio di un sensore.
-    \item ParkingSpotsController: gestisce le richieste/risposte relative al dominio delle piazzole.
+    dei sensori di parcheggio di un sensore;
+    \item ParkingSpotsController: gestisce le richieste/risposte relative al dominio delle piazzole;
     \item ParkingSpotsParkingAreasController: gestisce le richieste/risposte relative al dominio delle piazzole
-    di un parcheggio.
+    di un parcheggio;
     \item ParkingSpotsSensorsController: gestisce le richieste/risposte relative al dominio delle piazzole
-    di un sensore.
-    \item SensorsController: gestisce le richieste/risposte relative al dominio dei sensori.
+    di un sensore;
+    \item SensorsController: gestisce le richieste/risposte relative al dominio dei sensori;
     \item SensorsParkingSpotsController: gestisce le richieste/risposte relative al dominio dei sensori di una
-    piazzola.
+    piazzola;
     \item SensorsMaintenanceSensorsController: gestisce le richieste/risposte relative al dominio della manutenzione dei
     sensori di un sensore.
 \end{itemize}
@@ -255,9 +255,8 @@ I service dell'applicazione individuati sono i seguenti:
     \item ParkingSpotsService: gestisce la business logic relativa al dominio delle piazzole;
     \item SensorsService: gestisce la business logic relativa al dominio dei sensori;
     \item SensorsMaintenanceService: gestisce la business logic relativa al dominio della manutenzione dei sensori;
-    \item SensorsScrapingService: gestisce la business logic relativa al dominio del polling dei sensori;
+    \item SensorsScrapingService: gestisce la business logic relativa al dominio del polling dei sensori.
 \end{itemize}
-% //TODO: mettere ; alla fine degli itemize
 \subsection{Repository}
 I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno quindi il compito di
 comunicare con la componente di archiviazione dati come un database. Nel progetto è stato utilizzato un database
@@ -322,7 +321,7 @@ che eseguono le nostre query custom.
 Ci sono 2 modi per creare le query:
 \begin{itemize}
     \item tramite notazione pura SQL;
-    \item tramite i metodi del Query Builder;
+    \item tramite i metodi del Query Builder.
 \end{itemize}
 \leavevmode\newline
 E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazione SQL pura per 2 motivi:
@@ -338,7 +337,7 @@ E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazio
 I repository custom dell'applicazione individuati sono i seguenti:
 \begin{itemize}
     \item ParkingSensorsRepository: ha un metodo custom per aggiornare i timestamp delle misurazioni dei sensori di parcheggio 
-        passate come parametro.
+        passate come parametro;
     \item SensorsRepository: ha un metodo custom per ottenere i sensori che non hanno almeno una manutenzione.
 \end{itemize}
 % rel: https://it.wikipedia.org/wiki/Object-relational_mapping
@@ -406,14 +405,14 @@ export class ParkingSpotsModule {}
 \leavevmode\newline
 I moduli dell'applicazione individuati sono i seguenti:
 \begin{itemize}
-    \item AutomapperCustomModule: contiene i componenti per effettuare il mappaggio da DTO a entità.
-    \item DtoValidatorModule: contiene i componenti per validare i campi di un DTO.
-    \item MaintainersRegistryModule: contiene i componenti appartenenti al dominio dei manutentori.
-    \item ParkingAreasModule: contiene i componenti appartenenti al dominio dei parcheggi.
-    \item ParkingSensorsModule: contiene i componenti appartenenti al dominio delle misurazioni dei sensori di parcheggio.
-    \item ParkingSpotsModule: contiene i componenti appartenenti al dominio delle piazzole.
-    \item SensorsModule: contiene i componenti appartenenti al dominio dei sensori.
-    \item SensorsMaintenanceModule: contiene i componenti appartenenti al dominio della manutenzione dei sensori.
+    \item AutomapperCustomModule: contiene i componenti per effettuare il mappaggio da DTO a entità;
+    \item DtoValidatorModule: contiene i componenti per validare i campi di un DTO;
+    \item MaintainersRegistryModule: contiene i componenti appartenenti al dominio dei manutentori;
+    \item ParkingAreasModule: contiene i componenti appartenenti al dominio dei parcheggi;
+    \item ParkingSensorsModule: contiene i componenti appartenenti al dominio delle misurazioni dei sensori di parcheggio;
+    \item ParkingSpotsModule: contiene i componenti appartenenti al dominio delle piazzole;
+    \item SensorsModule: contiene i componenti appartenenti al dominio dei sensori;
+    \item SensorsMaintenanceModule: contiene i componenti appartenenti al dominio della manutenzione dei sensori;
     \item SensorsScrapingModule: contiene i componenti appartenenti al dominio del polling dei sensori.
 \end{itemize}
 
@@ -515,9 +514,9 @@ generando confusione per l'utente finale.
 \\\\
 Le eccezioni custom per TypeORM individuate sono le seguenti:
 \begin{itemize}
-    \item NotFoundError: gestisce errori dovuti alla richiesta di dati inesistenti.
-    \item InsertError: gestisce errori dovuti all'inserimento di dati.
-    \item UpdateError: gestisce errori dovuti all'aggiornamento di dati.
+    \item NotFoundError: gestisce errori dovuti alla richiesta di dati inesistenti;
+    \item InsertError: gestisce errori dovuti all'inserimento di dati;
+    \item UpdateError: gestisce errori dovuti all'aggiornamento di dati;
     \item DeleteError: gestisce errori dovuti alla cancellazione di dati.
 \end{itemize}
 \leavevmode\newline
@@ -581,13 +580,13 @@ informazioni:
     \item ip dell'utente finale;
     \item status code di risposta;
     \item lunghezza del messaggio di risposta;
-    \item timestamp della richiesta;
+    \item timestamp della richiesta.
 \end{itemize}
 \leavevmode\newline
 Per il servizio di polling si vuole effettuare il logging delle seguenti informazioni:
 \begin{itemize}
     \item timestamp del momento di avvio del polling;
-    \item timestamp del momento di fine del polling;
+    \item timestamp del momento di fine del polling.
 \end{itemize}
 \leavevmode\newline
 NestJS ha una classe built-in, chiamata Logger, che è possibile usare per effettuare il logging 
@@ -608,7 +607,7 @@ indica la sua importanza:
     \item error: log critico, qualcosa nell'applicazione non ha funzionato correttamente e
         alcune funzionalità dell'applicazione potrebbero non funzionare correttamente;
     \item warn: log di avviso, qualcosa di inaspettato è successo nell'applicazione;
-    \item info: log di informazione, è successo un evento all'interno dell'applicazione;
+    \item info: log di informazione, è successo un evento all'interno dell'applicazione.
 \end{itemize}
 \leavevmode\newline
 Esistono poi altri livelli di log che non sono stati però usati in questo progetto, quindi si è deciso di non specificarli.
@@ -675,7 +674,7 @@ contro dei due rispettivi punti.
 \\\\
 Pro del punto 1
 \begin{itemize}
-    \item Far comunicare il SensorsScrapingService con un servizio di \gls{API} \gls{REST}, separa bene le responsabilità e 
+    \item far comunicare il SensorsScrapingService con un servizio di \gls{API} \gls{REST}, separa bene le responsabilità e 
         nel caso di migrazione a un applicazione basata su microservizi, il microservizio dedicato al polling dei sensori 
         non deve cambiare il modo in cui interagisce
         con il servizio di persistenza, in quanto continua a chiamare le stesse \gls{API} \gls{REST} tramite il protocollo \gls{HTTP}.
@@ -683,7 +682,7 @@ Pro del punto 1
 \leavevmode\newline
 Contro del punto 1
 \begin{itemize}
-    \item Come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate \gls{HTTP} giornaliere
+    \item come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate \gls{HTTP} giornaliere
         per scaricare i dati dei sensori aggiornati. 
         \\
         Quindi come minimo deve effettuare 720 chiamate \gls{HTTP} giornaliere anche alle \gls{API} \gls{REST}, per verificare se ci sono sensori
@@ -698,18 +697,18 @@ Contro del punto 1
 \leavevmode\newline
 Pro del punto 2
 \begin{itemize}
-    \item Far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e delle misurazioni dei sensori di parcheggio
+    \item far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e delle misurazioni dei sensori di parcheggio
         riduce notevolmente i costi in termini di carico dell'applicazione, in quanto per persistere i dati è sufficiente chiamare un
         metodo del servizio da cui si dipende, senza dover fare chiamate \gls{HTTP} che sono molto costose. 
 \end{itemize}
 \leavevmode\newline
 Contro del punto 2
 \begin{itemize}
-    \item Nel caso di migrazione a un'applicazione basata su microservizi bisogna modificare il modo in cui il SensorsScrapingService 
+    \item nel caso di migrazione a un'applicazione basata su microservizi bisogna modificare il modo in cui il SensorsScrapingService 
         persiste i dati dei sensori
         e delle misurazioni dei sensori di parcheggio. Probabilmente bisogna passare a effettuare chiamate \gls{HTTP} al servizio di \gls{API} \gls{REST} (come il punto 1),
         in quanto il servizio di polling diventerà un microservizio indipendente, quindi non saranno più a lui visibili il servizio dei 
-        sensori e delle misurazioni di parcheggio.
+        sensori e delle misurazioni di parcheggio;
     \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile per il
         concetto di separazione delle responsabilità.
 \end{itemize}
@@ -755,6 +754,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \end{tabular}
     \caption{API REST parcheggio}
 \end{table}
+\clearpage
 \leavevmode\newline
 \textbf{Manutentore}
 \\
@@ -777,7 +777,6 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \caption{API REST manutentore}
 \end{table}
 \leavevmode\newline
-\clearpage
 \textbf{Sensore}
 \\
 \begin{table}[H]
@@ -803,6 +802,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \end{tabular}
     \caption{API REST sensore}
 \end{table}
+\clearpage
 \leavevmode\newline
 \textbf{Piazzola}
 \\
@@ -827,7 +827,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \end{tabular}
     \caption{API REST piazzola}
 \end{table}
-\clearpage
+
 \leavevmode\newline
 \textbf{Misurazione sensore di parcheggio}
 \\

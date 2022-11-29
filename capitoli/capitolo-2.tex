@@ -73,7 +73,7 @@ di effettuare un polling ogni due minuti al file \gls{XML} e aggiornare lo stato
 Lo stato dei sensori è quindi ridondante in quanto è presente sia nel \gls{back-end} del progetto che sul file \gls{XML} online. 
 La scelta di duplicare lo stato dei sensori nel \gls{back-end} è stata fatta per trarne i seguenti benefici:
 \begin{itemize}
-    \item permette di organizzare i dati in maniera più consona e organizzata.
+    \item permette di organizzare i dati in maniera più consona e organizzata;
     \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file \gls{XML} online
         in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza del \gls{back-end}, 
         di cui abbiamo pieno controllo.
@@ -160,8 +160,8 @@ di parcheggio.
 \\
 Ogni piazzola è caratterizzata da:
 \begin{itemize}
-    \item id: numero incrementale.
-    \item latitudine: stringa.
+    \item id: numero incrementale;
+    \item latitudine: stringa;
     \item longitudine: stringa.
 \end{itemize}
 \leavevmode\newline
@@ -171,8 +171,8 @@ Modella l'insieme di piazzole.
 \\
 Ogni parcheggio è caratterizzato da:
 \begin{itemize}
-    \item id: numero incrementale.
-    \item latitudine: stringa.
+    \item id: numero incrementale;
+    \item latitudine: stringa;
     \item longitudine: stringa.
 \end{itemize}
 \leavevmode\newline
@@ -181,7 +181,7 @@ Ogni parcheggio è caratterizzato da:
 Modella il sensore. Esistono due tipi di sensore:
 \begin{itemize}
     \item ambientale: misurana la qualità dell'aria e altri parametri nel parcheggio e possono 
-        coprire un'area di N piazzole.
+        coprire un'area di N piazzole;
         Sono gestiti da un'altro progetto di tirocinio, quindi non sono facenti parte di questo dominio di progetto.
     \item di parcheggio: sensore posizionato sotto l'auto nella piazzola. Rileva la presenza o meno
         del veicolo. Questo tipo di sensore può essere associato a una sola piazzola.
@@ -189,15 +189,15 @@ Modella il sensore. Esistono due tipi di sensore:
 Ogni sensore può avere una sola azienda manutentrice a lui associata.
 Ogni sensore è caratterizzato da:
 \begin{itemize}
-    \item id: numero incrementale.
-    \item nome: stringa.
-    \item batteria: stringa, indica la tensione della batteria in Volt.
-    \item carica: stringa, indica il livello di carica della batteria (da 1 a 3).
-    \item type: stringa, indica il tipo di sensore (ambientale o di parcheggio).
-    \item attivo: booleano.
-    \item ultimo sondaggio: timestamp, indica l'ultima volta che è stato aggiornato lo stato del sensore.
-    \item da riparare: booleano, indica se il sensore deve essere riparato.
-    \item da caricare: booleano, indica se la batteria del sensore è scarica.
+    \item id: numero incrementale;
+    \item nome: stringa;
+    \item batteria: stringa, indica la tensione della batteria in Volt;
+    \item carica: stringa, indica il livello di carica della batteria (da 1 a 3);
+    \item type: stringa, indica il tipo di sensore (ambientale o di parcheggio);
+    \item attivo: booleano;
+    \item ultimo sondaggio: timestamp, indica l'ultima volta che è stato aggiornato lo stato del sensore;
+    \item da riparare: booleano, indica se il sensore deve essere riparato;
+    \item da caricare: booleano, indica se la batteria del sensore è scarica;
     \item in aggiornamento: booleano, indica se il sensore sta aggiornando il suo software.
 \end{itemize}
 \leavevmode\newline
@@ -206,11 +206,11 @@ Ogni sensore è caratterizzato da:
 Modella l'azienda incaricata alla manutenzione dei sensori.
 Ogni manutentore è caratterizzato da:
 \begin{itemize}
-    \item id: numero incrementale.
-    \item nome: stringa, indica il nome del titolare dell'azienda.
-    \item cognome: stringa, indica il cognome del titolare dell'azienda.
-    \item azienda: stringa.
-    \item telefono: stringa.
+    \item id: numero incrementale;
+    \item nome: stringa, indica il nome del titolare dell'azienda;
+    \item cognome: stringa, indica il cognome del titolare dell'azienda;
+    \item azienda: stringa;
+    \item telefono: stringa;
     \item email: stringa.
 \end{itemize}
 \leavevmode\newline
@@ -221,11 +221,11 @@ di parcheggio non salva uno storico di misurazioni fatte ma viene inserita solo 
 sovrascrivendo la precedente.
 Ogni misurazione di un sensore di parcheggio è caratterizzata da:
 \begin{itemize}
-    \item id: numero incrementale.
-    \item indirizzo: stringa.
-    \item latitudine: stringa.
-    \item longitudine: stringa.
-    \item valore: booleano, indica se il veicolo è presente o meno sopra al sensore.
+    \item id: numero incrementale;
+    \item indirizzo: stringa;
+    \item latitudine: stringa;
+    \item longitudine: stringa;
+    \item valore: booleano, indica se il veicolo è presente o meno sopra al sensore;
     \item marca temporale: timestamp, indica la data in cui è stata effettuata la misurazione.
 \end{itemize}
 
@@ -514,6 +514,7 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
     \item l'utente richiede la modifica di una piazzola.
     \item l'utente modifica una piazzola.
 \end{enumerate}
+\clearpage
 \leavevmode\newline
 \textbf{UC19 - Eliminazione di una piazzola}
 \\\\
@@ -612,12 +613,12 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \section{Tracciamento dei requisiti}
 Ogni requisito è identificato da un codice univoco nel seguente formato:
 \begin{itemize}
-    \item la prima lettera è sempre R, a indicare la parola requisito
+    \item la prima lettera è sempre R, a indicare la parola requisito;
     \item la seconda lettera indica il tipo di requisito:
     \begin{itemize}
-        \item F per i requisiti funzionali
-        \item Q per i requisiti qualitativi
-        \item V per i requisiti di vincolo
+        \item F per i requisiti funzionali;
+        \item Q per i requisiti qualitativi;
+        \item V per i requisiti di vincolo.
     \end{itemize}
     \item un numero progressivo che identifica in modo univoco il requisito.
 \end{itemize}
