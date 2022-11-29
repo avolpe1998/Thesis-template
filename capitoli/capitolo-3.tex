@@ -30,7 +30,7 @@ in livelli orizzontali. Di conseguenza ogni livello svolge un ruolo specifico ne
 \\
 La layered architecture non ha restrizioni sul numero di strati che l'applicazione può avere, in quanto 
 lo scopo è avere livelli che promuovano il concetto di separazione delle responsabilità.
-
+\clearpage
 \begin{figure}[H]
     \centering
     \includegraphics[height=5cm]{layered-architecture}
@@ -88,13 +88,13 @@ Le motivazione che hanno portato a scegliere questo stile architetturale sono le
         Infatti grazie alla separazione delle responsabilità della layered architecture, è facile andare
         a trasformare i componenti del monolite in microservizi.
 \end{itemize}
-
+\clearpage
 \section{Struttura software}
 E' stato scelto NestJS come framework di sviluppo del progetto dato che utilizza la layered architecture,
 tramite il pattern controller-service-repository. Vediamo questo design pattern:
 \begin{figure}[H]
     \centering
-    \includegraphics[height=6cm]{controller-service-repository-pattern}
+    \includegraphics[height=9cm]{controller-service-repository-pattern}
     \caption{Controller-service-repository pattern}
 \end{figure}
 \leavevmode\newline
@@ -142,15 +142,14 @@ Per dichiarare una classe come controller, bisogna applicare il decorator @Contr
 definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
 @Injectable sopra la definizione della classe.
 \\
-\begin{lstlisting}[language=JavaScript]
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Injectable()
 export class MaintainersRegistryService {
     constructor(private readonly maintainersRegistryRepository: 
         MaintainersRegistryRepository){}
-
-    getAllMaintainers(){
-        return this.maintainersRegistryRepository.find();
-    }
 
     async getMaintainerById(id: string){
         const maintainer = 
@@ -159,7 +158,6 @@ export class MaintainersRegistryService {
                     id: id
                 }
             });
-
         if(isEmpty(maintainer))
             throw new NotFoundError('maintainer id not found');
 
@@ -169,47 +167,12 @@ export class MaintainersRegistryService {
     async createMaintainer(maintainer: MaintainerRegistry){
         const insertResponse = 
             await this.maintainersRegistryRepository.insert(maintainer);
-
         if(isEmpty(insertResponse.identifiers))
             throw new InsertError('problem to insert record');
 
         const maintainerInsertedId = insertResponse.identifiers[0].id;
 
         return this.getMaintainerById(maintainerInsertedId);
-    }
-
-    async editMaintainerById(id: string, maintainerRegistry: MaintainerRegistry){
-        try{
-            await this.getMaintainerById(id);    
-        }catch(error){
-            throw(error);
-        }
-        
-        const updateResponse = 
-            await this.maintainersRegistryRepository.update(id, maintainerRegistry);
-
-        const numberRowAffected = updateResponse.affected;
-
-        if(numberRowAffected !== 1)
-            throw new UpdateError('problem to update record');
-
-        return this.getMaintainerById(id);
-    }
-
-    async deleteMaintainerById(id: string){
-        try{
-            await this.getMaintainerById(id);    
-        }catch(error){
-            throw(error);
-        }
-
-        const deleteResponse = 
-            await this.maintainersRegistryRepository.delete(id);
-
-        const numberRowAffected = deleteResponse.affected;
-
-        if(numberRowAffected !== 1)
-            throw new DeleteError('problem to delete record');
     }
 }
 \end{lstlisting}
@@ -220,17 +183,14 @@ finale. NestJS considera come provider tutte le classi istanziabili e marcate co
 @Injectable che non sono controller; quindi sia classi di tipo service, che repository devono essere marcate
 con il decorator @Injectable. 
 \\
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Controller('maintainers')
 export class MaintainersRegistryController {
     constructor(private readonly maintainersRegistryService: 
         MaintainersRegistryService){}
-
-    @Get()
-    getAllMaintainers(){
-        return this.maintainersRegistryService
-            .getAllMaintainers();
-    }
 
     @Get(':id')
     getMaintainerById(@Param('id') id: string){
@@ -334,7 +294,10 @@ Se creiamo un repository custom non è più necessario usare il metodo forFeatur
 come provider.
 \\ 
 
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Injectable()
 export class SensorsRepository extends Repository<Sensor>{
     constructor(private dataSource: DataSource){
@@ -417,8 +380,10 @@ In questo caso se un componente di un modulo B dichiara una
 dipendenza da un componente esportato da un modulo A, nel decorator @Module, della classe modulo B, deve essere dichiarato il
 modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array imports all'interno di @Module).
 \\
-% //TODO: sistemare colori codice
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Module({
     imports: [ 
         SensorsModule,
@@ -460,7 +425,10 @@ utili per rappresentare le entità di tipo sensore e misurazioni sensore con cui
 Prima di effettuare la conversione da \gls{DTO} a entità, i campi del \gls{DTO} vengono validati, lanciando un'eccezione nel caso 
 la validazione fallisca.
 \\
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 export class SensorScrapingDto{
     
     id: string;
@@ -563,7 +531,10 @@ Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
 di una classe ad intervalli di tempo regolari.
 \\\\
 Per poter usare la libreria bisogna importare, nel modulo root dell'applicazione, il modulo della libreria schedule in questo modo:
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Module({
   imports: [
     ScheduleModule.forRoot()
@@ -656,7 +627,10 @@ listener sull'evento close dell'oggetto response. In questo modo il log viene sc
 gestire la richiesta e abbiamo tutti i dati a disposizione per poterla loggare.
 % ref: https://www.loggly.com/use-cases/application-logging-best-practices/
 
-\begin{lstlisting}
+\begin{lstlisting}[
+    language=JavaScript,
+    basicstyle=\ttfamily\footnotesize
+]
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(
@@ -781,7 +755,6 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \end{tabular}
     \caption{API REST parcheggio}
 \end{table}
-\clearpage
 \leavevmode\newline
 \textbf{Manutentore}
 \\
@@ -804,6 +777,7 @@ Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti
     \caption{API REST manutentore}
 \end{table}
 \leavevmode\newline
+\clearpage
 \textbf{Sensore}
 \\
 \begin{table}[H]

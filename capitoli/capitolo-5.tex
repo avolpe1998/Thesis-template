@@ -59,7 +59,10 @@ contenere il nome del metodo da testare e una funzione callback contenente tutti
 Ogni test va scritto all'interno della dicitura it, che richiede il nome del test e una funzione callback
 contenente il caso di test.
 \\\\
-\begin{lstlisting}
+\begin{lstlisting}[
+  language=JavaScript,
+  basicstyle=\ttfamily\footnotesize
+]
 describe('MaintainersRegistryService', () => {
   describe('getMaintainerById', () => {
     it('should return the maintainer if found', async () => {

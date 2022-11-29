@@ -16,6 +16,12 @@ stato ed informazioni di alcuni sensori di parcheggio e le persiste in un databa
 \\\\
 Lo scopo di questo progetto è migrare le \gls{API} \gls{REST} e il servizio di polling, dalla soluzione
 realizzata con il framework Spring, in una soluzione realizzata con il framework NestJS.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=8cm]{polling-sensori}
+    \caption{Polling sensori}
+\end{figure}
+\leavevmode\newline
 
 \section{Confronto con gli stakeholders}
 E' stato fatto un incontro iniziale con il proponente, ovvero l'azienda Sync Lab,
@@ -44,25 +50,20 @@ questo caso il sistema deve aggiornare le coordinate del sensore esistente, anzi
 Sono stati scelti una tipologia di sensori con \gls{GPS}\glsfirstoccur integrato, che ad ogni variazione di stato vanno ad 
 aggiornare un record a loro associato in un file \gls{XML} online, dove ogni record contiene le informazioni e
 lo stato del sensore.
-\\
-% //TODO: sistemare grandezza font:
-\begin{lstlisting}[style=XML]
+\\\\
+Vediamo un estratto del file \gls{XML} online:
+\begin{lstlisting}[
+    style=XML,
+    basicstyle=\ttfamily\footnotesize
+]
 <markers>
     <marker id="1" name="156A2C71" address="Padova Galleria Spagna" lat="45.389040" lng="11.928577" state="0" battery="3,7V" active="1"/>
+    
     <marker id="2" name="156A2A71" address="Padova Galleria Spagna" lat="45.389029" lng="11.928598" state="1" battery="3,7V" active="1"/>
+    
     <marker id="3" name="156A2B71" address="Padova Galleria Spagna" lat="45.389028" lng="11.928631" state="0" battery="3,7V" active="1"/>
+    
     <marker id="4" name="156A2C72" address="Via Forcellini" lat="45.392648" lng="11.904846" state="0" battery="3,7V" active="1"/>
-    <marker id="5" name="156A2A73" address="Via Forcellini" lat="45.392618" lng="11.904963" state="1" battery="3,7V" active="1"/>
-    <marker id="6" name="156A2B74" address="Via Forcellini" lat="45.392622" lng="11.904921" state="1" battery="3,7V" active="1"/>
-    <marker id="7" name="156A2C75" address="Piazza Capitaniato" lat="45.407958" lng="11.872594" state="0" battery="3,7V" active="1"/>
-    <marker id="8" name="156A2A76" address="Piazza Capitaniato" lat="45.407936" lng="11.872584" state="1" battery="3,7V" active="1"/>
-    <marker id="9" name="156A2B77" address="Piazza Capitaniato" lat="45.407913" lng="11.872580" state="0" battery="3,7V" active="1"/>
-    <marker id="10" name="156A2C78" address="Prato della valle" lat="45.397848" lng="11.875080" state="1" battery="3,7V" active="1"/>
-    <marker id="11" name="156A2A79" address="Prato della valle" lat="45.397838" lng="11.875102" state="0" battery="3,7V" active="1"/>
-    <marker id="12" name="156A2B710" address="Prato della valle" lat="45.397822" lng="11.875126" state="0" battery="3,7V" active="1"/>
-    <marker id="13" name="156A2C711" address="Via Sorio" lat="45.400546" lng="11.855238" state="0" battery="3,7V" active="1"/>
-    <marker id="14" name="156A2A712" address="Via Sorio" lat="45.400547" lng="11.855173" state="0" battery="3,7V" active="1"/>
-    <marker id="15" name="156A2B7113" address="Via Sorio" lat="45.400546" lng="11.855015" state="1" battery="3,7V" active="1"/>
 </markers>
 \end{lstlisting}
 \leavevmode\newline
@@ -664,7 +665,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \end{tabular}
     \caption{Requisiti funzionali manutentore}
 \end{table}
-
+\clearpage
 % sensore
 \begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 
@@ -682,7 +683,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \end{tabular}
     \caption{Requisiti funzionali sensore}
 \end{table}
-\clearpage
+
 % piazzola
 \begin{table}[H]
     \begin{tabular}{|p{1cm}|p{6cm}|p{1.9cm}|p{1.8cm}|} 

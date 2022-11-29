@@ -147,22 +147,37 @@
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 
+\definecolor{primaryblue}{RGB}{6, 0, 255}
+\definecolor{mediumblue}{RGB}{0, 112, 193}
+\definecolor{carmine}{RGB}{163, 21, 21}
+\definecolor{chestnut}{RGB}{127, 56, 20}
+\definecolor{vibrantpurple}{RGB}{175, 0, 219}
+\definecolor{midgreen}{RGB}{48, 145, 48}
+\definecolor{deepblue}{RGB}{7, 16, 128}
+
 \lstdefinelanguage{JavaScript}{
-  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, async},
-  keywordstyle=\color{blue}\bfseries,
-  ndkeywords={class, export, boolean, throw, implements, import, this},
-  ndkeywordstyle=\color{darkgray}\bfseries,
+  keywords={class, constructor, private, readonly, this, async, const, new},
+  keywordstyle=\color{primaryblue}\bfseries,
+  ndkeywords={await, if, throw, try, catch, return, export},
+  ndkeywordstyle=\color{vibrantpurple}\bfseries,
   identifierstyle=\color{black},
   sensitive=false,
   comment=[l]{//},
   morecomment=[s]{/*}{*/},
-  commentstyle=\color{purple}\ttfamily,
-  stringstyle=\color{red}\ttfamily,
+  commentstyle=\color{midgreen}\ttfamily,
+  stringstyle=\color{carmine}\ttfamily,
+  % classoffset=2,
+  % otherkeywords={Injectable, Controller, ara},
+  % morekeywords={Injectable, Controller, ara},
+  % keywordstyle=\color{chestnut},
+  % classoffset=0,
   morestring=[b]',
   morestring=[b]"
 }
 
-\lstset{basicstyle=\fontsize{1}{1}}
+\lstset{
+  linewidth=14cm
+}
 
 \input{tesi-config}                     % file con le impostazioni personali
 
@@ -173,7 +188,7 @@
 \frontmatter
 \input{inizio-fine/frontespizio}
 \input{inizio-fine/colophon}
-\input{inizio-fine/dedica}
+%\input{inizio-fine/dedica}
 \input{inizio-fine/sommario}
 \input{inizio-fine/ringraziamenti}
 \input{inizio-fine/indici}
