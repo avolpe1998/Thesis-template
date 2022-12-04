@@ -1,6 +1,6 @@
 % !TEX encoding = UTF-8
 % !TEX TS-program = pdflatex
-% !TEX root = ../tesi.tex
+% !TEX root = ../Volpe_Andrea.tex
 
 %**************************************************************
 \chapter{Ristrutturazione database}
@@ -13,15 +13,15 @@ la realizzazione del progetto.}
 Durante la fase di studio del database ho rilevato la presenza di
 alcune criticità che hanno richiesto una revisione del modello logico.
 \\\\
-Attraverso il confronto con un'altro stagista con il quale si condivideva lo stesso database 
-è emersa la necessità di una revisione del modello di persistenza.
+Attraverso il confronto con un'altro stagista con il quale si condivideva la stessa base di dati 
+è emersa la necessità di una revisione del modello logico.
 \\\\
 Una revisione o modifica di un database all'interno di progetti ha impatti importanti, in questo
 particolare caso sono stati coinvolti tutor aziendale e sviluppatori interessati per condividere
 l'intervento. 
 \\\\
 Lavorando su branch indipendenti si sono riuscite a mantenere le modifiche 
-in isolamento senza impatti riuscendo a testare la correttezza dell'intervento in un database locale.
+in isolamento senza impatti, riuscendo a testare la correttezza dell'intervento in una base di dati locale.
 \\\\
 Successivamente l'azienda valuterà in fase di rilascio le versioni adeguate da installare
 negli ambienti di sviluppo collaudo ed esercizio.
@@ -36,9 +36,9 @@ Il modello logico esistente era il seguente:
 
 \section{Anomalie rilevate}
 Partendo dalla premessa che il software è un prodotto in continua evoluzione, le prime versioni
-di prodotti possono presentare anomalie o bug.
+di prodotto possono presentare anomalie o bug.
 \\\\
-La stessa progettazione del modello dati iniziale può possedere mancanze, lacune oppure subire variazioni da nuovi requisiti. 
+La stessa progettazione del modello logico iniziale può possedere mancanze, lacune oppure subire variazioni da nuovi requisiti. 
 \\
 I framework di persistenza (es. JPA) 
 riescono a facilitare questo tipo di interventi correttivi.
@@ -67,32 +67,32 @@ nella tabella parking\_area, creando un'inutile ridondanza di dati.
 La relazione sensors -> parking\_area ha cardinalità uno a molti, nel senso che una piazzola può avere
 più sensori e un sensore può essere associato solo a una piazzola. 
 \\
-La cosa è sbagliata, in quanto una piazzola può si avere più sensori associati (un sensore di parcheggio e/o N
+La cosa è sbagliata, in quanto una piazzola può, si, avere più sensori associati (un sensore di parcheggio e/o N
 sensori ambientali) ma anche un sensore può essere associato a più piazzole; in quanto un sensore ambientale
 può ricoprire un area di N piazzole.
 \\\\\\
 \textbf{Mancanza di tabelle fondamentali}
 \\\\
-Manca una tabella fondamentale che rappresenti un parcheggio (un insieme di piazzole). 
+Mancava una tabella fondamentale che rappresentasse un parcheggio (un insieme di piazzole). 
 \\
-Tabella molto importante dato che essa ha un indirizzo e una posizione geografica (latitudine e longitudine), 
+Tabella molto importante dato che un parcheggio ha un indirizzo e una posizione geografica (latitudine e longitudine), 
 riconosciute come tali dagli strumenti di navigazione più comuni, come Google Maps. 
 \\
 Ogni piazzola di uno stesso parcheggio ha una posizione geografica diversa dalle altre piazzole (discostata di qualche 
 metro) e potenzialmente diversa da quella del parcheggio. 
 \\
-Quindi con la struttura vecchia non è possibile ricercare un parcheggio a sistema passando le coordinate del parcheggio di Google
-Maps ad esempio e nemmeno identificare un parcheggio.
+Quindi con la struttura vecchia non era possibile ricercare un parcheggio a sistema passando le coordinate del parcheggio di Google
+Maps ad esempio e nemmeno identificare un singolo parcheggio.
 \\\\\\
 \textbf{Database poco modulare}
 \\\\
-Il valore del sensore di parcheggio viene salvato all'interno della tabella parking\_area (libero/occupato). Questa cosa non crea problemi ora che 
-si è deciso, dall'analisi fatta, di salvare solo l'ultima misurazione di un sensore di parcheggio.
+La misurazione del sensore di parcheggio viene salvata all'interno della tabella parking\_area (libero/occupato). Questa cosa non creava problemi con il corrente modello progettuale dove,
+dall'analisi fatta, si era deciso di salvare solo l'ultima misurazione di un sensore di parcheggio.
 \\\\
 Se però in futuro si decidesse di salvare uno storico di misurazioni dei sensori di parcheggio (cosa molto probabile che
-avvenga e cosa che viene già fatta con i sensori ambientali), con la struttura attuale non è possibile farlo e i costi
-per modificare la struttura del database in futuro, con il progetto in produzione da tempo, sarebbero molto più
-alti rispetto a farlo adesso.
+avvenga e cosa che viene già fatta con i sensori ambientali), non sarebbe possibile farlo e i costi
+per modificare la struttura del database con il software in esercizio su un ambiente di produzione, sarebbero molto più
+alti rispetto a farlo in fase di sviluppo.
 \\\\
 Inoltre l'aggiunta di una tabella per lo storico non ha un impatto negativo sulla struttura del database.
 \clearpage
@@ -144,4 +144,4 @@ il campo value rappresentava una ridondanza inutile.
 Per ogni sensore di parcheggio ora viene salvata solo una misurazione nella tabella parking\_sensors, ovvero
 l'ultima, che sovrascrive la precedente ma a differenza del modello logico precedente, se in qualsiasi momento
 si decidesse di salvare lo storico delle misurazioni dei sensori di parcheggio, si può fare semplicemente togliendo
-il vincolo unique dalla foreign key fk\_sensor\_id della tabella parking\_sensors, senza modificare la struttura delle tabelle.
+il vincolo unique dalla foreign key \textit{fk\_sensor\_id} della tabella parking\_sensors, senza modificare la struttura della base di dati.

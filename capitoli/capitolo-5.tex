@@ -1,6 +1,6 @@
 % !TEX encoding = UTF-8
 % !TEX TS-program = pdflatex
-% !TEX root = ../tesi.tex
+% !TEX root = ../Volpe_Andrea.tex
 
 %**************************************************************
 \chapter{Verifica e validazione}
@@ -10,34 +10,32 @@
 
 \section{Verifica}
 \subsection{Criteri di verifica}
-E' stato stabilito con il proponente che il prodotto finale dovesse avere 
+E' stato stabilito con il proponente di realizzare  
 una suite di test automatici per testare la business logic del progetto,
 con una copertura a livello di branch stabilita >= al 90\% e una copertura
 a livello linee di codice >= al 60\%.
 \\\\
-La motivazione che ha portato a richiedere una copertura così alta a livello
-branch è dovuta al fatto che si vuole assicurare il corretto funzionamento di 
-tutti i possibili casi di errore, anche in caso di futura manutenzione del software.
+Un metodo si divide in più branch di esecuzione, molti di questi branch sono 
+responsabili della gestione dei casi in cui si verifica un errore
+e/o i casi in cui il metodo non può seguire il suo comportamento
+standard ad esempio perché i parametri passati dal client non sono validi.
 \\\\
-Con casi di errore sono intesi tutti quei comportamenti inaspettati che si possono verificare
-durante l'esecuzione di un pezzo del programma. Ad esempio l'errore che viene generato quando 
-si vuole modificare un parcheggio ma l'operazione non può essere fatta perché l'id del
-parcheggio passato non esiste.
+Il proponente ha definito in maniera chiara e precisa, durante la progettazione del software in 
+Spring, come il software dovesse comportarsi in questi casi ed ha ritenuto di fondamentale importanza
+che gli sviluppatori seguano queste linee guida.
+\\
+Questa è la motivazione che ha portato a una richiesta di copertura a livello branch così alta. In questo modo si assicura 
+che, anche in caso di manutenzione del programma, il comportamento nei casi 
+descritti non venga alterato.
 \\\\
-E' inoltre importante che sia mantenuta la coerenza stabilita per i casi di errore e
-nel caso alcuni branch non fossero coperti da casi di test, uno sviluppatore potrebbe
-inconsciamente modificare il comportamento del programma in caso di un errore, generando
-un comportamento inaspettato per l'utente finale. Ad esempio potrebbe eliminare per sbaglio
-il lancio dell'eccezione NotFoundError in caso l'id del parcheggio passato non esista.
-\\\\
-Senza questo controllo, nel caso venga passato un id inesistente, il programma invece
-di ritornare uno status code 404 (NOT FOUND), ritornerebbe lo status code 200 con corpo
-della risposta vuoto, in quanto la query non avendo trovato l'id richiesto, semplicemente non
-ritorna nulla ma questo tipo di risposta non è coerente con la pianificazione effettuata
-e quindi genera un programma poco solido.
-\\\\
-E' molto importante per il proponente che questa cosa non succeda e quindi è stata richiesta
-una copertura a livello branch >= al 90\%.
+Ad esempio se il client richiede le informazioni di uno specifico parcheggio passando 
+l'id e l'id passato non esista, senza delle linee guida su come rispondere
+al client, possono presentarsi delle ambiguità. In quanto, uno sviluppatore potrebbe rispondere con 
+un corpo del messaggio vuoto a indicare che non è stata rilevata alcuna informazione, mentre 
+un'altro potrebbe rispondere con un codice di errore e un messaggio appropriato. 
+\\
+Questo tipo di situazione genera confusione per l'utente finale e rende il programma poco 
+solido. Quindi il proponente ha ritenuto importante garantire coerenza nella gestione di questi casi.
 
 \subsection{Strumenti utilizzati}
 NestJS fornisce uno strumento built-in per scrivere vari tipi di test, tra cui unit test, 

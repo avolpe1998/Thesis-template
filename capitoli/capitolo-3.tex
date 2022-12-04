@@ -1,6 +1,6 @@
 % !TEX encoding = UTF-8
 % !TEX TS-program = pdflatex
-% !TEX root = ../tesi.tex
+% !TEX root = ../Volpe_Andrea.tex
 
 %**************************************************************
 \chapter{Progettazione}
@@ -53,33 +53,33 @@ interagisce direttamente.
 \textbf{Livello di business}
 \\\\
 Il livello di business contiene tutta la logica che è richiesta dall'applicazione per poter soddisfare i 
-suoi requisiti funzionali. Solitamente questo livello si occupa dell'aggregazione dei dati, della computazione
+suoi requisiti funzionali. Solitamente questo livello si occupa dell'aggregazione, della computazione
 e della richiesta dei dati. Quindi qui è dove viene implementata la logica principale dell'applicazione.
 \\\\\\
 \textbf{Livello fisico}
 \\\\
-Qui è dove sono salvati tutti i dati recuperabili dell'applicazione. Solitamente questo livello è chiamato
+Nel livello fisico sono salvati tutti i dati recuperabili dell'applicazione. Solitamente questo livello è chiamato
 anche livello di persistenza. Questo livello si occupa di interagire con il sistema in cui i dati 
-sono mantenuti in maniera persistente, come ad esempio un database.
-
+sono persistiti, come ad esempio un database.
+% //TODO: cambiare immagine controller-service-repository duplicata
 \subsection{Motivazioni della scelta}
 Le motivazione che hanno portato a scegliere questo stile architetturale sono le seguenti:
 \begin{itemize}
     \item dato che la separazione delle responsabilità è la proprietà principale di quest'architettura,
-        ogni livello di software ha la sua specifica funzione. Questo rende facile il dover aggiornare 
+        ogni livello del software ha la sua specifica funzione. Questo rende facile il dover aggiornare 
         singoli livelli e permette al team di sviluppo di separare bene i carichi di lavoro tra i vari 
-        membri, che possono lavorare in maniera contemporanea su livelli diversi;
+        membri, che possono lavorare in maniera contemporanea su componenti diverse;
     \item per la proponente è importante avere una suite di test automatici per testare i vari componenti
-        dell'applicazione. La layered architecture separando bene le responsabilità tra i livelli, 
-        permette di suddividere l'applicazione in componenti ben separati e quindi più facili da testare.
-        Essendo ogni livello isolato dagli altri, è possibile creare casi di test di dimensione ridotta, 
+        dell'applicazione. La layered architecture, separando bene le responsabilità tra i livelli, 
+        permette di suddividere l'applicazione in componenti ben separate e quindi più facili da testare.
+        Essendo ogni livello isolato dagli altri, è possibile creare casi di test di dimensione ridotte, 
         in quanto le componenti di cui fare il \gls{mock} sono poche;
     \item l'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
-        gli altri livelli;
+        gli altri;
     \item nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
         di migrazione ad un'architettura a microservizi. La layered architecture lavora bene (lato monolite) anche
         in un sistema con un'architettura ibrida monolite/microservizi. Questo tipo di architettura
-        ibrida solitamente si forma nel processo di migrazione di un sistema monolitico in un sistema a microservizi.
+        ibrida solitamente si viene a formare nel processo di migrazione di un sistema monolitico a un sistema a microservizi.
         \\
         Di conseguenza, in ottica di una futura migrazione in un sistema a microservizi (molto probabile che avvenga), è
         bene scegliere un monolite che lavori bene in un'architettura ibrida e quindi che sia facile da migrare
@@ -98,13 +98,13 @@ tramite il pattern controller-service-repository. Vediamo questo design pattern:
     \caption{Controller-service-repository pattern}
 \end{figure}
 \leavevmode\newline
-Il controller-service-repository pattern suddivide i componenti dell'applicazione su tre livelli fondamentali:
+Il controller-service-repository pattern suddivide le componenti dell'applicazione su tre livelli fondamentali:
 il controller, il service e il repository.
 \\
 Il controller è il livello più alto, mentre il repository quello più basso, in mezzo ai due c'è il service.
 \\
-Il controller è il livello responsabile per gestire le richieste in arrivo e ritornare le risposte all'utente finale.
-Esiste un meccanismo di routing che gestisce a quale controller inviare le richieste.
+Il controller è il livello responsabile di gestire le richieste in arrivo e ritornare le risposte all'utente finale.
+Esiste un meccanismo di routing built-in nel framework, che gestisce a quale controller inviare le richieste.
 \\
 Il service è il livello responsabile della business logic.
 \\
@@ -115,7 +115,7 @@ Analizziamo in dettaglio le componenti che vanno a formare struttura del softwar
 
 \subsection{IoC container}
 L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
-del pattern Dependency Injection all'interno di NestJS.
+del pattern Dependency Injection.
 \\
 L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come controller o provider.
 \\\\
@@ -127,17 +127,17 @@ usando il pattern singleton e la inserisce nell'IoC container.
 \\
 Se però la classe da istanziare dichiara una dipendenza con un altro controller o provider nel proprio 
 costruttore, il sistema runtime applica in maniera automatica il pattern Dependency Injection; ovvero
-va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe, nell'IoC container, se
-presente la inietta nella classe e crea l'istanza della nuova classe da inserire nell'IoC container. 
+va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe, nell'IoC container; se
+presente la inietta nella classe e crea l'istanza da inserire nell'IoC container. 
 \\
 Altrimenti va a creare prima
-l'istanza della classe che deve essere iniettata, prima della classe che dichiara la dipendenza (se possibile, in quanto la
-classe da iniettare potrebbe a sua volta richiedere una dipendenza e in tal caso si segue la successione di 
-dipendenze fino a che non si trova una classe che possa essere istanziata) e la inietta nella classe che dichiara
-la dipendenza, poi crea un'istanza della classe che ha dichiarato la dipendenza e la inserisce nell'IoC container.
-
+l'istanza della classe che deve essere iniettata (se possibile, in quanto la
+classe da iniettare potrebbe a sua volta avere una dipendenza e in tal caso si segue la successione di 
+dipendenze fino a che non si trova una classe che può essere istanziata) e la inietta nella classe che dichiara
+la dipendenza, poi crea l'istanza della classe che ha dichiarato la dipendenza e la inserisce nell'IoC container.
+% //TODO: sistemare dicitura definizione/dichiarazione di una classe
 \subsection{Controller e provider}
-I due componenti fondamentali di NestJS sono i controller e i provider. 
+Due componenti fondamentali di NestJS sono i controller e i provider. 
 Per dichiarare una classe come controller, bisogna applicare il decorator @Controller, sopra la 
 definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
 @Injectable sopra la definizione della classe.
@@ -180,7 +180,7 @@ export class MaintainersRegistryService {
 \\
 I controller sono i componenti dedicati a gestire le richieste in ingresso e a fornire le risposte all'utente
 finale. NestJS considera come provider tutte le classi istanziabili e marcate con il decorator 
-@Injectable che non sono controller; quindi sia classi di tipo service, che repository devono essere marcate
+@Injectable che non sono controller; quindi sia classi di tipo service che repository devono essere marcate
 con il decorator @Injectable. 
 \\
 \begin{lstlisting}[
@@ -224,8 +224,8 @@ export class MaintainersRegistryController {
 \leavevmode\newline
 \\
 E' possibile marcare con il decorator @Injectable
-anche classi non service o repository per fare in modo che NestJS, in maniera automatica, istanzi, inietti le dipendenze 
-dichiarate nel costruttore e le inserisca nell'IoC container.
+anche classi non service o repository per fare in modo che NestJS, in maniera automatica ne inietti le dipendenze 
+dichiarate nel costruttore, le istanzi e le inserisca nell'IoC container.
 \\\\
 I controller dell'applicazione individuati sono i seguenti:
 \begin{itemize}
@@ -259,18 +259,18 @@ I service dell'applicazione individuati sono i seguenti:
 \end{itemize}
 \subsection{Repository}
 I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno quindi il compito di
-comunicare con la componente di archiviazione dati come un database. Nel progetto è stato utilizzato un database
+comunicare con la componente di gestione della persistenza come un \gls{DBMS}\glsfirstoccur. Nel progetto è stato utilizzato un database
 relazionale di tipo postgreSQL.
 \\\\
 NestJS è indipendente dal tipo di database scelto (relazionale o non relazionale). Infatti NestJS si interfaccia
-al database tramite uno strumento che si chiama TypeORM. TypeORM implementa una tecnica di programmazione chiamata 
+alla base di dati tramite il framework TypeORM. TypeORM implementa una tecnica di programmazione chiamata 
 \gls{ORM}\glsfirstoccur, che converte i dati tra diversi tipi di sistemi usando linguaggi di programmazione \gls{OOP}\glsfirstoccur.
 \\\\
 Uno strumento \gls{ORM} incapsula il codice necessario per manipolare i dati, senza aver bisogno di scrivere manualmente
-le query al database ma si interagisce direttamente con un oggetto nello stesso linguaggio che si sta usando. 
+le query al database, interagendo direttamente con un oggetto nello stesso linguaggio di programmazione che si sta usando. 
 \\
 In questo modo il database viene astratto e si diventa indipendenti dal tipo di database utilizzato, in quanto è compito dell'\gls{ORM}
-tradurre la richiesta fatta, in linguaggio di programmazione ad alto livello, nella query al database. 
+tradurre la richiesta fatta in linguaggio di alto livello, nella query al database. 
 \\\\
 Uno strumento come TypeORM offre quindi una grande flessibilità, in quanto è possibile decidere di passare da un database
 relazionale a un database non relazionale in qualsiasi momento, senza dover effettuare modifiche al livello di persistenza.
@@ -278,21 +278,21 @@ relazionale a un database non relazionale in qualsiasi momento, senza dover effe
 Senza un'\gls{ORM} la migrazione da un database relazionale a un database non relazionale implica la riscrittura di tutte le query.
 \\\\
 Il repository viene fornito e creato in maniera automatica da NestJS. Per fare in modo che ciò avvenga è però necessario
-dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository e in particolare nell'array di imports, con 
-il metodo forFeature della classe TypeOrmModule, la lista di entità di cui si vuole creare un repository.
+dichiarare, all'interno del modulo in cui si vuole che NestJS crei il repository e in particolare nell'array \textit{imports}, con 
+il metodo \textit{forFeature} della classe TypeOrmModule, la lista di entità di cui si vuole creare un repository.
 \\\\
 Il repository creato da NestJS include tutti i metodi necessari per le operazioni basilari \gls{CRUD} (find(), save(), update(), 
 delete() ecc..).
 \\\\
 Spesso però abbiamo bisogno di effettuare query al database più complesse rispetto a quelle a disposizione nel repository
 creato da NestJS. Per fare ciò dobbiamo creare una nostra classe repository custom che estenda la classe Repository, che è una
-classe Generic definita all'interno di NestJS e si aspetta come tipo del Generic il tipo dell'entità di cui vogliamo 
+classe Generic built-in di NestJS, che si aspetta come tipo del Generic il tipo dell'entità di cui vogliamo 
 creare il repository.
 \\\\
-Se creiamo un repository custom non è più necessario usare il metodo forFeature nella classe modulo, ma va importato il repository custom
+Se creiamo un repository custom non è più necessario usare il metodo \textit{forFeature} nella classe modulo ma va importato il repository custom
 come provider.
-\\ 
-
+\\\\ 
+Vediamo un esempio di repository custom:
 \begin{lstlisting}[
     language=JavaScript,
     basicstyle=\ttfamily\footnotesize
@@ -318,19 +318,22 @@ export class SensorsRepository extends Repository<Sensor>{
 Nel repository custom, oltre che ai metodi ereditati dalla classe padre Repository, possiamo creare i nostri metodi personalizzati
 che eseguono le nostre query custom. 
 \\\\
-Ci sono 2 modi per creare le query:
+Ci sono 2 modi per scrivere le query:
 \begin{itemize}
     \item tramite notazione pura SQL;
     \item tramite i metodi del Query Builder.
 \end{itemize}
 \leavevmode\newline
+Il Query Builder è uno strumento built-in in TypeORM, per creare query SQL usando una sintassi elegante e conveniente,
+eseguirle e ottenere il risultato.
+\\
 E' fortemente consigliato l'utilizzo del Query Builder anziché usare la notazione SQL pura per 2 motivi:
 \begin{enumerate}
     \item La concatenazione dei metodi del Query Builder rende molto più chiaro e pulito il codice, quindi più facile
         da manutenere.
-    \item Nel caso di cambio di tipo di database (ad esempio passando da PostgreSQL a Oracle) le query continuano a funzionare, in 
+    \item Nel caso di migrazione del database (ad esempio passando da PostgreSQL a Oracle) le query continuano a funzionare, in 
         quanto grazie al Query Builder,
-        TypeORM le converte adattandole alla sintassi del database che si stà utilizzando. Mentre non viene 
+        TypeORM le converte adattandole alla sintassi del database che si sta utilizzando. Mentre non viene 
         effettuata alcun tipo di conversione per le query in notazione pura SQL.
 \end{enumerate}
 \leavevmode\newline
@@ -352,32 +355,32 @@ il controller, il service e il repository dei sensori di parcheggio sono tre buo
 all'interno dello stesso modulo.
 \\\\
 Grazie ai moduli si riesce a mantenere il codice ben organizzato, separando le componenti per dominio di appartenenza
-e stabilendo dei confini chiari tra i vari componenti. In questo modo NestJS ci aiuta a gestire la complessità e a 
+e stabilendo dei confini chiari. In questo modo NestJS ci aiuta a gestire la complessità e a 
 sviluppare con principi SOLID, specialmente quando le dimensioni dell'applicazione crescono e/o quando il team cresce.
 \\\\
 In un modulo possiamo inserire solo componenti controller o provider. Per inserire un componente in un modulo, dobbiamo
 specificare il nome del componente all'interno del decorator
-@Module della classe modulo (i controller devono essere dichiarati nell'array controllers di all'interno di @Module,
-mentre i provider devono essere dichiarati nell'array providers all'interno di @Module). 
+@Module della classe modulo (i controller devono essere dichiarati nell'array \textit{controllers} di all'interno di @Module,
+mentre i provider devono essere dichiarati nell'array \textit{providers} all'interno di @Module). 
 \\\\
 Se un controller o un provider non è dichiarato in un modulo che viene incluso dal modulo
 root, NestJS non istanzierà la classe del componente e non verrà inserito nell'IoC container.
 \\\\
 Un concetto fondamentale dei moduli è che le componenti (controller, service, repository, classi varie..) dichiarate 
-come appartenenti ad un modulo hanno uno scope locale al modulo, quindi sono visibili solo tra di loro e non vedono
+in un modulo hanno uno scope locale al modulo, quindi sono visibili solo tra di loro e non vedono
 i componenti appartenenti ad altri moduli.
 \\
-E' un caso comune però che un componente di un modulo abbia bisogno di un componente appartenente ad un altro modulo
-e quindi lo dichiara come dipendenza. Facendo una cosa del genere NestJS genera un errore in fase di compilazione, poiché come 
-spiegato sopra, un componente di un modulo A, non può vedere un componente di un modulo B.
+E' un caso comune però che un componente di un modulo A abbia bisogno di un componente di un modulo B
+e quindi lo dichiara come dipendenza. Questa cosa, in NestJS, genera un errore in fase di compilazione per il problema
+di scope enunciato sopra.
 \\\\
-Per risolvere questo problema NestJS permette di definire nel decorator @Module della classe modulo, i componenti che
-quel modulo vuole esportare e quindi che abbiano visibilità pubblica (i componenti da esportare devono essere dichiarati 
-nell'array exports all'interno di @Module). 
+Per risolvere questo problema, NestJS permette di definire nel decorator @Module della classe modulo, i componenti che
+quel modulo vuole esportare e quindi abbiano visibilità pubblica (i componenti da esportare devono essere dichiarati 
+nell'array \textit{exports} all'interno di @Module). 
 \\
 In questo caso se un componente di un modulo B dichiara una 
 dipendenza da un componente esportato da un modulo A, nel decorator @Module, della classe modulo B, deve essere dichiarato il
-modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array imports all'interno di @Module).
+modulo del componente che si vuole importare (i moduli da importare devono essere dichiarati nell'array \textit{imports} all'interno di @Module).
 \\
 \begin{lstlisting}[
     language=JavaScript,
@@ -419,7 +422,7 @@ I moduli dell'applicazione individuati sono i seguenti:
 \subsection{DTO}
 E' stata usata una classe di tipo \gls{DTO}\glsfirstoccur chiamata SensorsScrapingDto. Questa classe viene utilizzata per rappresentare
 il contenuto del file \gls{XML} online contente lo stato dei sensori. Da questo oggetto vengono estratte le informazioni
-utili per rappresentare le entità di tipo sensore e misurazioni sensore con cui si va ad aggiornare il database.
+utili per rappresentare le entità di tipo sensore e misurazione del sensore di parcheggio con cui si va ad aggiornare il database.
 \\\\
 Prima di effettuare la conversione da \gls{DTO} a entità, i campi del \gls{DTO} vengono validati, lanciando un'eccezione nel caso 
 la validazione fallisca.
@@ -463,53 +466,57 @@ export class SensorScrapingDto{
 NestJS ha un livello built-in che è responsabile di processare tutte le eccezioni non catturate durante 
 l'esecuzione di un'applicazione.
 \\\\
-Quando un'eccezione non viene catturata dal codice dell'applicazione, viene catturata da questo livello,
-che in maniera automatica invia una risposta user-friendly \gls{HTTP} al client, evitando di far interrompere 
+Quando un'eccezione non viene catturata dal codice dell'applicazione, viene catturata da una componente built-in di NestJS, che
+ in maniera automatica invia una risposta \gls{HTTP} al client, evitando di far interrompere 
 l'esecuzione del programma. Questa componente si chiama exception filter.
 \\\\
-La risposta inviata al client dall'exception filter è user-friendly e contiene un messaggio appropriato, solo se l'eccezione è di tipo HttpException o 
+La risposta inviata al client dall'exception filter è user-friendly in quanto contiene un messaggio appropriato ma
+ solo se l'eccezione catturata è di tipo HttpException o 
 una sua sottoclasse. 
-Altrimenti viene inviata una risposta al client con un messaggio "internal server error" e status code 500.
+Altrimenti viene inviata una risposta con il generico messaggio "internal server error" e status code 500.
 \\\\
-Possono capitare eccezioni anche durante l'esecuzione di query tramite TypeORM. Essendo TypeORM una libreria
-esterna, nessuna eccezione da lei lanciata viene catturata dal livello descritto sopra di NestJS.
+Possono essere lanciate eccezioni durante l'esecuzione di query tramite TypeORM. Essendo TypeORM una libreria
+esterna, nessuna eccezione da lei lanciata viene catturata dal exception filter di NestJS.
 \\\\
-Per evitare di interrompere l'esecuzione del programma al lancio di eccezioni non catturabili dall'exception filter di NestJS,
+Per evitare di interrompere l'esecuzione del programma in questi casi,
  si è deciso di 
-sovrascrivere l'exception filter globale fornito da NestJS con uno custom e di creare un set di eccezioni
-custom che vengono lanciate per problemi collegati al servizio di persistenza.
+sovrascrivere l'exception filter built-in con uno custom che catturi tutte le eccezioni. 
 \\\\
-Questo exception filter è stato chiamato TypeOrmExceptionFilter e implementa l'interfaccia ExceptionFilter di
-NestJS. 
+Questo exception filter è stato chiamato TypeOrmExceptionFilter e implementa l'interfaccia built-in ExceptionFilter 
+di NestJS. 
 \\
 TypeOrmExceptionFilter simula il comportamento dell'exception filter di NestJS catturando qualsiasi
 tipo di eccezione, rispondendo con "internal server error" e status code 500 in caso l'eccezione non sia riconosciuta.
-Inoltre funziona anche se si verificano eccezioni da librerie esterne; garantendo un buon livello di resilienza
+Inoltre catturando anche le eccezioni di librerie esterne garantisce un buon livello di resilienza
 del programma. 
 \\\\
-Se l'eccezione lanciata è quella custom, definita per i problemi del servizio di persistenza, lo status code e il messaggio 
-vengono inviati in maniera
-appropriata all'utente finale.
+E' stato deciso di creare un set di eccezioni
+custom che vengono lanciate per problemi collegati al servizio di persistenza.
+\\
+In questo modo rendiamo più espliciti gli errori e inviamo in maniera appropriata status code e il messaggio 
+all'utente finale.
 \\\\
-Eccezioni di TypeORM di tipo QueryFailedError, vengono analizzate in base al loro codice di errore; 
-lo status code e il messaggio anche in questo caso vengono inviati in maniera appropriata all'utente finale.
-Un esempio di eccezione di tipo QueryFailedError con codice errore 23505, indica un confitto nel database, quindi
+Alcune eccezioni di TypeORM di tipo QueryFailedError, non vengono sovrascritte da eccezioni custom ma 
+vengono analizzate in base al loro codice di errore.
+\\
+In base a questo codice, lo status code e il messaggio vengono inviati in maniera appropriata all'utente finale.
+\\
+Ad esempio, un'eccezione di tipo QueryFailedError con codice errore 23505, indica un confitto nel database, quindi
 viene inviata una risposta al client con status code 409 e messaggio "database error on unique constraint".
 \\\\
 Avere un exception filter permette di spostare la responsabilità della gestione delle eccezioni in un livello
-apposito. In questo modo si facilita la manutenzione e si assicura coerenza nella gestione delle eccezioni.
+separato; in questo modo si facilita la manutenzione e si assicura coerenza.
 \\\\
 Senza un exception filter dovrebbero essere i controller a gestire le eccezioni e modificare la loro risposta
-in base al tipo di eccezione ricevuta dal service (che ha usufruito del metodo del repository che ha lanciato
-l'eccezione).
-\\\\
-In questo modo però si creano controller di grandi dimensioni rendendo il codice meno pulito e più difficile
+in base al tipo di eccezione ricevuta dal service.
+\\
+Questo porta alla creazione di controller di grandi dimensioni rendendo il codice meno pulito e più difficile
 da manutenere. Inoltre questo approccio non garantisce che tutti i controller gestiscano la stessa eccezione
 allo stesso modo. 
 \\
-Ad esempio sviluppatori diversi potrebbero gestire in maniera diversa la stessa eccezione (ad esempio rispondendo
-all'utente finale con un messaggio di errore diverso,
-più messaggi di errore, inserendo un numero e tipo di parametri di risposta diversi ecc..)
+Ad esempio sviluppatori diversi potrebbero gestire in maniera diversa l'eccezione QueryFailedError 23505 (ad esempio usando
+un diverso messaggio di errore,
+usando più messaggi di errore, inserendo un numero e tipo di parametri di risposta diversi ecc..)
 generando confusione per l'utente finale.
 \\\\
 Le eccezioni custom per TypeORM individuate sono le seguenti:
@@ -523,7 +530,7 @@ Le eccezioni custom per TypeORM individuate sono le seguenti:
 
 \subsection{Scheduler}
 Come spiegato nel capitolo di analisi dei requisiti, si è deciso di implementare il servizio di polling dei dati
-dei sensori con un intervallo di tempo pari a due minuti. Per fare questa cosa utilizzo 
+dei sensori con un intervallo di tempo pari a due minuti. Per farlo è stata utilizzata
 la libreria @nestjs/schedule che integra il package cron di Node.js.
 \\\\
 Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
@@ -545,16 +552,16 @@ export class AppModule {}
 Avendo importato la libreria abbiamo a disposizione un decorator @Cron, da specificare sopra al metodo che vogliamo venga 
 schedulato. 
 \\\\
-Come parametro del @Cron dobbiamo inserire una stringa contenente un cron pattern, con
+Come parametro del @Cron dobbiamo inserire una stringa contenente un cron pattern con
 l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
-\\\\
-Nel nostro caso vogliamo eseguirlo ogni due minuti, quindi gli passiamo la stringa "*/2 * * * *".
+\\
+Nel nostro caso volevamo eseguirlo ogni due minuti, quindi gli abbiamo passato la stringa "*/2 * * * *".
 \\\\
 In particolare, il metodo da schedulare è il metodo all'interno del service SensorsScrapingService, che si occupa
 di effettuare il polling, la persistenza dei dati dei sensori di parcheggio e delle misurazioni dei sensori di parcheggio.
 
 \subsection{Logging}
-Il logging in un'applicazione è un processo fondamentale, che serve a salvare gli eventi che accadono durante
+Il logging in un'applicazione è un processo fondamentale che serve a salvare gli eventi che accadono durante
 la sua esecuzione.
 \\\\
 Grazie al logging, gli sviluppatori possono accorgersi di potenziali attacchi o analizzare gli
@@ -564,66 +571,68 @@ Il logging viene effettuato salvando su un file (solitamente con estensione .log
 accadute in un particolare evento che si è deciso di loggare, come la richiesta da parte
 dell'utente finale di un servizio dell'applicazione.
 \\\\
-Solitamente questi file di log raggiungono dimensioni importanti a volte nell'ordine dei Gigabyte, quindi possono aver bisogno di
+Solitamente questi file di log raggiungono dimensioni importanti, a volte nell'ordine dei Gigabyte, quindi possono aver bisogno di
 un server dedicato per persisterli oppure di meccanismi di compressione file schedulati.
 \\\\
-Per questo progetto è stato deciso di fare il logging di tutte le richieste alle \gls{API} \gls{REST} da parte dell'utente
-finale e tutte le volte che viene eseguito il servizio di polling schedulato.
+Per questo progetto è stato deciso di fare il logging di tutte le richieste alle \gls{API} \gls{REST}
+e tutte le volte che viene eseguito il servizio di polling schedulato.
 \\
-In particolare, per le richieste alle \gls{API} \gls{REST} dell'utente finale, si vuole effettuare il logging delle seguenti 
+In particolare, per le richieste alle \gls{API} \gls{REST}, si vuole effettuare il logging delle seguenti 
 informazioni:
 \begin{itemize}
     \item metodo della richiesta (GET, POST, PUT, DELETE);
     \item \gls{endpoint} richiesto;
     \item corpo della richiesta;
-    \item user agent dell'utente finale;
-    \item ip dell'utente finale;
-    \item status code di risposta;
-    \item lunghezza del messaggio di risposta;
+    \item user agent del client;
+    \item indirizzo ip del client;
+    \item status code della risposta;
+    \item lunghezza del messaggio della risposta;
     \item timestamp della richiesta.
 \end{itemize}
 \leavevmode\newline
 Per il servizio di polling si vuole effettuare il logging delle seguenti informazioni:
 \begin{itemize}
     \item timestamp del momento di avvio del polling;
-    \item timestamp del momento di fine del polling.
+    \item timestamp del momento di terminazione del polling.
 \end{itemize}
 \leavevmode\newline
 NestJS ha una classe built-in, chiamata Logger, che è possibile usare per effettuare il logging 
 dell'applicazione. 
 \\\\
 Questa classe però permette solo di effettuare operazioni basilari e come spiegato nella 
-guida ufficiale, per effettuare operazioni più complesse, come il salvataggio delle informazioni di 
-logging su file, è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
+guida ufficiale, per effettuare operazioni più complesse, come il salvataggio delle informazioni
+su file, è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
 Winston.
 \\\\
-Con Winston è possibile definire la destinazione di output dei nostri log (nel nostro caso un file .log in una directory logs nel
+Winston permette di definire la destinazione dei nostri log (nel nostro caso un file .log in una directory logs nel
 progetto) e la formattazione nel testo (nel nostro caso abbiamo usato una funzionalità di Winston che permette
-di usare la stessa formattazione dei log di NestJS).
+di usare la stessa formattazione dei log di NestJS) e molte altre funzionalità che non sono state utilizzate
+in questo progetto.
 \\\\
-Le informazioni di cui si può effettuare il logging tramite Winston, assumono diversi livelli. Il livello del log 
+Le informazioni loggabili tramite Winston, hanno diversi livelli. Il livello del log 
 indica la sua importanza:
 \begin{itemize}
     \item error: log critico, qualcosa nell'applicazione non ha funzionato correttamente e
-        alcune funzionalità dell'applicazione potrebbero non funzionare correttamente;
-    \item warn: log di avviso, qualcosa di inaspettato è successo nell'applicazione;
-    \item info: log di informazione, è successo un evento all'interno dell'applicazione.
+        alcune funzionalità potrebbero non rispondere correttamente;
+    \item warn: log di avviso, si è verificato qualcosa di inaspettato nell'applicazione;
+    \item info: log di informazione, si è verificato un evento all'interno dell'applicazione.
 \end{itemize}
 \leavevmode\newline
-Esistono poi altri livelli di log che non sono stati però usati in questo progetto, quindi si è deciso di non specificarli.
+Esistono poi altri livelli di log che non sono stati usati in questo progetto, quindi si è deciso di non elencarli.
 \\\\
-Winston permette di scegliere quali sono i livelli di informazione che vogliamo loggare, per questo progetto è stato effettuato il logging
+Winston permette di decidere i livelli d'informazione che vogliamo loggare, in particolare per questo progetto è stato effettuato il logging
 a livello error e info.
 \\\\
-Le informazioni riguardanti le richieste dell'utente finale e il servizio di polling, sono stati loggate a livello info.
+Le informazioni riguardanti le richieste alle \gls{API} \gls{REST} e il servizio di polling, sono state loggate a livello info.
 \\\\
-Per loggare le richieste dell'utente finale è stato implementato un middleware LoggerMiddleware che intercetta tutte le 
-richieste dell'utente finale prima che 
-vengano passate ai controller e salva in delle variabili interne le informazioni sulla richiesta.
+Per loggare le richieste alle \gls{API} \gls{REST} è stato implementato un middleware LoggerMiddleware che intercetta tutte le 
+richieste prima che 
+vengano passate ai controller e salva in delle variabili interne le informazioni da loggare.
 \\\\
-Per avere nel log, anche lo status code della risposta inviata all'utente finale dal controller, il LoggerMiddleware imposta un 
-listener sull'evento close dell'oggetto response. In questo modo il log viene scritto solo quando il controller ha terminato di
-gestire la richiesta e abbiamo tutti i dati a disposizione per poterla loggare.
+Per avere nel log, anche lo status code della risposta inviata al client dal controller, il LoggerMiddleware imposta un 
+listener sull'evento \textit{close} dell'oggetto \textit{response}, 
+prima di passare la richiesta al controller. In questo modo il log viene scritto solamente quando il controller ha terminato di
+gestire la richiesta (attivando il metodo listener) e abbiamo tutti i dati a disposizione.
 % ref: https://www.loggly.com/use-cases/application-logging-best-practices/
 
 \begin{lstlisting}[
@@ -685,7 +694,7 @@ Contro del punto 1
     \item come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate \gls{HTTP} giornaliere
         per scaricare i dati dei sensori aggiornati. 
         \\
-        Quindi come minimo deve effettuare 720 chiamate \gls{HTTP} giornaliere anche alle \gls{API} \gls{REST}, per verificare se ci sono sensori
+        Quindi come minimo deve effettuare 720 chiamate \gls{HTTP} giornaliere ulteriori anche alle \gls{API} \gls{REST}, per verificare se ci sono sensori
         da aggiornare. 
         \\
         Nella pratica le chiamate \gls{HTTP} da fare sono di più, poiché dopo aver verificato se ci sono sensori da aggiornare ed
@@ -704,32 +713,32 @@ Pro del punto 2
 \leavevmode\newline
 Contro del punto 2
 \begin{itemize}
-    \item nel caso di migrazione a un'applicazione basata su microservizi bisogna modificare il modo in cui il SensorsScrapingService 
+    \item nel caso di migrazione a un'applicazione basata su microservizi deve essere modificato il modo in cui il SensorsScrapingService 
         persiste i dati dei sensori
-        e delle misurazioni dei sensori di parcheggio. Probabilmente bisogna passare a effettuare chiamate \gls{HTTP} al servizio di \gls{API} \gls{REST} (come il punto 1),
-        in quanto il servizio di polling diventerà un microservizio indipendente, quindi non saranno più a lui visibili il servizio dei 
-        sensori e delle misurazioni di parcheggio;
-    \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile per il
-        concetto di separazione delle responsabilità.
+        e delle misurazioni dei sensori di parcheggio. Probabilmente si dovranno effettuare chiamate \gls{HTTP} al servizio di \gls{API} \gls{REST} (come il punto 1),
+        in quanto il servizio di polling diventerà un microservizio indipendente, quindi il servizio dei 
+        sensori e delle misurazioni di parcheggio saranno fuori dal suo scope;
+    \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile, perseguendo il
+        principio di separazione delle responsabilità.
 \end{itemize}
 \leavevmode\newline
-Si è optato per il punto 2, in quanto questo è un progetto nato con lo scopo di fare un'analisi comparativa con un altro progetto esistente
-e quindi per non avere differenze prestazionali si è implementato il servizio usando la variante più simile al modo in cui il 
-servizio di polling è implementato nell'altro progetto. Inoltre è vero che è bene evitare le dipendenze tra servizi per ridurre
+Si è optato per il punto 2, in quanto questo è un progetto nato con l'obiettivo di fare un'analisi comparativa con un altro progetto esistente,
+di conseguenza, per non avere differenze prestazionali, si è scelta la variante più simile al 
+servizio di polling implementato nell'altro progetto. Inoltre, è vero che è bene evitare le dipendenze tra servizi per ridurre
 l'accoppiamento tra le componenti e separare le responsabilità ma molto spesso non è possibile farlo e capita frequentemente
 di avere dipendenze tra loro.
 
 \section{API REST}
 Tramite lo strumento Stoplight sono state progettate 17 \gls{API} \gls{REST}. Stoplight light è un ottimo strumento realizzato
-appositamente per progettare \gls{API} \gls{REST}.
+per progettare \gls{API} \gls{REST}.
 \\\\
-Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle \gls{API} da utilizzare.
+Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle \gls{API}.
 \\\\
-Stoplight permette di definire l'specificare dell'\gls{API}, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
+Stoplight permette di definire l'\gls{endpoint} dell'\gls{API}, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
 eventuale corpo della richiesta, eventuale corpo della risposta, status code della risposta e altre informazioni
-utili a chi deve sviluppare le \gls{API} o all'utente finale che deve effettuare le richieste.
+utili a chi deve sviluppare le \gls{API} e al client che deve effettuare le richieste.
 \\\\
-Progettata un'\gls{API} su Stoplight è possibile generare il \gls{mock} della risposta, in questo modo gli sviluppatori \gls{front-end} non hanno bisogno
+Progettata un'\gls{API} è possibile generare il \gls{mock} della risposta, in questo modo gli sviluppatori \gls{front-end} non hanno bisogno
 di attendere che il \gls{back-end} venga realizzato per sviluppare la parte di \gls{front-end}.
 \\\\
 Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti:
