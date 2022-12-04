@@ -29,33 +29,33 @@ che, anche in caso di manutenzione del programma, il comportamento nei casi
 descritti non venga alterato.
 \\\\
 Ad esempio se il client richiede le informazioni di uno specifico parcheggio passando 
-l'id e l'id passato non esista, senza delle linee guida su come rispondere
-al client, possono presentarsi delle ambiguità. In quanto, uno sviluppatore potrebbe rispondere con 
-un corpo del messaggio vuoto a indicare che non è stata rilevata alcuna informazione, mentre 
+un'id inesistente, senza delle linee guida su come comportarsi, 
+possono generarsi delle ambiguità. Uno sviluppatore, ad esempio, potrebbe rispondere con 
+il corpo del messaggio vuoto a indicare che non è stata rilevata alcuna informazione, mentre 
 un'altro potrebbe rispondere con un codice di errore e un messaggio appropriato. 
 \\
 Questo tipo di situazione genera confusione per l'utente finale e rende il programma poco 
-solido. Quindi il proponente ha ritenuto importante garantire coerenza nella gestione di questi casi.
+solido. Il proponente ha ritenuto quindi importante garantire coerenza nella gestione di questi casi.
 
 \subsection{Strumenti utilizzati}
-NestJS fornisce uno strumento built-in per scrivere vari tipi di test, tra cui unit test, 
+NestJS fornisce uno strumento built-in per sviluppare vari tipi di test, tra cui unit test, 
 end to end test, integration test e così via. 
 \\\\
-Lo strumento di test usa Jest, un framework apposito per scrivere test automatici ed effettuare 
+Lo strumento usa Jest, un framework per scrivere test automatici ed effettuare 
 il \gls{mock} delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
 Angular, Vue.
 \\\\
-I file test in NestJS per conformità sono stati nominati con lo stesso nome della classe che vanno
-a testare e devono terminare in .spec.ts se vogliamo che vengano visti da NestJS ed eseguiti.
+I file di test per conformità sono stati nominati con lo stesso nome della classe che vanno
+a testare e devono terminare in .spec.ts se vogliamo che vengano visti ed eseguiti da NestJS.
 \\\\
-Ogni caso di test deve essere racchiuso all'interno della dicitura describe, specificando nome della
-classe che si va a testare e una funzione di callback contenente i test per i vari metodi di quella classe.
+Ogni caso di test deve essere racchiuso all'interno della dicitura \textit{describe}, specificando nome della
+classe che va a testare e una funzione di callback contenente i test dei metodi.
 \\
-A sua volta ogni specifico metodo che si va a testare deve essere racchiuso in un describe, che deve
-contenere il nome del metodo da testare e una funzione callback contenente tutti i test su quel metodo.
+I metodi da testare devono essere racchiusi in un ulteriore \textit{describe}, specificando il nome
+del metodo e la funzione di callback contenente i test.
 \\
-Ogni test va scritto all'interno della dicitura it, che richiede il nome del test e una funzione callback
-contenente il caso di test.
+Ogni test deve essere racchiuso nella dicitura \textit{it}, specificando la descrizione e la funzione 
+di callback contenente il test.
 \\\\
 \begin{lstlisting}[
   language=JavaScript,
@@ -85,11 +85,10 @@ describe('MaintainersRegistryService', () => {
 
 \subsection{Progettazione}
 Per i criteri di verifica stabiliti con il proponente si è deciso di testare tutti i metodi dei service che
-avessero un numero di branch > 1. In questo modo viene assicurata la copertura di tutti i casi di errore,
-dato che i metodi con un solo branch (solitamente metodi di get delle informazioni di un'entità) in caso 
-di errore, avendo solo un branch, non hanno delle ramificazioni per gestirlo in modo custom ma 
-semplicemente non catturano l'eccezione (lanciata da TypeORM o NestJS) che viene rilanciata al chiamante 
-e poi eventualmente catturata dall'exception filter che conforma la risposta per il client.
+avessero un numero di branch > di 1. In questo modo viene assicurata la copertura di tutti i casi di errore,
+dato che i metodi con un solo branch 
+non gestiscono comportamenti inaspettati in maniera custom e in caso di eccezione non la catturano 
+rilanciandola al chiamante.
 \\\\
 Scrivendo dei test automatici che vanno a testare i metodi con più di un branch si assicura che:
 \begin{itemize}
