@@ -94,33 +94,28 @@ Scrivendo dei test automatici che vanno a testare i metodi con più di un branch
 \begin{itemize}
     \item ogni branch può essere raggiunto;
     \item ogni branch si comporta nel modo atteso;
-    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore gestiti in maniera custom (id passato non trovato, 
-    aggiornamento non riuscito ecc..) non vengano eliminati e si assicura il mantenimento della loro
-    conformità con quanto stabilito con il proponente. 
+    \item se uno sviluppatore modifica un metodo, si assicura che i casi di errore gestiti in maniera custom (id non trovato, 
+    aggiornamento non riuscito ecc..) non vengano eliminati e siano conformi con quanto stabilito con il proponente. 
     \\
-    Ad esempio si assicura che venga mantenuto il controllo in caso di errore di aggiornamento di un'entità e
-    venga lanciata dal service un eccezione di tipo UpdateError.
+    Ad esempio in caso di errore di aggiornamento di un'entità, si assicura che venga mantenuto il branch di controllo e
+    venga lanciata un eccezione di tipo \textit{UpdateError}.
 \end{itemize}
 \leavevmode\newline
 Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei \gls{mock} per tutte le dipendenze
 della classe da testare, repository compresi.
 \\\\
-Fornire dei \gls{mock} per le dipendenze significa fornire ai casi di test delle componenti fittizie che vanno a simulare
-il comportamento della componente originale. 
-\\\\
-Le componenti fittizie sono molto più piccole delle componenti originali e implementano solo la parte di codice 
+I \gls{mock} sono delle componenti fittizie molto più piccole delle componenti originali e implementano solo la parte di codice 
 necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
 \\\\
-Jest fornisce dei metodi molto utili per creare il \gls{mock} di un metodo di una classe e sovrascriverne il comportamento.
+Jest fornisce dei metodi molto utili per creare il \gls{mock} di un metodo.
 Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il \gls{mock}.
 \\\\
-Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare il \gls{mock} dei loro metodi, è stata
-usata una libreria esterna chiamata @golevelup/ts-jest, che permette di dichiarare l'intera classe di cui si vuole fare
-il \gls{mock} e viene restituito un oggetto con gli stessi metodi della classe che gli abbiamo specificato ma con il contenuto 
-dei metodi vuoto, 
+Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare successivamente il \gls{mock} di tutti i loro metodi, è stata
+usata una libreria esterna chiamata \textit{@golevelup/ts-jest}, che permette di dichiarare l'intera classe di cui si vuole effettuare
+il \gls{mock} e restituisce un oggetto con gli stessi metodi della classe specificatagli ma con il corpo vuoto, 
 alleggerendo notevolmente il peso della componente.
 \\\\
-Di queste componenti viene poi effettuato il \gls{mock} dei metodi necessari all'esecuzione dei test, tramite il metodo
+Viene successivamente fatto il \gls{mock} solo dei metodi necessari all'esecuzione dei test tramite il metodo
 spyOn, come descritto in precedenza.
 \clearpage
 \subsection{Realizzazione}
@@ -172,5 +167,5 @@ Al termine del progetto la copertura dei requisiti è la seguente:
 \leavevmode\newline
 Come si può notare i requisiti funzionali, qualitativi e di vincolo sono stati coperti con una percentuale pari al 100\%.
 \\
-Di conseguenza sono stati coperti anche i requisiti desiderabili oltre che quelli obbligatori. Non erano presenti requisiti 
+Di conseguenza sono stati coperti anche i requisiti desiderabili oltre a quelli obbligatori. Non erano presenti requisiti 
 facoltativi.
