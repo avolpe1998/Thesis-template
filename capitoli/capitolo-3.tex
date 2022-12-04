@@ -537,14 +537,14 @@ Le eccezioni custom per TypeORM individuate sono le seguenti:
 \leavevmode\newline
 
 \subsection{Scheduler}
-Come spiegato nel capitolo di analisi dei requisiti, si è deciso di implementare il servizio di polling dei dati
-dei sensori con un intervallo di tempo pari a due minuti. Per farlo è stata utilizzata
+Come spiegato nel capitolo di analisi dei requisiti, è  stato deciso di implementare il servizio di polling dei dati
+dei sensori con un intervallo di tempo pari a due minuti. L'esecuzione schedulata è stata implementata con
 la libreria @nestjs/schedule che integra il package cron di Node.js.
 \\\\
-Questa libreria mette a disposizione uno strumento per poter eseguire il metodo
+Questa libreria fornisce uno strumento per poter eseguire il metodo
 di una classe ad intervalli di tempo regolari.
 \\\\
-Per poter usare la libreria bisogna importare, nel modulo root dell'applicazione, il modulo della libreria schedule in questo modo:
+Per utilizzare la libreria deve essere importato, nel modulo root dell'applicazione, il modulo della libreria schedule in questo modo:
 \begin{lstlisting}[
     language=JavaScript,
     basicstyle=\ttfamily\footnotesize
@@ -557,35 +557,34 @@ Per poter usare la libreria bisogna importare, nel modulo root dell'applicazione
 export class AppModule {}
 \end{lstlisting}
 \leavevmode\newline
-Avendo importato la libreria abbiamo a disposizione un decorator @Cron, da specificare sopra al metodo che vogliamo venga 
-schedulato. 
+Importata la libreria è disponibile un decorator \textit{@Cron}, da utilizzare sopra al metodo che vogliamo schedulare. 
 \\\\
-Come parametro del @Cron dobbiamo inserire una stringa contenente un cron pattern con
-l'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
+Il decorator \textit{@Cron} si aspetta un parametro stringa contenente il cron pattern
+dell'intervallo di tempo con cui vogliamo che NestJS esegua il metodo.
 \\
-Nel nostro caso volevamo eseguirlo ogni due minuti, quindi gli abbiamo passato la stringa "*/2 * * * *".
+Nel nostro caso è stato deciso un intervallo di due minuti, quindi la stringa passata è "*/2 * * * *".
 \\\\
-In particolare, il metodo da schedulare è il metodo all'interno del service SensorsScrapingService, che si occupa
+Il metodo da schedulare è \textit{scrapeAndPersistSensors()} e si trova all'interno del service SensorsScrapingService; si occupa
 di effettuare il polling, la persistenza dei dati dei sensori di parcheggio e delle misurazioni dei sensori di parcheggio.
 
 \subsection{Logging}
-Il logging in un'applicazione è un processo fondamentale che serve a salvare gli eventi che accadono durante
-la sua esecuzione.
+Il logging è un processo fondamentale che salva gli eventi che accadono durante
+l'esecuzione di un'applicazione.
 \\\\
-Grazie al logging, gli sviluppatori possono accorgersi di potenziali attacchi o analizzare gli
+Permette agli sviluppatori di rilevare potenziali attacchi o analizzare
 errori prima che questi interrompano i flussi di lavoro aziendali.
 \\\\
-Il logging viene effettuato salvando su un file (solitamente con estensione .log) le informazioni rilevanti
-accadute in un particolare evento che si è deciso di loggare, come la richiesta da parte
-dell'utente finale di un servizio dell'applicazione.
+Il logging viene effettuato salvando su un file (solitamente con estensione .log) o su altri output (ad esempio sulla console) le informazioni rilevanti
+di un evento, ad esempio la richiesta da parte
+dell'client di un'\gls{API} \gls{REST}.
 \\\\
 Solitamente questi file di log raggiungono dimensioni importanti, a volte nell'ordine dei Gigabyte, quindi possono aver bisogno di
 un server dedicato per persisterli oppure di meccanismi di compressione file schedulati.
 \\\\
-Per questo progetto è stato deciso di fare il logging di tutte le richieste alle \gls{API} \gls{REST}
-e tutte le volte che viene eseguito il servizio di polling schedulato.
+Per questo progetto è stato deciso di loggare tutte le richieste alle \gls{API} \gls{REST}
+e tutte le esecuzioni del servizio di polling schedulato.
 \\
-In particolare, per le richieste alle \gls{API} \gls{REST}, si vuole effettuare il logging delle seguenti 
+Per le richieste alle \gls{API} \gls{REST} si vogliono salvare le seguenti 
 informazioni:
 \begin{itemize}
     \item metodo della richiesta (GET, POST, PUT, DELETE);
@@ -598,27 +597,29 @@ informazioni:
     \item timestamp della richiesta.
 \end{itemize}
 \leavevmode\newline
-Per il servizio di polling si vuole effettuare il logging delle seguenti informazioni:
+Per il servizio di polling si vogliono salvare le seguenti informazioni:
 \begin{itemize}
     \item timestamp del momento di avvio del polling;
     \item timestamp del momento di terminazione del polling.
 \end{itemize}
 \leavevmode\newline
-NestJS ha una classe built-in, chiamata Logger, che è possibile usare per effettuare il logging 
+Logger è una classe built-in di NestJS che è possibile utilizzare per effettuare il logging 
 dell'applicazione. 
 \\\\
-Questa classe però permette solo di effettuare operazioni basilari e come spiegato nella 
-guida ufficiale, per effettuare operazioni più complesse, come il salvataggio delle informazioni
-su file, è bene appoggiarsi ad una libreria esterna che si integra molto bene con NestJS, chiamata
+Questa classe ha però dei limiti, in quanto mette a disposizione un set ristretto di operazioni, ad esempio 
+non permette di salvare i log su file. Come spiegato nella 
+guida ufficiale, per effettuare operazioni più complesse è buona prassi appoggiarsi ad una libreria
+esterna. Per quanto riguarda il logging, una libreria terza che si integra molto bene con NestJS e suggerita dal sito ufficiale è
 Winston.
 \\\\
-Winston permette di definire la destinazione dei nostri log (nel nostro caso un file .log in una directory logs nel
-progetto) e la formattazione nel testo (nel nostro caso abbiamo usato una funzionalità di Winston che permette
-di usare la stessa formattazione dei log di NestJS) e molte altre funzionalità che non sono state utilizzate
+Winston permette di definire la destinazione dei log (nel nostro caso un file .log in una directory logs nel
+progetto), la formattazione del testo (nel nostro caso è stata utilizzata una funzionalità di Winston che permette
+di replicare formattazione dei log di NestJS) e molte altre funzionalità non utilizzate
 in questo progetto.
 \\\\
-Le informazioni loggabili tramite Winston, hanno diversi livelli. Il livello del log 
-indica la sua importanza:
+Il log, oltre alla stringa d'informazione, è dotato di un livello.
+Il livello 
+indica l'importanza del log:
 \begin{itemize}
     \item error: log critico, qualcosa nell'applicazione non ha funzionato correttamente e
         alcune funzionalità potrebbero non rispondere correttamente;
@@ -626,21 +627,20 @@ indica la sua importanza:
     \item info: log di informazione, si è verificato un evento all'interno dell'applicazione.
 \end{itemize}
 \leavevmode\newline
-Esistono poi altri livelli di log che non sono stati usati in questo progetto, quindi si è deciso di non elencarli.
+Esistono anche altri livelli di log che non sono stati utilizzati in questo progetto, si è deciso quindi di non elencarli.
 \\\\
-Winston permette di decidere i livelli d'informazione che vogliamo loggare, in particolare per questo progetto è stato effettuato il logging
-a livello error e info.
+Winston permette di decidere i livelli d'informazione che vogliamo loggare; per questo progetto è stato scelto di loggare
+i livello error e info.
 \\\\
-Le informazioni riguardanti le richieste alle \gls{API} \gls{REST} e il servizio di polling, sono state loggate a livello info.
+Le informazioni delle richieste alle \gls{API} \gls{REST} e del servizio di polling, sono di livello info.
 \\\\
-Per loggare le richieste alle \gls{API} \gls{REST} è stato implementato un middleware LoggerMiddleware che intercetta tutte le 
-richieste prima che 
-vengano passate ai controller e salva in delle variabili interne le informazioni da loggare.
-\\\\
-Per avere nel log, anche lo status code della risposta inviata al client dal controller, il LoggerMiddleware imposta un 
-listener sull'evento \textit{close} dell'oggetto \textit{response}, 
-prima di passare la richiesta al controller. In questo modo il log viene scritto solamente quando il controller ha terminato di
-gestire la richiesta (attivando il metodo listener) e abbiamo tutti i dati a disposizione.
+Per loggare le richieste alle \gls{API} \gls{REST} è stato implementato un middleware custom, chiamato LoggerMiddleware, che intercetta tutte le 
+richieste prima che arrivino ai controller e salva le informazioni in delle variabili interne.
+\\
+Successivamente imposta un listener sull'evento \textit{close} dell'oggetto \textit{response} e passa la richiesta al controller.
+\\
+Quando il controller termina, attiva il listener del middleware, che ora ha tutte le informazioni necessarie per loggare la richiesta 
+(informazioni in input dal client e quelle in output dal controller).
 % ref: https://www.loggly.com/use-cases/application-logging-best-practices/
 
 \begin{lstlisting}[
@@ -674,20 +674,19 @@ export class LoggerMiddleware implements NestMiddleware {
 \end{lstlisting}
 
 \section{Servizio di polling}
-Sono state proposte due varianti per sviluppare il servizio di polling. Queste due varianti riguardano il
-modo in cui il servizio SensorsScrapingService, che si occupa di effettuare il polling dei dati dei sensori
+Sono state proposte due varianti per lo sviluppo del servizio di polling e riguardano il
+modo in cui il SensorsScrapingService, che effettua il polling dei dati dei sensori
 da un file \gls{XML} online, debba comunicare col servizio di persistenza.
 \\\\
 Le due varianti:
 \begin{enumerate}
-    \item Far comunicare il SensorsScrapingService col servizio di persistenza effettuando delle chiamate \gls{HTTP} 
-        alle \gls{API} \gls{REST} di cui ha bisogno.
-    \item Far comunicare il SensorsScrapingService direttamente col livello di servizio dei sensori e delle misurazioni 
-    dei sensori di parcheggio.
+    \item il SensorsScrapingService comunica col servizio di persistenza effettuando chiamate \gls{HTTP} 
+        alle \gls{API} \gls{REST};
+    \item il SensorsScrapingService comunica direttamente con il servizio dei sensori e col servizio delle misurazioni 
+        dei sensori di parcheggio.
 \end{enumerate}
 \leavevmode\newline
-E' stato scelto di implementare il punto 2. Vediamo le motivazioni che hanno portato a effettuare questa scelta, analizzando pro e 
-contro dei due rispettivi punti.
+E' stato implementato il punto 2 ma analizziamo le motivazioni che hanno portato a effettuare questa scelta:
 \\\\
 Pro del punto 1
 \begin{itemize}
@@ -702,39 +701,33 @@ Contro del punto 1
     \item come analizzato nella fase di analisi dei requisiti il SensorsScrapingService deve effettuare 720 chiamate \gls{HTTP} giornaliere
         per scaricare i dati dei sensori aggiornati. 
         \\
-        Quindi come minimo deve effettuare 720 chiamate \gls{HTTP} giornaliere ulteriori anche alle \gls{API} \gls{REST}, per verificare se ci sono sensori
-        da aggiornare. 
-        \\
-        Nella pratica le chiamate \gls{HTTP} da fare sono di più, poiché dopo aver verificato se ci sono sensori da aggiornare ed
-        eventualmente aggiornati, bisogna fare un'altra chiamata \gls{HTTP} alle \gls{API} \gls{REST} per verificare se ci sono anche misurazioni dei sensori
-        da aggiornare ed eventualmente aggiornarle. 
-        \\
-        Il che porta il numero di chiamate \gls{HTTP} da effettuare al servizio di \gls{API} \gls{REST}, pari ad un minimo di 1440 giornaliere.
+        Di conseguenza deve effettuare un minimo 1440 chiamate \gls{HTTP} giornaliere ulteriori alle \gls{API} \gls{REST} 
+        per verificare la presenza di sensori e misurazioni di sensori di parcheggio 
+        da aggiornare (720 chiamate per i sensori e 720 per le misurazioni).
 \end{itemize}
 \leavevmode\newline
 Pro del punto 2
 \begin{itemize}
-    \item far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e delle misurazioni dei sensori di parcheggio
-        riduce notevolmente i costi in termini di carico dell'applicazione, in quanto per persistere i dati è sufficiente chiamare un
-        metodo del servizio da cui si dipende, senza dover fare chiamate \gls{HTTP} che sono molto costose. 
+    \item far comunicare direttamente il SensorsScrapingService con il servizio dei sensori e il servizio delle misurazioni dei sensori di parcheggio
+        riduce notevolmente i costi in termini di carico dell'applicazione, in quanto si persistono i dati utilizzando un
+        metodo del servizio da cui si dipende senza dover effettuare costose chiamate \gls{HTTP}. 
 \end{itemize}
 \leavevmode\newline
 Contro del punto 2
 \begin{itemize}
-    \item nel caso di migrazione a un'applicazione basata su microservizi deve essere modificato il modo in cui il SensorsScrapingService 
+    \item nel caso di migrazione a un'applicazione basata su microservizi deve essere modificata la modalità in cui il SensorsScrapingService 
         persiste i dati dei sensori
         e delle misurazioni dei sensori di parcheggio. Probabilmente si dovranno effettuare chiamate \gls{HTTP} al servizio di \gls{API} \gls{REST} (come il punto 1),
-        in quanto il servizio di polling diventerà un microservizio indipendente, quindi il servizio dei 
-        sensori e delle misurazioni di parcheggio saranno fuori dal suo scope;
-    \item Solitamente è meglio evitare di creare dipendenze tra servizi, per mantenere il servizio il più isolato possibile, perseguendo il
-        principio di separazione delle responsabilità.
+        in quanto il servizio di polling diventerà un microservizio indipendente e il servizio dei 
+        sensori e il servizio delle misurazioni saranno fuori dal suo scope;
+    \item è buona prassi evitare la creazione di dipendenze tra servizi, perseguendo i
+        principi di isolamento e separazione delle responsabilità.
 \end{itemize}
 \leavevmode\newline
-Si è optato per il punto 2, in quanto questo è un progetto nato con l'obiettivo di fare un'analisi comparativa con un altro progetto esistente,
+Questo è un progetto nato con l'obiettivo di fare un'analisi comparativa con un progetto esistente;
 di conseguenza, per non avere differenze prestazionali, si è scelta la variante più simile al 
-servizio di polling implementato nell'altro progetto. Inoltre, è vero che è bene evitare le dipendenze tra servizi per ridurre
-l'accoppiamento tra le componenti e separare le responsabilità ma molto spesso non è possibile farlo e capita frequentemente
-di avere dipendenze tra loro.
+servizio di polling dell'altro progetto. Inoltre, non è sempre possibile evitare le dipendenze tra servizi
+che sono comuni in molti applicativi.
 
 \section{API REST}
 Tramite lo strumento Stoplight sono state progettate 17 \gls{API} \gls{REST}. Stoplight light è un ottimo strumento realizzato
@@ -742,12 +735,12 @@ per progettare \gls{API} \gls{REST}.
 \\\\
 Essendo un servizio in cloud è accessibile a chiunque abbia necessità di avere la documentazione delle \gls{API}.
 \\\\
-Stoplight permette di definire l'\gls{endpoint} dell'\gls{API}, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
+Stoplight permette di definire gli \gls{endpoint} delle \gls{API}, il metodo della richiesta per accedere alla risorsa (GET, POST, PUT, DELETE ecc..),
 eventuale corpo della richiesta, eventuale corpo della risposta, status code della risposta e altre informazioni
-utili a chi deve sviluppare le \gls{API} e al client che deve effettuare le richieste.
+utili agli sviluppatori delle \gls{API} e al client che effettua le richieste.
 \\\\
 Progettata un'\gls{API} è possibile generare il \gls{mock} della risposta, in questo modo gli sviluppatori \gls{front-end} non hanno bisogno
-di attendere che il \gls{back-end} venga realizzato per sviluppare la parte di \gls{front-end}.
+di attendere che il \gls{back-end} venga realizzato per sviluppare la loro parte.
 \\\\
 Le \gls{API} \gls{REST}, suddivise per dominio di appartenenza, sono le seguenti:
 \\\\
