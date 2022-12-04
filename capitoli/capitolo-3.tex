@@ -11,21 +11,22 @@ la realizzazione del progetto.}
 
 % %**************************************************************
 \section{Architettura del progetto}
-Le dimensioni di questo progetto allo stato attuale sono contenute, inoltre deve essere fatta un'analisi
-comparativa tra la soluzione finale di questo progetto con un progetto già esistente. Per rendere 
+Questo progetto è nato con lo scopo di fare un'analisi
+comparativa con un progetto già esistente. Per rendere 
 l'analisi comparativa più efficace, è stato scelto di usare la stessa architettura dell'altro progetto, 
 ovvero la layered architecture.
 \\\\
 Questo tipo di architettura velocizza la realizzazione del progetto, a discapito della facilità di
-manutenzione ma non è un problema essendo il progetto di dimensioni contenute. In caso
-il progetto dovesse crescere fino al punto in cui risulti difficile manutenerlo è sempre possibile
-migrarlo a un'architettura a microservizi.
+manutenzione ma non è un problema dato che le dimensioni del prodotto al momento sono contenute. Se
+le dimensioni del progetto dovessero aumentare notevolmente, fino al punto in cui il processo di manutenzione risulti 
+difficile, è possibile
+migrarlo a un'architettura a microservizi in qualsiasi momento.
 
 % ref: https://cs.uwaterloo.ca/~m2nagapp/courses/CS446/1195/Arch_Design_Activity/Layered.pdf
 
 \subsection{Layered architecture}
 La layered architecture è uno degli stili architetturali più utilizzati al giorno d'oggi. L'idea che sta dietro a
-questo tipo di architettura è organizzare i moduli o i componenti con funzionalità simili
+questo tipo di architettura consiste nell'organizzare i moduli o i componenti con funzionalità simili
 in livelli orizzontali. Di conseguenza ogni livello svolge un ruolo specifico nell'applicazione.
 \\
 La layered architecture non ha restrizioni sul numero di strati che l'applicazione può avere, in quanto 
@@ -59,39 +60,36 @@ e della richiesta dei dati. Quindi qui è dove viene implementata la logica prin
 \textbf{Livello fisico}
 \\\\
 Nel livello fisico sono salvati tutti i dati recuperabili dell'applicazione. Solitamente questo livello è chiamato
-anche livello di persistenza. Questo livello si occupa di interagire con il sistema in cui i dati 
-sono persistiti, come ad esempio un database.
+anche livello di persistenza. Si occupa di interagire con il sistema in cui i dati 
+sono persistiti, ad esempio un database.
 % //TODO: cambiare immagine controller-service-repository duplicata
 \subsection{Motivazioni della scelta}
-Le motivazione che hanno portato a scegliere questo stile architetturale sono le seguenti:
+Le motivazioni e i vantaggi che hanno portato a scegliere questo stile architetturale sono i seguenti:
 \begin{itemize}
-    \item dato che la separazione delle responsabilità è la proprietà principale di quest'architettura,
-        ogni livello del software ha la sua specifica funzione. Questo rende facile il dover aggiornare 
-        singoli livelli e permette al team di sviluppo di separare bene i carichi di lavoro tra i vari 
-        membri, che possono lavorare in maniera contemporanea su componenti diverse;
-    \item per la proponente è importante avere una suite di test automatici per testare i vari componenti
-        dell'applicazione. La layered architecture, separando bene le responsabilità tra i livelli, 
-        permette di suddividere l'applicazione in componenti ben separate e quindi più facili da testare.
-        Essendo ogni livello isolato dagli altri, è possibile creare casi di test di dimensione ridotte, 
+    \item dato che la separazione delle responsabilità è la proprietà principale di questa architettura,
+        ogni livello software ha la sua specifica funzione. Questo rende facile aggiornare 
+        separatamente i livelli e permette al team di sviluppo di suddividere i carichi di lavoro tra i 
+        membri del team, che possono lavorare in contemporanea su componenti diverse;
+    \item per la proponente era importante avere una suite di test automatici per testare i vari componenti
+        dell'applicazione. La layered architecture
+        permette di suddividere l'applicazione in componenti ben separate e quindi facili da testare.
+        Essendo ogni livello isolato, è possibile creare casi di test di dimensione ridotte, 
         in quanto le componenti di cui fare il \gls{mock} sono poche;
-    \item l'isolamento tra i vari livelli permette di modificare un livello senza che la modifica intacchi
-        gli altri;
-    \item nel caso l'applicazione diventi molto grande è possibile, senza troppo sforzo, avviare un processo
+    \item nel caso le dimensioni dell'applicazioni diventino importanti, è possibile, senza troppo sforzo, avviare un processo
         di migrazione ad un'architettura a microservizi. La layered architecture lavora bene (lato monolite) anche
         in un sistema con un'architettura ibrida monolite/microservizi. Questo tipo di architettura
         ibrida solitamente si viene a formare nel processo di migrazione di un sistema monolitico a un sistema a microservizi.
         \\
-        Di conseguenza, in ottica di una futura migrazione in un sistema a microservizi (molto probabile che avvenga), è
-        bene scegliere un monolite che lavori bene in un'architettura ibrida e quindi che sia facile da migrare
-        in un sistema a microservizi.
+        Di conseguenza, in un ottica di futura migrazione a un sistema a microservizi (molto probabile che avvenga), è
+        bene scegliere un monolite che lavori bene in un'architettura ibrida e quindi che sia facile da migrare.
         \\
-        Infatti grazie alla separazione delle responsabilità della layered architecture, è facile andare
+        Infatti grazie alla separazione delle responsabilità e l'isolamento della layered architecture, è facile andare
         a trasformare i componenti del monolite in microservizi.
 \end{itemize}
 \clearpage
 \section{Struttura software}
-E' stato scelto NestJS come framework di sviluppo del progetto dato che utilizza la layered architecture,
-tramite il pattern controller-service-repository. Vediamo questo design pattern:
+E' stato scelto NestJS come framework di sviluppo del progetto dato che utilizza la layered architecture
+tramite il design pattern controller-service-repository. Vediamo questo design pattern:
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm]{controller-service-repository-pattern}
@@ -101,9 +99,7 @@ tramite il pattern controller-service-repository. Vediamo questo design pattern:
 Il controller-service-repository pattern suddivide le componenti dell'applicazione su tre livelli fondamentali:
 il controller, il service e il repository.
 \\
-Il controller è il livello più alto, mentre il repository quello più basso, in mezzo ai due c'è il service.
-\\
-Il controller è il livello responsabile di gestire le richieste in arrivo e ritornare le risposte all'utente finale.
+Il controller è il livello responsabile di gestire le richieste in arrivo e ritornare le risposte al client.
 Esiste un meccanismo di routing built-in nel framework, che gestisce a quale controller inviare le richieste.
 \\
 Il service è il livello responsabile della business logic.
@@ -111,36 +107,37 @@ Il service è il livello responsabile della business logic.
 Il repository è il livello che viene anche chiamato livello di persistenza nella layered architecture e quindi interagisce
 con il sistema di persistenza dati, come il database.
 \\\\
-Analizziamo in dettaglio le componenti che vanno a formare struttura del software:
-
+Analizziamo in dettaglio le componenti che vanno a comporre la struttura del software:
+% //TODO: mettere in maiuscolo iniziale COntroller e Provider
 \subsection{IoC container}
-L'Inversion of Control container è un componente fondamentale di NestJS che permette l'applicabilità
+L'Inversion of Control container è un componente fondamentale di NestJS utilizzato per l'applicazione
 del pattern Dependency Injection.
 \\
-L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come controller o provider.
+L'IoC container contiene un'istanza di tipo singleton per ogni classe dichiarata come Controller o Provider.
 \\\\
 Il funzionamento dell'IoC container è il seguente:
 \\\\
-quando viene avviata un'applicazione NestJS, il sistema runtime ricerca tutti controller e provider che 
+quando viene avviata un'applicazione NestJS, il sistema runtime ricerca tutti i controller e provider che 
 sono stati dichiarati all'interno di moduli importati dal modulo root. Per ognuna di queste classi crea un'istanza
 usando il pattern singleton e la inserisce nell'IoC container. 
 \\
-Se però la classe da istanziare dichiara una dipendenza con un altro controller o provider nel proprio 
-costruttore, il sistema runtime applica in maniera automatica il pattern Dependency Injection; ovvero
+Se però la classe da istanziare dichiara una dipendenza con un altro Controller e/o Provider nel proprio 
+costruttore, il sistema runtime applica automaticamente il pattern Dependency Injection; ovvero
 va a cercare un'istanza della dipendenza dichiarata nel costruttore della classe, nell'IoC container; se
 presente la inietta nella classe e crea l'istanza da inserire nell'IoC container. 
 \\
 Altrimenti va a creare prima
 l'istanza della classe che deve essere iniettata (se possibile, in quanto la
 classe da iniettare potrebbe a sua volta avere una dipendenza e in tal caso si segue la successione di 
-dipendenze fino a che non si trova una classe che può essere istanziata) e la inietta nella classe che dichiara
-la dipendenza, poi crea l'istanza della classe che ha dichiarato la dipendenza e la inserisce nell'IoC container.
+dipendenze fino a che non si trova una classe che può essere istanziata) e la inserisce nell'IoC container, 
+poi la inietta nella classe che dichiara
+la dipendenza; infine crea l'istanza della classe che ha dichiarato la dipendenza e la inserisce nell'IoC container.
 % //TODO: sistemare dicitura definizione/dichiarazione di una classe
 \subsection{Controller e provider}
 Due componenti fondamentali di NestJS sono i controller e i provider. 
-Per dichiarare una classe come controller, bisogna applicare il decorator @Controller, sopra la 
-definizione della classe, mentre per dichiarare una classe come provider bisogna applicare il decorator
-@Injectable sopra la definizione della classe.
+Per dichiarare una classe come controller, deve essere applicato il decorator \textit{@Controller}, sopra la 
+definizione della classe, mentre per dichiarare una classe come provider deve essere applicato il decorator
+\textit{@Injectable} sopra la definizione della classe.
 \\
 \begin{lstlisting}[
     language=JavaScript,
@@ -178,10 +175,10 @@ export class MaintainersRegistryService {
 \end{lstlisting}
 \leavevmode\newline
 \\
-I controller sono i componenti dedicati a gestire le richieste in ingresso e a fornire le risposte all'utente
-finale. NestJS considera come provider tutte le classi istanziabili e marcate con il decorator 
-@Injectable che non sono controller; quindi sia classi di tipo service che repository devono essere marcate
-con il decorator @Injectable. 
+I controller sono i componenti dedicati a gestire le richieste in ingresso e a fornire le risposte al
+client. NestJS considera provider tutte le classi istanziabili e marcate con il decorator 
+\textit{@Injectable} che non sono controller; quindi classi service e repository devono essere marcate
+con il decorator \textit{@Injectable}. 
 \\
 \begin{lstlisting}[
     language=JavaScript,
@@ -223,8 +220,8 @@ export class MaintainersRegistryController {
 \end{lstlisting}
 \leavevmode\newline
 \\
-E' possibile marcare con il decorator @Injectable
-anche classi non service o repository per fare in modo che NestJS, in maniera automatica ne inietti le dipendenze 
+E' possibile marcare con il decorator \textit{@Injectable}
+anche classi non service o repository per fare in modo che NestJS ne inietti le dipendenze 
 dichiarate nel costruttore, le istanzi e le inserisca nell'IoC container.
 \\\\
 I controller dell'applicazione individuati sono i seguenti:
@@ -258,7 +255,7 @@ I service dell'applicazione individuati sono i seguenti:
     \item SensorsScrapingService: gestisce la business logic relativa al dominio del polling dei sensori.
 \end{itemize}
 \subsection{Repository}
-I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno quindi il compito di
+I repository sono i componenti dedicati alla gestione della persistenza dei dati. Hanno il compito di
 comunicare con la componente di gestione della persistenza come un \gls{DBMS}\glsfirstoccur. Nel progetto è stato utilizzato un database
 relazionale di tipo postgreSQL.
 \\\\
