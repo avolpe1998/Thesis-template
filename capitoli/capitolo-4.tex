@@ -42,7 +42,6 @@ in isolamento senza impatti, riuscendo a testare la correttezza dell'intervento 
 Successivamente l'azienda valuterà in fase di rilascio le versioni adeguate da installare
 negli ambienti di sviluppo collaudo ed esercizio.
 \\\\
-\clearpage
 Il modello logico esistente era il seguente:
 \begin{figure}[H]
   \centering
@@ -71,8 +70,6 @@ nome più appropriato poteva essere sensors\_maintenance.
 parking\_area era la tabella rappresentante la piazzola di parcheggio, un nome più appropriato
 poteva essere parking\_spots.
 \\\\\\
-\clearpage
-\leavevmode\newline
 \textbf{Duplicazione di dati}
 \\\\
 La tabella parking\_area\_stats non serviva, in quanto duplicava dei dati già presenti
@@ -111,7 +108,6 @@ per modificare la struttura del database con il software in esercizio su un ambi
 alti rispetto a farlo in fase di sviluppo.
 \\\\
 Inoltre l'aggiunta di una tabella per lo storico non ha un impatto negativo sulla struttura del database.
-\clearpage
 \section{Ristrutturazione}
 
 Il modello logico ristrutturato è il seguente:
@@ -144,8 +140,7 @@ E' stato reso facoltativo che il sensore debba essere associato a una piazzola.
 E' stato reso facoltativo che il manutentore debba essere associato a un sensore.
 \\
 E' stato reso facoltativo che il sensore debba essere associato a un manutentore.
-\clearpage
-\leavevmode\newline
+\\\\
 \textbf{Mancanza di tabelle fondamentali}
 \\\\
 E' stata aggiunta la tabella parking\_areas in rappresentanza dei parcheggi, dotati di indirizzo, latitudine e 
