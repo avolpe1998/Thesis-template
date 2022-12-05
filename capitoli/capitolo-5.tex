@@ -84,7 +84,7 @@ describe('MaintainersRegistryService', () => {
 \end{lstlisting}
 
 \subsection{Progettazione}
-Per i criteri di verifica stabiliti con il proponente si è deciso di testare tutti i metodi dei service che
+Per i criteri di verifica stabiliti con il proponente si è deciso di testare tutti i metodi dei Service che
 avessero un numero di branch > di 1. In questo modo viene assicurata la copertura di tutti i casi di errore,
 dato che i metodi con un solo branch 
 non gestiscono comportamenti inaspettati in maniera custom e in caso di eccezione non la catturano 
@@ -102,7 +102,7 @@ Scrivendo dei test automatici che vanno a testare i metodi con più di un branch
 \end{itemize}
 \leavevmode\newline
 Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei \gls{mock} per tutte le dipendenze
-della classe da testare, repository compresi.
+della classe da testare, Repository compresi.
 \\\\
 I \gls{mock} sono delle componenti fittizie molto più piccole delle componenti originali e implementano solo la parte di codice 
 necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.

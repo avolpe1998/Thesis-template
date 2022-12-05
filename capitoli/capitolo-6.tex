@@ -25,9 +25,9 @@ realizzata risultasse fallimentare, è comunque presente un progetto solido che 
 messo in esercizio in ambiente di produzione, riducendo i costi del dover scartare un prodotto 
 inutilizzabile.
 \\\\
-Il problema di dover scartare il prodotto realizzato in NestJS può presentarsi nel caso in fase di sviluppo
+Il problema di dover scartare il prodotto realizzato in NestJS può presentarsi nel caso in cui in fase di sviluppo
 sorgessero problemi di non fattibilità del software, non preventivati in fase di analisi per la
-scarsa conoscenza del framework. Oppure per problemi legati alla soluzione finale realizzata, per lo 
+scarsa conoscenza del framework. Oppure per problemi legati alla soluzione finale realizzata (programma troppo pesante, prestazioni troppo lente ecc..), per lo 
 stesso motivo di prima.
 
 \section{Le due soluzioni}
@@ -50,14 +50,14 @@ stato rilasciato nel 2016.
 Attualmente non sono molti i prodotti realizzati in NestJS, ma questo framework sta prendendo piede negli ultimi anni in quanto
 usa Node.js per eseguire il codice JavaScript.
 \\\\
-Node.js è uno strumento molto utilizzato, nonostante sia fornito di una vastità di librerie la sua lacuna è la mancanza
+Node.js è uno strumento molto utilizzato ma nonostante sia fornito di una vastità di librerie la sua lacuna è la mancanza
 di un'architettura ben strutturata, che invece è ben presente in Spring. Quest'architettura 
 permette la realizzazione di applicazioni altamente testabili, scalabili, con basso grado di accoppiamento
 e facili da manutenere.
 \\\\
 NestJS copre questa mancanza di Node.js, fornendo un livello in più di astrazione sopra a Node.js e creando un'architettura 
 molto simile a quella di Spring.
-
+% //TODO: inserire frase sulla normalizzazione
 \section{Punti di valutazione}
 Per effettuare l'analisi comparativa tra le due soluzioni, sono stati presi in considerazione i seguenti 
 punti e messi a confronto:
@@ -75,7 +75,7 @@ punti e messi a confronto:
 \\\\
 Spring Boot si basa sul concetto di Dependency Injection e usa il pattern controller-service-repository. 
 Questa struttura permette uno sviluppo rapido delle applicazioni, dato
-che si occupa il framework di iniettare le dipendenze dichiarate nei costruttori dei componenti. 
+che si occupa il framework di iniettare le dipendenze dichiarate nei costruttori delle componenti. 
 Il pattern controller-service-repository permette di creare applicazioni ben strutturate e dotate di una 
 buona separazione delle responsabilità, perseguendo i principi SOLID.
 \\\\
@@ -148,7 +148,7 @@ e in modo molto chiaro tutti i concetti di cui si ha bisogno per sviluppare con 
 \\\\
 Ho usato principalmente la documentazione ufficiale per imparare NestJS durante lo stage e sono riuscito a essere
 operativo in tempi ragionevoli e a fare le cose in modo coerente.
-% //TODO: mettere in corsivo i componenti come @Controller
+
 \subsection{Prestazioni}
 Per valutare le due soluzioni in termini di prestazioni è stato considerato il tempo medio di risposta delle \gls{API} \gls{REST}, 
 caricate sullo stesso 

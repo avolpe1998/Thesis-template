@@ -16,6 +16,22 @@ alcune criticità che hanno richiesto una revisione della base di dati.
 Attraverso il confronto con un'altro stagista con il quale si condivideva la stessa base di dati 
 è emersa la necessità di una revisione del modello logico.
 \\\\
+Rilevate le criticità abbiamo verificato che il database fosse in forma normale, in quanto una base 
+di dati non in forma normale presenta problemi di ridondanza, inefficienza, complessità e perdita di 
+informazioni.
+\\
+Un database è in forma normale se soddisfa le tre forme:
+\\
+\begin{itemize}
+  \item La prima forma normale dice che le tabelle non contengono gruppi (colonne) ripetuti;
+  \item La seconda forma normale dice che tutti gli attributi di una tabella dipendono dalla chiave completa;
+  \item La terza forma normale dice che nessuna colonna di una tabella è dipendente da una colonna descrittore, 
+  che a sua volta dipende dalla chiave primaria.
+\end{itemize}
+\leavevmode\newline
+Il database soddisfava le tre forme ed era quindi in prima, seconda e terza forma normale ma presentava comunque criticità che hanno richiesto 
+una ristrutturazione.
+\\\\
 Una revisione o modifica di un database all'interno di progetti ha impatti importanti, in questo
 particolare caso sono stati coinvolti tutor aziendale e sviluppatori interessati per condividere
 l'intervento. 
