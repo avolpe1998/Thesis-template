@@ -1,6 +1,6 @@
 @echo off
 
-if [%MAIN%]==[] set MAIN=tesi
+if [%MAIN%]==[] set MAIN=Volpe_Andrea
 if [%BUILD_DIR%]==[] set BUILD_DIR=.\
 
 @echo --------------------------------------------------------------

@@ -10,23 +10,23 @@
 la realizzazione del progetto.}
 
 \section{Scopo del progetto}
-Il progetto precedente realizza un set di \gls{API} \gls{REST} per interfacciarsi con un sistema 
+Il progetto precedente realizza un set di \gls{api} \gls{rest} per interfacciarsi con un sistema 
 di Smart Parking. Inoltre, attraverso un servizio di polling, raccoglie 
 stato ed informazioni di alcuni sensori di parcheggio e le persiste in una base di dati relazionale.
 \\\\
-Lo scopo di questo progetto consisteva nel migrare le \gls{API} \gls{REST} e il servizio di polling, dalla soluzione
+Lo scopo di questo progetto consisteva nel migrare le \gls{api} \gls{rest} e il servizio di polling, dalla soluzione
 realizzata con il framework Spring, in una soluzione realizzata con il framework NestJS.
 
 \section{Confronto con gli stakeholders}
 E' stato fatto un incontro iniziale con il proponente, ovvero l'azienda Sync Lab,
 per definire con chiarezza i requisiti richiesti.
 \subsection{Servizio API REST}
-Nell'incontro sono state prese in considerazione le \gls{API} \gls{REST} esistenti.
-E' emerso fin da subito che la quantità di \gls{API} \gls{REST} da migrare era troppo elevata per il
+Nell'incontro sono state prese in considerazione le \gls{api} \gls{rest} esistenti.
+E' emerso fin da subito che la quantità di \gls{api} \gls{rest} da migrare era troppo elevata per il
 tempo di stage a disposizione. 
 \\\\
 E' stato quindi necessario fare una valutazione di quali fossero i servizi fondamentali che
-il servizio di \gls{API} \gls{REST} avrebbe dovuto esporre per poter essere utilizzato senza che venissero
+il servizio di \gls{api} \gls{rest} avrebbe dovuto esporre per poter essere utilizzato senza che venissero
 a mancare funzionalità fondamentali per un utilizzo a livello base del sistema.
 
 \subsection{Servizio di polling}
@@ -39,11 +39,11 @@ aggiunge alla rete, il sistema lo rilevi e ne mantenga lo stato
 aggiornato. La stessa cosa deve avvenire per quanto riguarda lo spostamento di un sensore, solo che in 
 questo caso il sistema deve aggiornare le coordinate del sensore esistente, anziché aggiungerne uno nuovo a sistema.
 \\\\
-Sono stati scelti una tipologia di sensori con \gls{GPS}\glsfirstoccur integrato, che ad ogni variazione di stato vanno ad 
-aggiornare un record a loro associato in un file \gls{XML} online, dove ogni record contiene le informazioni e
+Sono stati scelti una tipologia di sensori con \gls{gps}\glsfirstoccur integrato, che ad ogni variazione di stato vanno ad 
+aggiornare un record a loro associato in un file \gls{xml} online, dove ogni record contiene le informazioni e
 lo stato del sensore.
 \\\\
-Vediamo un estratto del file \gls{XML} online:
+Vediamo un estratto del file \gls{xml} online:
 \begin{lstlisting}[
     style=XML,
     basicstyle=\ttfamily\footnotesize
@@ -60,20 +60,20 @@ Vediamo un estratto del file \gls{XML} online:
 \end{lstlisting}
 \leavevmode\newline
 Non avendo controllo sui sensori e quindi sul quando vengano scritti i dati, con il proponente si è deciso
-di effettuare un polling ogni due minuti al file \gls{XML} e aggiornare lo stato del \gls{back-end}.
+di effettuare un polling ogni due minuti al file \gls{xml} e aggiornare lo stato del \gls{back-end-g}.
 \\\\
-Lo stato dei sensori è quindi ridondante in quanto è presente sia nel \gls{back-end} di Smart Parking che sul file \gls{XML} online. 
-La scelta di replicare lo stato dei sensori nel \gls{back-end} è stata fatta per trarne i seguenti vantaggi:
+Lo stato dei sensori è quindi ridondante in quanto è presente sia nel \gls{back-end-g} di Smart Parking che sul file \gls{xml} online. 
+La scelta di replicare lo stato dei sensori nel \gls{back-end-g} è stata fatta per trarne i seguenti vantaggi:
 \begin{itemize}
     \item permette di organizzare i dati in maniera più consona e organizzata;
-    \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file \gls{XML} online
-        in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza nel \gls{back-end} Smart Parking, 
+    \item l'accesso ai dati diventa molto più veloce in quanto non si deve interrogare un file \gls{xml} online
+        in una posizione remota e sconosciuta ma viene interrogato il servizio di persistenza nel \gls{back-end-g} Smart Parking, 
         di cui abbiamo pieno controllo.
 \end{itemize}
 \leavevmode\newline
 La motivazione che ha portato ad eseguire il polling ogni due minuti è la seguente:
 \\
-il tipo di servizio offerto non è un \gls{real-time system}\glsfirstoccur, in quanto non crea problemi all'utente
+il tipo di servizio offerto non è un real-time system, in quanto non crea problemi all'utente
 vedere una piazzola che si libera/occupa con un delta di intervallo di ritardo. 
 \\
 L'importante è che questo delta non sia troppo elevato, in tal caso i dati mostrati all'utente sarebbero troppo
@@ -83,7 +83,7 @@ elevato.
 Effettuare il polling con un ridotto intervallo di tempo tra un polling e il successivo (dell'ordine dei millisecondi
 ad esempio),
 genera molte 
-chiamate \gls{HTTP} da parte del \gls{back-end} per accedere al contenuto del file \gls{XML} e molti accessi al database in caso ci siano dati da 
+chiamate \gls{http} da parte del \gls{back-end-g} per accedere al contenuto del file \gls{xml} e molti accessi al database in caso ci siano dati da 
 inserire/aggiornare.
 \\\\
 Vediamo un esempio pratico con una tabella che mostra il costo di chiamate e accessi al database giornalieri al variare 
@@ -122,10 +122,10 @@ Gli accessi in scrittura variano in base al tempo trascorso dall'ultimo polling 
 più costosi di quelli in lettura).
 \\\\
 Come vediamo dalla tabella e come auspicabile, con un polling ad un intervallo di ogni ora si effettuano solo
-24 richieste \gls{HTTP} al giorno ma il delta di latenza di aggiornamento dei dati li rende inutilizzabili.
+24 richieste \gls{http} al giorno ma il delta di latenza di aggiornamento dei dati li rende inutilizzabili.
 \\\\
 D'altra parte un intervallo di un millisecondo rende i dati aggiornati quasi in tempo reale ma 
-non è sostenibile effettuare un numero di richieste \gls{HTTP} giornaliere dal \gls{back-end} pari a 864 * $10^5$ (più di 86 milioni).
+non è sostenibile effettuare un numero di richieste \gls{http} giornaliere dal \gls{back-end-g} pari a 864 * $10^5$ (più di 86 milioni).
 \leavevmode
 \\\\
 Un numero di richieste giornaliere pari a 720 è stato ritenuto accettabile, così come il numero di accessi al database
@@ -133,7 +133,7 @@ indicati per la colonna dei 2 minuti e si è optato quindi per questa scelta, ri
 aggiornamento un valore accettabile per l'utente finale e che i costi delle chiamate e di accessi al database non
 siano di sovraccarico per il sistema.
 \\\\
-Il servizio per il polling dei sensori doveva essere realizzato in modo che fosse separato da quello delle \gls{API} \gls{REST}.
+Il servizio per il polling dei sensori doveva essere realizzato in modo che fosse separato da quello delle \gls{api} \gls{rest}.
 \\
 Sia per una separazione della responsabilità, che per una futura migrazione a un'applicazione basata su microservizi,
 in cui il servizio di polling dovrà diventare un microservizio a se stante, gestibile in maniera indipendente rispetto
@@ -141,7 +141,7 @@ agli altri microservizi.
 
 \section{Entità}
 Per rendere più chiaro il dominio del progetto ed eliminare eventuali ambiguità, si è ritenuto necessario
-documentare le entità di dominio coinvolte nelle funzionalità fondamentali delle \gls{API} \gls{REST}.
+documentare le entità di dominio coinvolte nelle funzionalità fondamentali delle \gls{api} \gls{rest}.
 \\\\\\
 \textbf{Piazzola}
 \\\\
@@ -554,14 +554,14 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \\
 \textbf{Attori secondari:} timer.
 \\
-\textbf{Precondizioni:} il timer è scaduto segnalando di effettuare la richiesta al file \gls{XML}.
+\textbf{Precondizioni:} il timer è scaduto segnalando di effettuare la richiesta al file \gls{xml}.
 \\
 \textbf{Post-condizioni:} il sistema ha ottenuto una lista di tutti i dati dei sensori aggiornati.
 \\
 \textbf{Scenario principale:}
 \begin{enumerate}
-    \item il timer scade e segnala al sistema di effettuare una richiesta al file \gls{XML}.
-    \item il sistema effettua la richiesta al file \gls{XML}.
+    \item il timer scade e segnala al sistema di effettuare una richiesta al file \gls{xml}.
+    \item il sistema effettua la richiesta al file \gls{xml}.
 \end{enumerate}
 
 \leavevmode\newline
@@ -571,13 +571,13 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \\
 \textbf{Attori secondari:} timer.
 \\
-\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{XML}.
+\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{xml}.
 \\
 \textbf{Post-condizioni:} il sistema ha creato i nuovi sensori.
 \\
 \textbf{Scenario principale:}
 \begin{enumerate}
-    \item il sistema ha ottenuto i dati aggiornati dal file \gls{XML}.
+    \item il sistema ha ottenuto i dati aggiornati dal file \gls{xml}.
     \item il sistema verifica la presenza di nuovi sensori nei dati ottenuti.
     \item il sistema crea i nuovi sensori.
 \end{enumerate}
@@ -589,13 +589,13 @@ Per maggior chiarezza i casi d'uso sono stati raggruppati per entità di dominio
 \\
 \textbf{Attori secondari:} timer.
 \\
-\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{XML}.
+\textbf{Precondizioni:} il sistema ha ottenuto i dati dei sensori aggiornati dal file \gls{xml}.
 \\
 \textbf{Post-condizioni:} il sistema ha modificato sensori.
 \\
 \textbf{Scenario principale:}
 \begin{enumerate}
-    \item il sistema ha ottenuto i dati aggiornati dal file \gls{XML}.
+    \item il sistema ha ottenuto i dati aggiornati dal file \gls{xml}.
     \item il sistema verifica la presenza di variazioni nei dati ottenuti rispetto ai dati dei sensori esistenti.
     \item il sistema modifica i sensori.
 \end{enumerate}
@@ -712,11 +712,11 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \hline
     Codice & Descrizione & Rilevanza &  Fonti \\ 
     \hline
-    RF21 & Il sistema deve richiedere ogni due minuti i dati dei sensori aggiornati da un file \gls{XML} online. & Obbligatorio & UC21 \\ 
+    RF21 & Il sistema deve richiedere ogni due minuti i dati dei sensori aggiornati da un file \gls{xml} online. & Obbligatorio & UC21 \\ 
     \hline
-    RF22 & Il sistema deve creare i nuovi sensori ottenuti dal file \gls{XML}. & Obbligatorio & UC22 \\ 
+    RF22 & Il sistema deve creare i nuovi sensori ottenuti dal file \gls{xml}. & Obbligatorio & UC22 \\ 
     \hline
-    RF23 & Il sistema deve modificare i sensori esistenti in base ai dati ottenuti dal file \gls{XML}. & Obbligatorio & UC23 \\ 
+    RF23 & Il sistema deve modificare i sensori esistenti in base ai dati ottenuti dal file \gls{xml}. & Obbligatorio & UC23 \\ 
     \hline
     \end{tabular}
     \caption{Requisiti funzionali polling sensore}
@@ -756,7 +756,7 @@ Per maggior chiarezza i requisiti sono stati raggruppati per entità di dominio 
     \hline
     RV2 & Utilizzo di database PostgreSQL. & Desiderabile & Capitolato \\ 
     \hline
-    RV3 & Le \gls{API} \gls{REST} devono poter essere chiamate tramite protocollo \gls{HTTP}. & Obbligatorio & Capitolato \\ 
+    RV3 & Le \gls{api} \gls{rest} devono poter essere chiamate tramite protocollo \gls{http}. & Obbligatorio & Capitolato \\ 
     \hline
     RV4 & La richiesta di ottenimento delle entità, all'applicazione, deve essere fatta tramite metodo GET. & 
         Obbligatorio & Capitolato \\ 

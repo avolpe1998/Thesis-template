@@ -42,7 +42,7 @@ NestJS fornisce uno strumento built-in per sviluppare vari tipi di test, tra cui
 end to end test, integration test e così via. 
 \\\\
 Lo strumento usa Jest, un framework per scrivere test automatici ed effettuare 
-il \gls{mock} delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
+il \gls{mock-g} delle componenti. Jest funziona su progetti che includono  React, Babel, TypeScript, Node,
 Angular, Vue.
 \\\\
 I file di test per conformità sono stati nominati con lo stesso nome della classe che vanno
@@ -101,21 +101,21 @@ Scrivendo dei test automatici che vanno a testare i metodi con più di un branch
     venga lanciata un eccezione di tipo \textit{UpdateError}.
 \end{itemize}
 \leavevmode\newline
-Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei \gls{mock} per tutte le dipendenze
+Per alleggerire i test e quindi velocizzarne l'esecuzione si è deciso di creare dei \gls{mock-g} per tutte le dipendenze
 della classe da testare, Repository compresi.
 \\\\
-I \gls{mock} sono delle componenti fittizie molto più piccole delle componenti originali e implementano solo la parte di codice 
+I \gls{mock-g} sono delle componenti fittizie molto più piccole delle componenti originali e implementano solo la parte di codice 
 necessaria a far funzionare il caso di test nel modo in cui ci si aspetta.
 \\\\
-Jest fornisce dei metodi molto utili per creare il \gls{mock} di un metodo.
-Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il \gls{mock}.
+Jest fornisce dei metodi molto utili per creare il \gls{mock-g} di un metodo.
+Tramite il metodo spyOn infatti si va a specificare l'oggetto e il metodo di cui si vuole effettuare il \gls{mock-g}.
 \\\\
-Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare successivamente il \gls{mock} di tutti i loro metodi, è stata
+Per evitare di dover caricare componenti reali, quindi molto pesanti ed effettuare successivamente il \gls{mock-g} di tutti i loro metodi, è stata
 usata una libreria esterna chiamata \textit{@golevelup/ts-jest}, che permette di dichiarare l'intera classe di cui si vuole effettuare
-il \gls{mock} e restituisce un oggetto con gli stessi metodi della classe specificatagli ma con il corpo vuoto, 
+il \gls{mock-g} e restituisce un oggetto con gli stessi metodi della classe specificatagli ma con il corpo vuoto, 
 alleggerendo notevolmente il peso della componente.
 \\\\
-Viene successivamente fatto il \gls{mock} solo dei metodi necessari all'esecuzione dei test tramite il metodo
+Viene successivamente fatto il \gls{mock-g} solo dei metodi necessari all'esecuzione dei test tramite il metodo
 spyOn, come descritto in precedenza.
 \clearpage
 \subsection{Realizzazione}

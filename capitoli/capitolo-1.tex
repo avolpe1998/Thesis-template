@@ -26,7 +26,7 @@ mercato dell’Information and Communication Technology (ICT).
 \\\\
 A seguito di una
 maturazione delle competenze tecnologiche, metodologiche ed applicative nel dominio
-del software, l’azienda è riuscita rapidamente a trasformarsi in \gls{System Integrator}\glsfirstoccur conquistando 
+del software, l’azienda è riuscita rapidamente a trasformarsi in System Integrator conquistando 
 significative fette di mercato nei settori mobile, videosorveglianza e sicurezza
 delle infrastrutture informatiche aziendali. 
 \\\\
@@ -34,7 +34,7 @@ Attualmente, Sync Lab ha più di 150 clienti
 diretti e finali, con un organico aziendale di 300 dipendenti distribuiti tra le 6 sedi
 dislocate in tutta Italia.
 Sync Lab si pone come obiettivo principale quello di supportare il cliente nella realizzazione, 
-messa in opera e governance di soluzione \gls{IT}\glsfirstoccur, sia dal punto di vista tecnologico,
+messa in opera e governance di soluzione \gls{it}\glsfirstoccur, sia dal punto di vista tecnologico,
 sia nel governo del cambiamento organizzativo.
 
 \begin{figure}[H]
@@ -50,7 +50,7 @@ software, dove l'azienda è stata il proponente del mio progetto.
 \\\\
 Sono venuto a conoscenza della proposta di stage di Sync Lab grazie all'evento stage-it 2022. 
 L’evento promosso da Assindustria Venetocentro in collaborazione con l’Università 
-di Padova per favorire l’incontro tra aziende con progetti innovativi in ambito \gls{IT} e 
+di Padova per favorire l’incontro tra aziende con progetti innovativi in ambito \gls{it} e 
 studenti dei corsi di laurea in Informatica, Ingegneria informatica e Statistica.
 \\\\
 
@@ -62,7 +62,7 @@ Il progetto di stage consisteva nella migrazione di un progetto esistente realiz
 Spring, in un progetto con le stesse funzionalità ma realizzato con il framework NestJS.
 \\
 Il progetto esistente è composto da un set di
-\gls{API}\glsfirstoccur \gls{REST}\glsfirstoccur, che vanno a esporre le funzionalità \gls{CRUD}
+\gls{api}\glsfirstoccur \gls{rest}\glsfirstoccur, che vanno a esporre le funzionalità \gls{crud}
 di un progetto di Smart Parking. 
 \\\\
 Il proponente ha deciso di effettuare 
@@ -85,9 +85,9 @@ anche la disponibilità di posti auto in un parcheggio; il tutto in tempo reale.
 Era prevista la realizzazione anche di una sezione dedicata ai manutentori, in modo che potessero monitorare
 in tempo reale lo stato dei sensori, facilitando quindi il processo di manutenzione.
 \\\\
-Il progetto prevedeva la realizzazione di un \gls{front-end}\glsfirstoccur con il framework Angular che interagisse 
-con le \gls{API} \gls{REST} da realizzare in questo progetto di 
-\gls{back-end}\glsfirstoccur.
+Il progetto prevedeva la realizzazione di un \gls{front-end-g}\glsfirstoccur con il framework Angular che interagisse 
+con le \gls{api} \gls{rest} da realizzare in questo progetto di 
+\gls{back-end-g}\glsfirstoccur.
 \clearpage
 \begin{figure}[H]
     \centering
@@ -111,8 +111,8 @@ Le problematiche riscontrate:
         di cui doveva essere effettuata la migrazione;
     \item framework Node.js e NestJS: la conoscenza di questi due framework era completamente
         assente. Conoscerli era di fondamentale importanza per poter implementare il servizio
-        di \gls{API} \gls{REST} richiesto;
-    \item la quantità di \gls{API} \gls{REST} da migrare era troppo elevata per il tempo a disposizione;
+        di \gls{api} \gls{rest} richiesto;
+    \item la quantità di \gls{api} \gls{rest} da migrare era troppo elevata per il tempo a disposizione;
     \item il modello della base dati ha dovuto subire adeguamenti rispetto alla prima versione
         per rappresentare nel modo migliore lo scenario funzionale.
 \end{itemize}
@@ -130,9 +130,9 @@ sufficienti per comprendere ruoli e le responsabilità dei singoli livelli e le 
 che intercorrono tra loro.
 \\\\
 Un'analisi fatta dal proponente ha rivelato questo tipo di architettura adattarsi molto bene al 
-servizio di \gls{API} \gls{REST} da realizzare per questo progetto.
+servizio di \gls{api} \gls{rest} da realizzare per questo progetto.
 \\
-Inoltre molti framework per lo sviluppo di applicativi \gls{back-end} si basano su quest'architettura, compresi
+Inoltre molti framework per lo sviluppo di applicativi \gls{back-end-g} si basano su quest'architettura, compresi
 Spring e NestJS, che integrano il pattern controller-service-repository; un pattern
 che sfrutta la layered architecture, creando tre diversi livelli di astrazione: 
 \begin{itemize}
@@ -153,36 +153,36 @@ Spring e NestJS, è stato quasi obbligatorio.
     \caption{Controller-service-repository pattern}
 \end{figure}
 \leavevmode\newline
-Non era prevista la creazione di un sistema di autenticazione per l'accesso alle \gls{API} \gls{REST}, in quanto 
+Non era prevista la creazione di un sistema di autenticazione per l'accesso alle \gls{api} \gls{rest}, in quanto 
 un altro studente tirocinante stava realizzando questa parte.
 
 %**************************************************************
 \section{Descrizione del prodotto ottenuto}
 
-All'inizio dello stage era disponibile un \gls{back-end} contenente le \gls{API} \gls{REST}, sviluppato in Spring, pronto per
+All'inizio dello stage era disponibile un \gls{back-end-g} contenente le \gls{api} \gls{rest}, sviluppato in Spring, pronto per
 poter essere messo in esercizio in ambiente di produzione.
 \\
-Non potendo migrare l'intero set di \gls{API} \gls{REST}, è stato preventivato di sviluppare
-le più importanti, in modo da poter effettuare le operazioni \gls{CRUD}\glsfirstoccur più
+Non potendo migrare l'intero set di \gls{api} \gls{rest}, è stato preventivato di sviluppare
+le più importanti, in modo da poter effettuare le operazioni \gls{crud}\glsfirstoccur più
 comuni.
 \\\\
-Le \gls{API} \gls{REST} espongono un'interfaccia compatibile con quello che ormai è uno standard per la
-comunicazione con servizi di tipo \gls{REST}; ovvero per comunicare con loro è necessario effettuare
-delle richieste \gls{HTTP}\glsfirstoccur a degli specifici \gls{endpoint} tramite i seguenti metodi:
+Le \gls{api} \gls{rest} espongono un'interfaccia compatibile con quello che ormai è uno standard per la
+comunicazione con servizi di tipo \gls{rest}; ovvero per comunicare con loro è necessario effettuare
+delle richieste \gls{http}\glsfirstoccur a degli specifici \gls{endpoint-g} tramite i seguenti metodi:
 \begin{itemize}
-    \item GET: per ottenere delle risorse dal servizio \gls{REST};
-    \item POST: per creare una nuova risorsa nel servizio \gls{REST};
-    \item PUT: per modificare una risorsa nel servizio \gls{REST};
-    \item DELETE: per eliminare una risorsa dal servizio \gls{REST}.
+    \item GET: per ottenere delle risorse dal servizio \gls{rest};
+    \item POST: per creare una nuova risorsa nel servizio \gls{rest};
+    \item PUT: per modificare una risorsa nel servizio \gls{rest};
+    \item DELETE: per eliminare una risorsa dal servizio \gls{rest}.
 \end{itemize}
 \leavevmode\newline
-Nel \gls{back-end} è presente inoltre un servizio schedulato che ogni due minuti in maniera autonoma va a fare il polling
-da un file \gls{XML}\glsfirstoccur online, contenente gli stati aggiornati dei sensori. Questo servizio registra poi 
+Nel \gls{back-end-g} è presente inoltre un servizio schedulato che ogni due minuti in maniera autonoma va a fare il polling
+da un file \gls{xml}\glsfirstoccur online, contenente gli stati aggiornati dei sensori. Questo servizio registra poi 
 le variazioni, rispetto
 al polling precedente, nello strato di persistenza.
 \\\\
-Il file \gls{XML} viene scritto e gestito dai produttori dei sensori di parcheggio, quindi non era compito di questo 
-progetto gestirne il funzionamento. Il funzionamento di questo file \gls{XML} è comunque abbastanza banale,
+Il file \gls{xml} viene scritto e gestito dai produttori dei sensori di parcheggio, quindi non era compito di questo 
+progetto gestirne il funzionamento. Il funzionamento di questo file \gls{xml} è comunque abbastanza banale,
 in quanto ad ogni variazione di stato, il sensore di parcheggio va semplicemente ad aggiornare 
 il record a lui associato
 all'interno del file.
@@ -212,18 +212,18 @@ compatibile con praticamente qualsiasi linguaggio di programmazione.
 \\\\\\
 \textbf{Postman}
 \\\\
-E' un'applicazione che viene utilizzata solitamente per testare \gls{API}. E' un client \gls{HTTP} che testa richieste
-\gls{HTTP} utilizzando una \gls{GUI}\glsfirstoccur, attraverso la quale otteniamo diversi tipi di risposta in base alle \gls{API} che 
+E' un'applicazione che viene utilizzata solitamente per testare \gls{api}. E' un client \gls{http} che testa richieste
+\gls{http} utilizzando una \gls{gui}\glsfirstoccur, attraverso la quale otteniamo diversi tipi di risposta in base alle \gls{api} che 
 andiamo ad interrogare.
 \\\\\\
 \textbf{Stoplight}
 \\\\
-E' una piattaforma per progettare \gls{API}. Grazie a questo strumento è possibile documentare in maniera rigorosa
-e su uno spazio in cloud un set di \gls{API}. La piattaforma permette di specificare varie informazioni per ogni
-\gls{API}, tra cui \gls{endpoint}\glsfirstoccur, parametri in ingresso attesi, possibili risposte con status code associato. Questo
-strumento è molto utile per gli sviluppatori \gls{front-end} che devono chiamare le \gls{API} di un servizio
-\gls{back-end}, soprattutto grazie alla funzionalità che permette di generare il \gls{mock}\glsfirstoccur della risposta di un'\gls{API}, 
-permettendo allo sviluppatore di effettuare le chiamate al \gls{back-end} anche senza che questo sia stato ancora realizzato.
+E' una piattaforma per progettare \gls{api}. Grazie a questo strumento è possibile documentare in maniera rigorosa
+e su uno spazio in cloud un set di \gls{api}. La piattaforma permette di specificare varie informazioni per ogni
+\gls{api}, tra cui \gls{endpoint-g}\glsfirstoccur, parametri in ingresso attesi, possibili risposte con status code associato. Questo
+strumento è molto utile per gli sviluppatori \gls{front-end-g} che devono chiamare le \gls{api} di un servizio
+\gls{back-end-g}, soprattutto grazie alla funzionalità che permette di generare il \gls{mock-g}\glsfirstoccur della risposta di un'\gls{api}, 
+permettendo allo sviluppatore di effettuare le chiamate al \gls{back-end-g} anche senza che questo sia stato ancora realizzato.
 \\\\\\
 \textbf{TypeScript}
 \\\\

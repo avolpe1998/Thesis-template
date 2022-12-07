@@ -11,7 +11,7 @@ loadParams() {
   GLOSSARY=true
   BIBLIOGRAPHY=true
   CLEAN=true
-  LOG=false
+  LOG=true
   FULL_RUN=false
 
   # Check that last parameter is not an option

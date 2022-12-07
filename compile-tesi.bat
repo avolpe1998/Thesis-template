@@ -1,5 +1,5 @@
 @echo off
-set MAIN=tesi
+set MAIN=Volpe_Andrea
 set BUILD_DIR=.\
 
 call clean.bat
