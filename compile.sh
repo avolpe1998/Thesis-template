@@ -5,13 +5,13 @@
 BUILD_DIR="build"
 
 # Thesis root .tex file name
-THESIS="Volpe_Andrea"
+THESIS="tesi"
 
 loadParams() {
   GLOSSARY=true
   BIBLIOGRAPHY=true
   CLEAN=true
-  LOG=true
+  LOG=false
   FULL_RUN=false
 
   # Check that last parameter is not an option
